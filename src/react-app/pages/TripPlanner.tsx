@@ -43,10 +43,10 @@ export default function AdminDashboard() {
             <p className="text-[#4CC9F0] text-xs uppercase tracking-widest font-bold">Executive Overview · Live Analytics</p>
           </div>
           <h1 className="text-4xl lg:text-5xl font-semibold text-[#F8FAFC] tracking-tight mb-3">Campus Hostel Analytics</h1>
-          <p className="text-[#C5D0D8] max-w-2xl font-medium">Real-time visibility across 12 hostels — occupancy, revenue, complaints, and AI-powered capacity planning.</p>
+          <p className="text-[#D1DEE6] max-w-2xl font-medium">Real-time visibility across 12 hostels — occupancy, revenue, complaints, and AI-powered capacity planning.</p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-12 mt-8 pt-8 border-t border-white/10">
             {[['12', 'Hostels'], ['4,820', 'Students'], ['91%', 'Occupancy'], ['₹2.4Cr', 'Revenue']].map(([v, l]) => (
-              <div key={l}><p className="text-3xl font-bold text-[#F8FAFC]">{v}</p><p className="text-xs text-[#C5D0D8] mt-2 uppercase tracking-wider font-medium">{l}</p></div>
+              <div key={l}><p className="text-3xl font-bold text-[#F8FAFC]">{v}</p><p className="text-xs text-[#D1DEE6] mt-2 uppercase tracking-wider font-medium">{l}</p></div>
             ))}
           </div>
         </div>
@@ -59,14 +59,14 @@ export default function AdminDashboard() {
             <div>
               <div className="flex items-center gap-2 mb-2"><Map className="w-5 h-5 text-[#1B4F72]" /><p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold">Campus Operations Map</p></div>
               <h2 className="text-lg font-bold text-[#071B34]">Full hostel visibility across all blocks</h2>
-              <p className="text-sm text-[#4A5568] mt-1">Cross-block analytics · Occupancy & complaint heatmaps · AI forecasting</p>
+              <p className="text-sm text-[#374151] mt-1">Cross-block analytics · Occupancy & complaint heatmaps · AI forecasting</p>
             </div>
             <ChevronRight className="w-6 h-6 text-[#1B4F72] group-hover:translate-x-1 transition-transform" />
           </Link>
           <div className="surface-panel rounded-2xl p-5">
             <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold mb-3">Campus Network</p>
             <CampusNetwork className="h-28" />
-            <p className="text-[10px] text-[#4A5568] mt-2 font-medium">Students · Rooms · Complaints · Visitors · Maintenance</p>
+            <p className="text-[10px] text-[#374151] mt-2 font-medium">Students · Rooms · Complaints · Visitors · Maintenance</p>
           </div>
         </div>
 
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead><tr className="text-left text-xs text-[#4A5568] uppercase tracking-wider font-bold border-b border-[#071B34]/8">
+              <thead><tr className="text-left text-xs text-[#374151] uppercase tracking-wider font-bold border-b border-[#071B34]/8">
                 <th className="px-6 py-3">Hostel</th><th className="px-6 py-3">Occupancy</th><th className="px-6 py-3">Students</th><th className="px-6 py-3">Complaints</th><th className="px-6 py-3">Revenue</th>
               </tr></thead>
               <tbody>
@@ -87,11 +87,11 @@ export default function AdminDashboard() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-20 h-1.5 bg-[#071B34]/8 rounded-full"><div className="h-full bg-[#4CC9F0] rounded-full" style={{ width: `${h.occupancy}%` }} /></div>
-                        <span className="text-[#4A5568] font-semibold">{h.occupancy}%</span>
+                        <span className="text-[#374151] font-semibold">{h.occupancy}%</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-[#4A5568] font-medium">{h.students}</td>
-                    <td className="px-6 py-4"><span className={`font-semibold ${h.complaints > 15 ? 'text-[#1B4F72]' : 'text-[#4A5568]'}`}>{h.complaints}</span></td>
+                    <td className="px-6 py-4 text-[#374151] font-medium">{h.students}</td>
+                    <td className="px-6 py-4"><span className={`font-semibold ${h.complaints > 15 ? 'text-[#1B4F72]' : 'text-[#374151]'}`}>{h.complaints}</span></td>
                     <td className="px-6 py-4 font-semibold text-[#071B34]">{h.revenue}</td>
                   </tr>
                 ))}
@@ -107,9 +107,9 @@ export default function AdminDashboard() {
             <div className="flex items-end gap-2 h-40 mt-6">
               {complaintTrend.map((v, i) => (
                 <div key={months[i]} className="flex-1 flex flex-col items-center gap-2">
-                  <span className="text-[10px] text-[#4A5568] font-bold">{v}</span>
+                  <span className="text-[10px] text-[#374151] font-bold">{v}</span>
                   <div className="w-full bg-[#1B4F72] rounded-t hover:bg-[#4CC9F0] transition-colors" style={{ height: `${(v / maxTrend) * 100}%`, minHeight: '8px' }} />
-                  <span className="text-xs text-[#4A5568] font-semibold">{months[i]}</span>
+                  <span className="text-xs text-[#374151] font-semibold">{months[i]}</span>
                 </div>
               ))}
             </div>
@@ -118,10 +118,10 @@ export default function AdminDashboard() {
             <div>
               <p className="text-xs text-[#4CC9F0] uppercase tracking-widest font-bold mb-3">Revenue Overview</p>
               <p className="text-4xl font-bold text-[#F8FAFC]">₹2.4Cr</p>
-              <p className="text-[#C5D0D8] text-sm font-medium mt-1">94% collection rate</p>
+              <p className="text-[#D1DEE6] text-sm font-medium mt-1">94% collection rate</p>
             </div>
             <div className="mt-6 pt-6 border-t border-white/8">
-              <p className="text-xs text-[#C5D0D8] font-medium mb-1">Outstanding</p>
+              <p className="text-xs text-[#D1DEE6] font-medium mb-1">Outstanding</p>
               <p className="text-2xl font-bold text-[#F8FAFC]">₹4.2L</p>
             </div>
           </section>
@@ -132,12 +132,11 @@ export default function AdminDashboard() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {aiInsights.map((insight) => (
               <div key={insight.title} className={`surface-panel rounded-xl p-5 elevate-hover ${insight.severity === 'critical' ? 'border border-[#FFB3C1]/40' : ''}`}>
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <BrainCircuit className="w-4 h-4 text-[#1B4F72] shrink-0" />
+                <div className="flex items-start justify-end mb-2">
                   <span className="text-[10px] font-bold text-[#1B4F72] bg-[#071B34]/5 px-2 py-0.5 rounded">{insight.metric}</span>
                 </div>
                 <h3 className="font-bold text-[#071B34] text-sm mb-1">{insight.title}</h3>
-                <p className="text-xs text-[#4A5568] leading-relaxed font-medium">{insight.desc}</p>
+                <p className="text-xs text-[#374151] leading-relaxed font-medium">{insight.desc}</p>
               </div>
             ))}
           </div>

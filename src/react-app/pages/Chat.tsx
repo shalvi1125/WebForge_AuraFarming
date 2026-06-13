@@ -3,9 +3,10 @@ import { Link } from 'react-router';
 import {
   ArrowLeft, Send, BrainCircuit, User,
   Clock, Sparkles, Loader2, ArrowRight,
-  Maximize2, Minimize2, Building2,
+  Maximize2, Minimize2,
   AlertCircle, Calendar, ShieldCheck, BarChart3,
 } from 'lucide-react';
+import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
 
 interface Message {
   id: string;
@@ -201,14 +202,12 @@ export default function Chat() {
             <div className="max-w-5xl mx-auto px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Link to="/student/dashboard" className="flex items-center space-x-1.5 text-[#4A5568] hover:text-[#4CC9F0] transition-colors text-sm font-medium">
+                  <Link to="/student/dashboard" className="flex items-center space-x-1.5 text-[#D1DEE6] hover:text-[#F8FAFC] hover:bg-white/8 px-2 py-1.5 rounded-lg transition-all text-sm font-semibold">
                     <ArrowLeft className="w-4 h-4" /><span>Dashboard</span>
                   </Link>
                   <div className="w-px h-5 bg-white/10" />
                   <Link to="/" className="flex items-center space-x-2">
-                    <div className="w-7 h-7 bg-[#1B4F72] rounded-lg flex items-center justify-center">
-                      <Building2 className="w-3.5 h-3.5 text-[#F8FAFC]" />
-                    </div>
+                    <HostelIQLogoMark size="sm" className="w-7 h-7 rounded-lg" />
                     <span className="font-semibold text-[#F8FAFC] text-sm">HostelIQ</span>
                   </Link>
                 </div>
@@ -231,10 +230,10 @@ export default function Chat() {
             </div>
             <div className="flex-1">
               <h2 className={`${titleSize} font-semibold ${expanded ? 'text-[#F8FAFC]' : 'text-[#071B34]'}`}>HostelIQ AI Assistant</h2>
-              {!expanded && <p className="text-[#4A5568] text-xs mt-0.5">Hostel support, leave, complaints, fees & more</p>}
+              {!expanded && <p className="text-[#374151] text-xs mt-0.5">Hostel support, leave, complaints, fees & more</p>}
             </div>
             <button onClick={() => setExpanded((v: boolean) => !v)}
-              className={`p-2 rounded-lg border transition-colors ${expanded ? 'border-white/10 text-[#4A5568] hover:text-[#F8FAFC]' : 'border-[#071B34]/10 text-[#4A5568] hover:text-[#071B34]'}`}
+              className={`p-2 rounded-lg border transition-colors ${expanded ? 'border-white/10 text-[#374151] hover:text-[#F8FAFC]' : 'border-[#071B34]/10 text-[#374151] hover:text-[#071B34]'}`}
               aria-label={expanded ? 'Collapse' : 'Expand'}>
               {expanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
@@ -253,7 +252,7 @@ export default function Chat() {
                       <div key={c.title} className={`p-6 ${expanded ? 'bg-[#0A2342]' : 'bg-[#F5F7FA]/50'}`}>
                         <Icon className={`w-5 h-5 ${expanded ? 'text-[#4CC9F0]' : 'text-[#1B4F72]'} mb-3`} />
                         <p className={`text-sm font-medium ${expanded ? 'text-[#F8FAFC]' : 'text-[#071B34]'}`}>{c.title}</p>
-                        <p className={`text-xs mt-1 leading-relaxed ${expanded ? 'text-[#4A5568]' : 'text-[#4A5568]'}`}>{c.desc}</p>
+                        <p className={`text-xs mt-1 leading-relaxed ${expanded ? 'text-[#374151]' : 'text-[#374151]'}`}>{c.desc}</p>
                       </div>
                     );
                   })}
@@ -266,7 +265,7 @@ export default function Chat() {
                     <button key={a.label} onClick={() => setInputValue(a.label)}
                       className={`text-left px-4 py-3 rounded-lg border transition-colors ${expanded ? 'border-white/10 bg-white/5 hover:bg-white/10 text-[#F8FAFC]' : 'border-[#071B34]/10 bg-white hover:border-[#4CC9F0]/30'}`}>
                       <p className="text-xs font-medium">{a.label}</p>
-                      <p className={`text-xs mt-0.5 ${expanded ? 'text-[#4A5568]' : 'text-[#4A5568]'}`}>{a.desc}</p>
+                      <p className={`text-xs mt-0.5 ${expanded ? 'text-[#374151]' : 'text-[#374151]'}`}>{a.desc}</p>
                     </button>
                   ))}
                 </div>
@@ -296,7 +295,7 @@ export default function Chat() {
                       ? renderAssistantContent(message.content)
                       : <p className="whitespace-pre-line leading-relaxed">{message.content}</p>
                     }
-                    <p className={`text-xs mt-2 ${message.role === 'user' ? 'text-[#4A5568]' : 'text-[#4A5568]'}`}>
+                    <p className={`text-xs mt-2 ${message.role === 'user' ? 'text-[#374151]' : 'text-[#374151]'}`}>
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -314,7 +313,7 @@ export default function Chat() {
                   <div className={`rounded-2xl px-4 py-3 ${expanded ? 'bg-[#0A2342] border border-white/5' : 'bg-[#F5F7FA]'}`}>
                     <div className="flex items-center space-x-2">
                       <Loader2 className="w-4 h-4 animate-spin text-[#4CC9F0]" />
-                      <span className={`text-sm ${expanded ? 'text-[#4A5568]' : 'text-[#4A5568]'}`}>{statusText || 'AI is thinking...'}</span>
+                      <span className={`text-sm ${expanded ? 'text-[#374151]' : 'text-[#374151]'}`}>{statusText || 'AI is thinking...'}</span>
                     </div>
                     {statusTrail.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1.5">
@@ -335,7 +334,7 @@ export default function Chat() {
         {/* Quick Prompts — shown only on initial state */}
         {!expanded && messages.length <= 1 && !isLoading && (
           <div className="bg-white border-l border-r border-[#071B34]/5 px-5 py-4 border-t">
-            <p className="text-xs text-[#4A5568] uppercase tracking-widest mb-3">Suggested questions</p>
+            <p className="text-xs text-[#374151] uppercase tracking-widest mb-3">Suggested questions</p>
             <div className="flex flex-wrap gap-2">
               {quickPrompts.map((prompt, index) => (
                 <button key={index} onClick={() => setInputValue(prompt)}
@@ -353,7 +352,7 @@ export default function Chat() {
             <div className="flex-1">
               <textarea value={inputValue} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setInputValue(e.target.value)} onKeyPress={handleKeyPress}
                 placeholder="Ask about leave, complaints, fees, hostel rules, visitor passes..."
-                className={`w-full resize-none border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 transition-all text-sm ${expanded ? 'bg-[#071B34] border-white/10 text-[#F8FAFC] placeholder-[#4A5568]' : 'bg-[#F5F7FA] border-[#071B34]/10 text-[#071B34] placeholder-[#4A5568]'}`}
+                className={`w-full resize-none border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 transition-all text-sm ${expanded ? 'bg-[#071B34] border-white/10 text-[#F8FAFC] placeholder-[#374151]' : 'bg-[#F5F7FA] border-[#071B34]/10 text-[#071B34] placeholder-[#374151]'}`}
                 rows={2} disabled={isLoading} />
             </div>
             <button onClick={handleSendMessage} disabled={!inputValue.trim() || isLoading}
@@ -361,7 +360,7 @@ export default function Chat() {
               <Send className="w-5 h-5" />
             </button>
           </div>
-          <div className="flex items-center justify-between mt-3 text-xs text-[#4A5568]">
+          <div className="flex items-center justify-between mt-3 text-xs text-[#374151]">
             <div className="flex items-center space-x-4">
               <span className="flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-[#4CC9F0]" /> AI-powered</span>
               <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-[#4CC9F0]" /> Instant support</span>
@@ -375,8 +374,8 @@ export default function Chat() {
             <Link to="/student/dashboard" className="bg-[#071B34] text-[#F8FAFC] px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-[#0A2342] transition-colors">
               <span>Back to Dashboard</span><ArrowRight className="w-4 h-4" />
             </Link>
-            <Link to="/" className="border border-[#071B34]/10 text-[#071B34] px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium bg-white hover:bg-[#F5F7FA] transition-colors">
-              <Building2 className="w-4 h-4" /><span>Home</span>
+            <Link to="/" className="border border-[#071B34]/10 text-[#071B34] px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm font-semibold bg-white hover:bg-[#F5F7FA] transition-colors">
+              <span>Home</span>
             </Link>
           </div>
         )}

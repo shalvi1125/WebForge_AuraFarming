@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Building2, ArrowLeft, User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
 
 interface UserPreferences {
   complaints: boolean;
@@ -106,13 +107,11 @@ export default function Signup() {
       <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center p-4">
         <div className="max-w-2xl w-full">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-[#071B34] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
-              <Building2 className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <HostelIQLogoMark size="lg" className="mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-[#071B34] mb-2">
               Your Hostel Interests
             </h1>
-            <p className="text-gray-500">Select the areas you'll use most in HostelIQ</p>
+            <p className="text-[#374151]">Select the areas you'll use most in HostelIQ</p>
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
@@ -136,7 +135,7 @@ export default function Signup() {
             <div className="flex space-x-4">
               <button
                 onClick={() => setStep(1)}
-                className="flex-1 border-2 border-gray-200 text-gray-600 py-3 rounded-xl hover:bg-[#F5F7FA] transition-all duration-200"
+                className="flex-1 border-2 border-gray-200 text-[#374151] py-3 rounded-xl hover:bg-[#F5F7FA] transition-all duration-200"
               >
                 Back
               </button>
@@ -168,14 +167,12 @@ export default function Signup() {
             <span>Back to Home</span>
           </Link>
 
-          <div className="w-16 h-16 bg-[#071B34] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
-            <Building2 className="w-8 h-8 text-white" />
-          </div>
+          <HostelIQLogoMark size="lg" className="mx-auto mb-4" />
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-[#071B34] mb-2">
             Join HostelIQ
           </h1>
-          <p className="text-gray-500">Create your HostelIQ account</p>
+          <p className="text-[#374151]">Create your HostelIQ account</p>
         </div>
 
         {/* Signup Form */}
@@ -183,7 +180,7 @@ export default function Signup() {
           <form onSubmit={(e) => { e.preventDefault(); setStep(2); }} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-[#374151] mb-2">
                   First Name
                 </label>
                 <input
@@ -197,7 +194,7 @@ export default function Signup() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-[#374151] mb-2">
                   Last Name
                 </label>
                 <input
@@ -213,11 +210,11 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-[#374151] mb-2">
                 Username
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#374151] w-5 h-5" />
                 <input
                   type="text"
                   name="username"
@@ -231,11 +228,11 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-[#374151] mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#374151] w-5 h-5" />
                 <input
                   type="email"
                   name="email"
@@ -249,11 +246,11 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-[#374151] mb-2">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#374151] w-5 h-5" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -266,7 +263,7 @@ export default function Signup() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] hover:text-[#1B4F72] transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#374151] hover:text-[#1B4F72] transition-colors"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -286,7 +283,7 @@ export default function Signup() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
+            <p className="text-[#374151]">
               Already have an account?{' '}
               <Link to="/login" className="text-[#1B4F72] hover:text-[#071B34] font-semibold">
                 Sign in here

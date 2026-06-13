@@ -1,19 +1,45 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Languages } from 'lucide-react';
 
 const TranslateButton = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    const el = document.getElementById('google_translate_element');
+    if (el) {
+      if (isOpen) {
+        el.classList.add('is-open');
+      } else {
+        el.classList.remove('is-open');
+      }
+    }
+  }, [isOpen]);
+
   const toggleTranslate = useCallback(() => {
     const el = document.getElementById('google_translate_element');
     if (!el) return;
 
-    const willOpen = el.style.display === 'none' || el.style.display === '';
-    el.style.display = willOpen ? 'block' : 'none';
-    el.style.visibility = willOpen ? 'visible' : 'hidden';
-    el.style.pointerEvents = willOpen ? 'auto' : 'none';
+    const willOpen = !isOpen;
     setIsOpen(willOpen);
-  }, []);
+
+    if (willOpen) {
+      el.classList.add('is-open');
+      // Google updated widget markup — menu trigger is aria-haspopup link, not .goog-te-menu-value
+      const openLanguageMenu = () => {
+        const trigger =
+          (el.querySelector('a[aria-haspopup="true"]') as HTMLElement | null) ??
+          (el.querySelector('.goog-te-gadget-simple a') as HTMLElement | null);
+        trigger?.click();
+      };
+      requestAnimationFrame(() => {
+        openLanguageMenu();
+        // Retry once if the gadget script loads after first paint
+        window.setTimeout(openLanguageMenu, 150);
+      });
+    } else {
+      el.classList.remove('is-open');
+    }
+  }, [isOpen]);
 
   return (
     <button

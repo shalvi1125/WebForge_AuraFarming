@@ -4,6 +4,7 @@ import {
   UserCheck, BarChart3, Shield, ArrowRight, Layers, Zap, Cpu,
   ChevronRight, Users,
 } from 'lucide-react';
+import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
 
 const capabilities = [
   { icon: Building2, title: 'Smart Room Allocation', desc: 'AI-powered room assignment with preference matching, conflict detection, and occupancy optimization.', color: 'bg-[#1B4F72]' },
@@ -32,20 +33,18 @@ const journeys = [
 export default function Features() {
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
-      <nav className="sticky top-0 z-50 bg-[#F5F7FA]/90 backdrop-blur-md border-b border-[#071B34]/5">
+      <nav className="sticky top-0 z-50 bg-[#F5F7FA]/95 backdrop-blur-md border-b border-[#071B34]/8">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-[#071B34] rounded-xl flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-white" />
-            </div>
+            <HostelIQLogoMark />
             <div>
-              <h1 className="text-xl font-bold text-gray-900">HostelIQ</h1>
-              <p className="text-xs text-[#1B4F72]">Platform Features</p>
+              <h1 className="text-xl font-bold text-[#071B34]">HostelIQ</h1>
+              <p className="text-xs text-[#1B4F72] font-semibold">Platform Features</p>
             </div>
           </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/chat" className="text-sm text-gray-600 hover:text-[#1B4F72] font-medium">AI Assistant</Link>
-            <Link to="/register" className="bg-[#071B34] text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-[#0A2342] transition-colors">Get Started</Link>
+          <div className="flex items-center gap-2">
+            <Link to="/chat" className="text-sm text-[#374151] hover:text-[#071B34] hover:bg-[#071B34]/5 px-3 py-2 rounded-lg font-semibold transition-all">AI Assistant</Link>
+            <Link to="/register" className="bg-[#071B34] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-[#0A2342] transition-colors">Get Started</Link>
           </div>
         </div>
       </nav>
@@ -58,14 +57,14 @@ export default function Features() {
           <h1 className="text-4xl lg:text-5xl font-semibold text-[#F8FAFC] mb-4 tracking-tight">
             Everything HostelIQ <span className="text-[#4CC9F0]">Delivers</span>
           </h1>
-          <p className="text-lg text-[#4A5568] max-w-2xl mx-auto">
+          <p className="text-lg text-[#374151] max-w-2xl mx-auto">
             One intelligent platform for students, wardens, admins, and visitors — powered by AI at every step.
           </p>
         </div>
       </section>
 
       <section className="py-20 max-w-7xl mx-auto px-6">
-        <h2 className="text-2xl font-extrabold text-gray-900 mb-10 text-center">Core Modules</h2>
+        <h2 className="text-2xl font-extrabold text-[#071B34] mb-10 text-center">Core Modules</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {capabilities.map((c) => {
             const Icon = c.icon;
@@ -74,8 +73,8 @@ export default function Features() {
                 <div className={`w-12 h-12 ${c.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{c.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{c.desc}</p>
+                <h3 className="font-semibold text-[#071B34] mb-2">{c.title}</h3>
+                <p className="text-sm text-[#374151] leading-relaxed">{c.desc}</p>
               </div>
             );
           })}
@@ -88,7 +87,7 @@ export default function Features() {
             <div className="inline-flex items-center gap-2 bg-[#071B34]/5 text-[#071B34] px-4 py-1.5 rounded-full text-sm font-medium mb-4">
               <BrainCircuit className="w-4 h-4" /> AI-Powered
             </div>
-            <h2 className="text-2xl font-extrabold text-gray-900">Intelligence Built In</h2>
+            <h2 className="text-2xl font-extrabold text-[#071B34]">Intelligence Built In</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {aiFeatures.map((f) => {
@@ -96,8 +95,8 @@ export default function Features() {
               return (
                 <div key={f.title} className="surface-panel rounded-2xl p-5 elevate-hover">
                   <Icon className="w-5 h-5 text-[#1B4F72] mb-3" />
-                  <h3 className="font-semibold text-gray-800 text-sm mb-1">{f.title}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed">{f.desc}</p>
+                  <h3 className="font-semibold text-[#071B34] text-sm mb-1">{f.title}</h3>
+                  <p className="text-xs text-[#374151] leading-relaxed">{f.desc}</p>
                 </div>
               );
             })}
@@ -106,7 +105,7 @@ export default function Features() {
       </section>
 
       <section className="py-20 max-w-7xl mx-auto px-6">
-        <h2 className="text-2xl font-extrabold text-gray-900 mb-10 text-center">User Journeys</h2>
+        <h2 className="text-2xl font-extrabold text-[#071B34] mb-10 text-center">User Journeys</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {journeys.map((j) => (
             <div key={j.role} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
@@ -117,7 +116,7 @@ export default function Features() {
                 {j.steps.map((step, i) => (
                   <li key={step} className="flex items-start gap-3 text-sm">
                     <span className="w-6 h-6 bg-[#071B34]/5 text-[#071B34] rounded-full flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
-                    <span className="text-gray-600">{step}</span>
+                    <span className="text-[#374151]">{step}</span>
                   </li>
                 ))}
               </ol>
@@ -129,7 +128,7 @@ export default function Features() {
       <section className="py-16 bg-[#071B34]">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-extrabold text-white mb-4">See HostelIQ in Action</h2>
-          <p className="text-[#4A5568] mb-8">Explore the platform with our interactive prototype.</p>
+          <p className="text-[#374151] mb-8">Explore the platform with our interactive prototype.</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/student/dashboard" className="bg-white text-[#071B34] px-6 py-3 rounded-xl font-semibold hover:bg-[#F5F7FA] transition-colors flex items-center gap-2">
               Student Portal <ArrowRight className="w-4 h-4" />

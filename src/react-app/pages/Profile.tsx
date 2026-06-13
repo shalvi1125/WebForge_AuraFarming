@@ -49,9 +49,9 @@ export default function StudentProfile() {
         avatar={student.avatar}
         homeHref="/student/dashboard"
         links={[
-          { label: 'Dashboard', href: '/student/dashboard' },
-          { label: 'Room', href: '/student/room' },
-          { label: 'Fees', href: '/student/fees' },
+          { label: 'Complaints', href: '/student/complaints' },
+          { label: 'Leave', href: '/student/leave' },
+          { label: 'Room Map', href: '/student/room' },
         ]}
       />
 
@@ -68,8 +68,8 @@ export default function StudentProfile() {
                   {student.avatar}
                 </div>
                 <h1 className="text-xl font-extrabold text-white">{student.name}</h1>
-                <p className="text-[#4A5568] text-sm">{student.rollNo}</p>
-                <p className="text-[#4A5568] text-xs mt-1">{student.year}</p>
+                <p className="text-[#374151] text-sm">{student.rollNo}</p>
+                <p className="text-[#374151] text-xs mt-1">{student.year}</p>
               </div>
               <div className="p-5 space-y-3">
                 {[
@@ -81,10 +81,10 @@ export default function StudentProfile() {
                   const Icon = row.icon;
                   return (
                     <div key={row.label} className="flex items-center gap-3 text-sm">
-                      <Icon className="w-4 h-4 text-gray-400 shrink-0" />
+                      <Icon className="w-4 h-4 text-[#374151] shrink-0" />
                       <div>
-                        <p className="text-xs text-gray-400">{row.label}</p>
-                        <p className="font-medium text-gray-800">{row.value}</p>
+                        <p className="text-xs text-[#374151]">{row.label}</p>
+                        <p className="font-medium text-[#071B34]">{row.value}</p>
                       </div>
                     </div>
                   );
@@ -93,7 +93,7 @@ export default function StudentProfile() {
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mt-4">
-              <h2 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+              <h2 className="font-semibold text-[#071B34] mb-3 flex items-center gap-2">
                 <Award className="w-5 h-5 text-[#1B4F72]" /> Achievement Badges
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -102,7 +102,7 @@ export default function StudentProfile() {
                   return (
                     <div key={b.name} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
                       <Icon className={`w-4 h-4 ${b.color}`} />
-                      <span className="text-xs font-medium text-gray-700">{b.name}</span>
+                      <span className="text-xs font-semibold text-[#374151]">{b.name}</span>
                     </div>
                   );
                 })}
@@ -118,9 +118,9 @@ export default function StudentProfile() {
                   <div key={s.label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm card-hover">
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-xs text-gray-500">{s.label}</p>
+                        <p className="text-xs text-[#374151]">{s.label}</p>
                         <p className={`text-2xl font-extrabold mt-1 ${s.color}`}>{s.value}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{s.sub}</p>
+                        <p className="text-xs text-[#374151] mt-0.5">{s.sub}</p>
                       </div>
                       <div className={`w-10 h-10 ${s.bg} rounded-xl flex items-center justify-center`}>
                         <Icon className={`w-5 h-5 ${s.color}`} />
@@ -132,20 +132,20 @@ export default function StudentProfile() {
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <h2 className="font-semibold text-gray-800 mb-4">Room & Fee Summary</h2>
+              <h2 className="font-semibold text-[#071B34] mb-4">Room & Fee Summary</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-[#F5F7FA] rounded-xl p-4 border border-[#071B34]/10">
                   <p className="text-xs text-[#1B4F72] font-medium mb-2">Room Details</p>
-                  <p className="text-sm font-bold text-gray-800">Room 204, Block B</p>
-                  <p className="text-xs text-gray-500 mt-1">3/4 occupancy · AC · Attached washroom</p>
+                  <p className="text-sm font-bold text-[#071B34]">Room 204, Block B</p>
+                  <p className="text-xs text-[#374151] mt-1">3/4 occupancy · AC · Attached washroom</p>
                   <Link to="/student/room" className="inline-flex items-center gap-1 text-xs text-[#1B4F72] mt-2 font-medium">
                     View allocation <ChevronRight className="w-3 h-3" />
                   </Link>
                 </div>
                 <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
                   <p className="text-xs text-emerald-600 font-medium mb-2">Fee Status</p>
-                  <p className="text-sm font-bold text-gray-800">₹4,500 outstanding</p>
-                  <p className="text-xs text-gray-500 mt-1">Last payment: ₹8,000 on 01 May</p>
+                  <p className="text-sm font-bold text-[#071B34]">₹4,500 outstanding</p>
+                  <p className="text-xs text-[#374151] mt-1">Last payment: ₹8,000 on 01 May</p>
                   <Link to="/student/fees" className="inline-flex items-center gap-1 text-xs text-emerald-600 mt-2 font-medium">
                     Pay now <ChevronRight className="w-3 h-3" />
                   </Link>
@@ -155,7 +155,7 @@ export default function StudentProfile() {
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100">
-                <h2 className="font-semibold text-gray-800">Activity Timeline</h2>
+                <h2 className="font-semibold text-[#071B34]">Activity Timeline</h2>
               </div>
               <div className="divide-y divide-gray-50">
                 {activity.map((a, i) => {
@@ -163,11 +163,11 @@ export default function StudentProfile() {
                   return (
                     <div key={i} className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors">
                       <div className="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
-                        <Icon className="w-4 h-4 text-gray-500" />
+                        <Icon className="w-4 h-4 text-[#374151]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-800">{a.action}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{a.time}</p>
+                        <p className="text-sm text-[#071B34]">{a.action}</p>
+                        <p className="text-xs text-[#374151] mt-0.5">{a.time}</p>
                       </div>
                       <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
                     </div>
@@ -181,7 +181,7 @@ export default function StudentProfile() {
                 <BrainCircuit className="w-6 h-6 text-cyan-400" />
                 <div>
                   <p className="text-white font-semibold text-sm">AI Profile Insights</p>
-                  <p className="text-[#4A5568] text-xs">Your complaint resolution rate is 87% — above hostel average.</p>
+                  <p className="text-[#374151] text-xs">Your complaint resolution rate is 87% — above hostel average.</p>
                 </div>
               </div>
               <Link to="/chat" className="text-cyan-300 text-xs font-medium hover:text-white flex items-center gap-1">

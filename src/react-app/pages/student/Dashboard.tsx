@@ -45,8 +45,8 @@ const aiInsights = [
 ];
 
 const statusStyles: Record<string, string> = {
-  Open: 'text-[#1B4F72] font-semibold', 'In Progress': 'text-[#0A2342] font-semibold', Resolved: 'text-[#4A5568]',
-  Pending: 'text-[#1B4F72] font-semibold', Approved: 'text-[#1B4F72] font-semibold', Rejected: 'text-[#4A5568]',
+  Open: 'text-[#1B4F72] font-semibold', 'In Progress': 'text-[#0A2342] font-semibold', Resolved: 'text-[#374151]',
+  Pending: 'text-[#1B4F72] font-semibold', Approved: 'text-[#1B4F72] font-semibold', Rejected: 'text-[#374151]',
 };
 
 export default function StudentDashboard() {
@@ -67,17 +67,17 @@ export default function StudentDashboard() {
                 <p className="text-[#4CC9F0] text-sm font-medium">{getGreeting()}</p>
               </div>
               <h1 className="text-4xl lg:text-5xl font-semibold text-[#F8FAFC] tracking-tight mb-2">{student.name}</h1>
-              <p className="text-[#C5D0D8] font-medium">{student.hostel} · Room {student.room} · {student.block}</p>
+              <p className="text-[#D1DEE6] font-medium">{student.hostel} · Room {student.room} · {student.block}</p>
             </div>
             <div className="bg-white/8 border border-white/12 rounded-xl px-5 py-4 backdrop-blur-sm">
-              <p className="text-xs text-[#C5D0D8] uppercase tracking-widest font-semibold mb-1">Today's Status</p>
+              <p className="text-xs text-[#D1DEE6] uppercase tracking-widest font-semibold mb-1">Today's Status</p>
               <p className="text-sm text-[#F8FAFC] font-medium">2 active issues · 1 leave pending</p>
               <p className="text-xs text-[#4CC9F0] mt-1">Curfew 10 PM · Mess closes 9 PM</p>
             </div>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10 mt-8 pt-8 border-t border-white/10">
             {[['2', 'Active complaints', '#F8FAFC'], ['1', 'Pending leave', '#4CC9F0'], ['₹4,500', 'Outstanding fees', '#F8FAFC'], ['3', 'Visitors this month', '#F8FAFC']].map(([v, l, c]) => (
-              <div key={l}><p className="text-2xl font-bold" style={{ color: c }}>{v}</p><p className="text-xs text-[#C5D0D8] mt-1 uppercase tracking-wider font-medium">{l}</p></div>
+              <div key={l}><p className="text-2xl font-bold" style={{ color: c }}>{v}</p><p className="text-xs text-[#D1DEE6] mt-1 uppercase tracking-wider font-medium">{l}</p></div>
             ))}
           </div>
         </div>
@@ -95,7 +95,7 @@ export default function StudentDashboard() {
                 <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold">Smart Hostel Operations Map</p>
               </div>
               <h2 className="text-xl font-bold text-[#071B34] mb-2">Explore your floor in real time</h2>
-              <p className="text-sm text-[#4A5568] leading-relaxed">Interactive floor plan with pastel status colors, heatmaps, and room intelligence. See nearby alerts for Room 206 and 205.</p>
+              <p className="text-sm text-[#374151] leading-relaxed">Interactive floor plan with pastel status colors, heatmaps, and room intelligence. See nearby alerts for Room 206 and 205.</p>
             </div>
             <Link to="/student/room" className="inline-flex items-center justify-center gap-2 bg-[#071B34] text-[#F8FAFC] px-6 py-3.5 rounded-xl font-semibold hover:bg-[#0A2342] transition-colors">
               Open Operations Map <ChevronRight className="w-4 h-4" />
@@ -108,15 +108,15 @@ export default function StudentDashboard() {
           <section className="lg:col-span-2 surface-panel rounded-2xl p-6 lg:p-8">
             <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold mb-3">Your Space</p>
             <h2 className="text-2xl font-bold text-[#071B34] mb-2">Room {student.room}</h2>
-            <p className="text-sm text-[#4A5568] font-medium mb-6">{student.block} · Tagore Hostel · 3 of 4 beds occupied</p>
+            <p className="text-sm text-[#374151] font-medium mb-6">{student.block} · Tagore Hostel · 3 of 4 beds occupied</p>
             <div className="mb-6">
-              <div className="flex justify-between text-sm mb-2"><span className="text-[#4A5568] font-medium">Occupancy</span><span className="text-[#071B34] font-bold">75%</span></div>
+              <div className="flex justify-between text-sm mb-2"><span className="text-[#374151] font-medium">Occupancy</span><span className="text-[#071B34] font-bold">75%</span></div>
               <div className="h-2 bg-[#071B34]/8 rounded-full"><div className="h-full w-3/4 bg-[#4CC9F0] rounded-full" /></div>
             </div>
             <div className="grid grid-cols-4 gap-3">
               {[['Room 204', 'Assigned'], ['Block B', 'Location'], ['3 / 4', 'Beds'], ['Active', 'Status']].map(([v, l]) => (
                 <div key={l} className="bg-[#F5F7FA] rounded-lg p-4 border border-[#071B34]/6">
-                  <p className="text-[10px] text-[#4A5568] uppercase tracking-wider font-semibold mb-1">{l}</p>
+                  <p className="text-[10px] text-[#374151] uppercase tracking-wider font-semibold mb-1">{l}</p>
                   <p className="text-sm font-bold text-[#071B34]">{v}</p>
                 </div>
               ))}
@@ -154,7 +154,7 @@ export default function StudentDashboard() {
                       <Icon className="w-4 h-4 text-[#1B4F72] mt-0.5 shrink-0" />
                       <div>
                         <p className="text-sm font-medium text-[#071B34]">{a.text}</p>
-                        <p className="text-xs text-[#4A5568] mt-0.5 font-medium">{a.time}</p>
+                        <p className="text-xs text-[#374151] mt-0.5 font-medium">{a.time}</p>
                       </div>
                     </div>
                   </div>
@@ -176,7 +176,7 @@ export default function StudentDashboard() {
                     <Icon className="w-4 h-4 text-[#1B4F72] shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-[#071B34]">{c.title}</p>
-                      <p className="text-xs text-[#4A5568] font-medium mt-0.5">{c.id} · {c.priority}</p>
+                      <p className="text-xs text-[#374151] font-medium mt-0.5">{c.id} · {c.priority}</p>
                     </div>
                     <span className={`text-xs ${statusStyles[c.status]}`}>{c.status}</span>
                   </div>
@@ -194,7 +194,7 @@ export default function StudentDashboard() {
               <div key={l.id} className="py-3 border-b border-[#071B34]/6 last:border-0 flex justify-between items-center">
                 <div>
                   <p className="text-sm font-semibold text-[#071B34]">{l.reason}</p>
-                  <p className="text-xs text-[#4A5568] font-medium">{l.from} → {l.to}</p>
+                  <p className="text-xs text-[#374151] font-medium">{l.from} → {l.to}</p>
                 </div>
                 <span className={`text-xs ${statusStyles[l.status]}`}>{l.status}</span>
               </div>
@@ -205,7 +205,7 @@ export default function StudentDashboard() {
             <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold mb-4">Visitors</p>
             {visitorRequests.map((v) => (
               <div key={v.name} className="py-3 border-b border-[#071B34]/6 last:border-0 flex justify-between">
-                <div><p className="text-sm font-semibold text-[#071B34]">{v.name}</p><p className="text-xs text-[#4A5568]">{v.date}</p></div>
+                <div><p className="text-sm font-semibold text-[#071B34]">{v.name}</p><p className="text-xs text-[#374151]">{v.date}</p></div>
                 <span className="text-xs text-[#1B4F72] font-bold">{v.status}</span>
               </div>
             ))}

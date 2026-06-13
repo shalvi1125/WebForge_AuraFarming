@@ -51,18 +51,18 @@ export default function WardenDashboard() {
                 <p className="text-[#4CC9F0] text-xs uppercase tracking-widest font-bold">Hostel Control Center · Live</p>
               </div>
               <h1 className="text-4xl lg:text-5xl font-semibold text-[#F8FAFC] tracking-tight mb-2">{warden.name}</h1>
-              <p className="text-[#C5D0D8] font-medium">{warden.hostel} · {warden.block} · {warden.totalStudents} students</p>
+              <p className="text-[#D1DEE6] font-medium">{warden.hostel} · {warden.block} · {warden.totalStudents} students</p>
               <p className="text-sm text-[#4CC9F0] mt-3 font-medium">1 critical alert · 14 active complaints · 87% occupancy</p>
             </div>
             <div className="bg-white/8 border border-white/12 rounded-2xl p-6 backdrop-blur-sm">
-              <p className="text-xs text-[#C5D0D8] uppercase tracking-widest font-bold mb-2">Hostel Health</p>
-              <p className="text-5xl font-bold text-[#F8FAFC]">88<span className="text-xl text-[#C5D0D8] font-medium">/100</span></p>
+              <p className="text-xs text-[#D1DEE6] uppercase tracking-widest font-bold mb-2">Hostel Health</p>
+              <p className="text-5xl font-bold text-[#F8FAFC]">88<span className="text-xl text-[#D1DEE6] font-medium">/100</span></p>
               <p className="text-xs text-[#4CC9F0] mt-2 font-semibold">↓ 3 pts from last week (Wi-Fi complaints)</p>
             </div>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8 pt-8 border-t border-white/10">
             {[['128', 'Students'], ['14', 'Active complaints'], ['6', 'Pending leave'], ['87%', 'Occupancy']].map(([v, l]) => (
-              <div key={l}><p className="text-2xl font-bold text-[#F8FAFC]">{v}</p><p className="text-xs text-[#C5D0D8] mt-1 uppercase tracking-wider font-medium">{l}</p></div>
+              <div key={l}><p className="text-2xl font-bold text-[#F8FAFC]">{v}</p><p className="text-xs text-[#D1DEE6] mt-1 uppercase tracking-wider font-medium">{l}</p></div>
             ))}
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function WardenDashboard() {
             <div>
               <div className="flex items-center gap-2 mb-2"><Map className="w-5 h-5 text-[#1B4F72]" /><p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold">Block Operations Map</p></div>
               <h2 className="text-lg font-bold text-[#071B34]">View full Block B floor plan</h2>
-              <p className="text-sm text-[#4A5568] mt-1">Complaint heatmap · Priority alerts · Room intelligence</p>
+              <p className="text-sm text-[#374151] mt-1">Complaint heatmap · Priority alerts · Room intelligence</p>
             </div>
             <ChevronRight className="w-6 h-6 text-[#1B4F72] group-hover:translate-x-1 transition-transform" />
           </Link>
@@ -103,10 +103,10 @@ export default function WardenDashboard() {
                     <CatIcon className="w-4 h-4 text-[#1B4F72] shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-[#071B34]">{c.title}</p>
-                      <p className="text-xs text-[#4A5568] font-medium mt-0.5">{c.student} · Room {c.room} · {c.time}</p>
+                      <p className="text-xs text-[#374151] font-medium mt-0.5">{c.student} · Room {c.room} · {c.time}</p>
                     </div>
-                    <span className={`text-xs font-bold uppercase ${c.priority === 'High' || c.priority === 'Critical' ? 'text-[#1B4F72]' : 'text-[#4A5568]'}`}>{c.priority}</span>
-                    <Link to="/warden/complaints" className="text-[#1B4F72] hover:text-[#4CC9F0] opacity-0 group-hover:opacity-100 transition-opacity"><ArrowUpRight className="w-4 h-4" /></Link>
+                    <span className={`text-xs font-bold uppercase ${c.priority === 'High' || c.priority === 'Critical' ? 'text-[#1B4F72]' : 'text-[#374151]'}`}>{c.priority}</span>
+                    <Link to="/warden/complaints" className="text-[#1B4F72] hover:text-[#4CC9F0] opacity-70 group-hover:opacity-100 transition-opacity"><ArrowUpRight className="w-4 h-4" /></Link>
                   </div>
                 );
               })}
@@ -139,7 +139,7 @@ export default function WardenDashboard() {
                   <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${a.urgent ? 'text-[#1B4F72]' : 'text-[#4CC9F0]'}`} />
                   <div>
                     <p className="text-sm font-semibold text-[#071B34]">{a.text}</p>
-                    <p className="text-xs text-[#4A5568] font-medium mt-0.5">{a.sub}</p>
+                    <p className="text-xs text-[#374151] font-medium mt-0.5">{a.sub}</p>
                   </div>
                 </div>
               );

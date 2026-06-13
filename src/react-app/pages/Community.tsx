@@ -62,7 +62,7 @@ export default function Announcements() {
         <header className="mb-16">
           <p className="text-xs text-[#1B4F72] uppercase tracking-widest mb-3">Tagore Hostel</p>
           <h1 className="text-4xl lg:text-5xl font-semibold text-[#071B34] tracking-tight">Campus Notice Board</h1>
-          <p className="text-[#4A5568] mt-4 max-w-xl">Notices, events, mess updates, and emergency alerts — curated for your hostel.</p>
+          <p className="text-[#374151] mt-4 max-w-xl">Notices, events, mess updates, and emergency alerts — curated for your hostel.</p>
         </header>
 
         {/* Featured announcement — editorial */}
@@ -72,11 +72,11 @@ export default function Announcements() {
               <div className="flex items-center gap-3 mb-6">
                 <Pin className="w-4 h-4 text-[#4CC9F0]" />
                 <span className="text-xs text-[#4CC9F0] uppercase tracking-widest">Featured</span>
-                <span className="text-xs text-[#4A5568]">{featured.date}</span>
+                <span className="text-xs text-[#374151]">{featured.date}</span>
               </div>
               <h2 className="text-2xl lg:text-3xl font-semibold text-[#F8FAFC] tracking-tight mb-4">{featured.title}</h2>
-              <p className="text-[#4A5568] leading-relaxed">{featured.body}</p>
-              <div className="flex items-center gap-6 mt-8 text-sm text-[#4A5568]">
+              <p className="text-[#374151] leading-relaxed">{featured.body}</p>
+              <div className="flex items-center gap-6 mt-8 text-sm text-[#374151]">
                 <span className="flex items-center gap-1.5"><ThumbsUp className="w-4 h-4" /> {featured.likes}</span>
                 <span className="flex items-center gap-1.5"><MessageCircle className="w-4 h-4" /> {featured.comments}</span>
               </div>
@@ -92,7 +92,7 @@ export default function Announcements() {
         <div className="flex flex-wrap gap-2 mb-12">
           {(['all', 'general', 'mess', 'maintenance', 'emergency', 'event'] as const).map((t) => (
             <button key={t} onClick={() => setFilter(t)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === t ? 'bg-[#071B34] text-[#F8FAFC]' : 'text-[#4A5568] hover:text-[#071B34] hover:bg-white'}`}>
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === t ? 'bg-[#071B34] text-[#F8FAFC]' : 'text-[#374151] hover:text-[#071B34] hover:bg-white'}`}>
               {t === 'all' ? 'All' : typeLabels[t]}
             </button>
           ))}
@@ -105,12 +105,12 @@ export default function Announcements() {
               <article key={notice.id} className="py-10 border-b border-[#071B34]/5 group">
                 <div className="flex items-center gap-4 mb-4">
                   <span className="text-xs text-[#1B4F72] uppercase tracking-widest">{typeLabels[notice.type]}</span>
-                  <span className="text-xs text-[#4A5568] flex items-center gap-1"><Clock className="w-3 h-3" />{notice.date}</span>
+                  <span className="text-xs text-[#374151] flex items-center gap-1"><Clock className="w-3 h-3" />{notice.date}</span>
                   {notice.pinned && <Pin className="w-3 h-3 text-[#4CC9F0]" />}
                 </div>
                 <h3 className="text-xl font-semibold text-[#071B34] mb-3 group-hover:text-[#1B4F72] transition-colors">{notice.title}</h3>
-                <p className="text-[#4A5568] leading-relaxed max-w-2xl">{notice.body}</p>
-                <div className="flex items-center gap-6 mt-6 text-sm text-[#4A5568]">
+                <p className="text-[#374151] leading-relaxed max-w-2xl">{notice.body}</p>
+                <div className="flex items-center gap-6 mt-6 text-sm text-[#374151]">
                   <button className="flex items-center gap-1.5 hover:text-[#4CC9F0] transition-colors"><ThumbsUp className="w-4 h-4" /> {notice.likes}</button>
                   <button className="flex items-center gap-1.5 hover:text-[#4CC9F0] transition-colors"><MessageCircle className="w-4 h-4" /> {notice.comments}</button>
                 </div>
@@ -125,7 +125,7 @@ export default function Announcements() {
               <div className="border-l-2 border-[#4CC9F0] pl-6">
                 <AlertTriangle className="w-5 h-5 text-[#4CC9F0] mb-3" />
                 <p className="font-medium text-[#071B34]">Fire drill on 16 Jun, 4 PM</p>
-                <p className="text-sm text-[#4A5568] mt-2">Mandatory for all Block B residents.</p>
+                <p className="text-sm text-[#374151] mt-2">Mandatory for all Block B residents.</p>
               </div>
             </div>
 
@@ -139,7 +139,7 @@ export default function Announcements() {
                     <div>
                       <p className="text-xs text-[#4CC9F0] mb-1">{e.date}</p>
                       <p className="font-medium text-[#071B34]">{e.title}</p>
-                      <p className="text-xs text-[#4A5568] mt-1">{e.time} · {e.location}</p>
+                      <p className="text-xs text-[#374151] mt-1">{e.time} · {e.location}</p>
                     </div>
                   </div>
                 ))}
@@ -153,21 +153,21 @@ export default function Announcements() {
                 {activePoll.options.map((opt) => (
                   <div key={opt.label}>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-[#4A5568]">{opt.label}</span>
+                      <span className="text-[#374151]">{opt.label}</span>
                       <span className="text-[#071B34]">{opt.pct}%</span>
                     </div>
                     <div className="h-1 bg-[#071B34]/5 rounded-full"><div className="h-full bg-[#1B4F72] rounded-full" style={{ width: `${opt.pct}%` }} /></div>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-[#4A5568] mt-4">{activePoll.totalVotes} votes · Ends 18 Jun</p>
+              <p className="text-xs text-[#374151] mt-4">{activePoll.totalVotes} votes · Ends 18 Jun</p>
             </div>
 
             <div className="pt-8 border-t border-[#071B34]/5">
               <p className="text-xs text-[#1B4F72] uppercase tracking-widest mb-4">Engagement</p>
               <div className="flex gap-12">
-                <div><p className="text-3xl font-semibold text-[#071B34]">94%</p><p className="text-xs text-[#4A5568] mt-1">Read rate</p></div>
-                <div><p className="text-3xl font-semibold text-[#071B34]">12</p><p className="text-xs text-[#4A5568] mt-1">Active polls</p></div>
+                <div><p className="text-3xl font-semibold text-[#071B34]">94%</p><p className="text-xs text-[#374151] mt-1">Read rate</p></div>
+                <div><p className="text-3xl font-semibold text-[#071B34]">12</p><p className="text-xs text-[#374151] mt-1">Active polls</p></div>
               </div>
             </div>
 

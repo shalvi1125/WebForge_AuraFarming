@@ -11,10 +11,11 @@ const requests = [
 export default function WardenLeave() {
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
-      <PortalNav portal="Warden Portal" userName="Dr. Priya Mehta" avatar="PM" homeHref="/warden/dashboard" dark />
+      <PortalNav portal="Warden Portal" userName="Dr. Priya Mehta" avatar="PM" homeHref="/warden/dashboard" dark
+        links={[{ label: 'Operations Map', href: '/student/room?view=warden' }, { label: 'Complaints', href: '/warden/complaints' }, { label: 'Students', href: '/warden/students' }]} />
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
         <Link to="/warden/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
-        <h1 className="text-2xl font-extrabold text-gray-900">Leave Approvals</h1>
+        <h1 className="text-2xl font-extrabold text-[#071B34]">Leave Approvals</h1>
         <div className="bg-[#F5F7FA] border border-[#071B34]/10 rounded-xl p-4 flex items-start gap-3">
           <BrainCircuit className="w-5 h-5 text-[#1B4F72] shrink-0" />
           <p className="text-sm text-[#071B34]">AI recommends approving LV-012 and reviewing LV-014 — 3 overlapping requests may affect Block B occupancy.</p>
@@ -24,9 +25,9 @@ export default function WardenLeave() {
             <div key={r.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="font-medium text-gray-800">{r.student} · Room {r.room}</p>
-                  <p className="text-sm text-gray-600 mt-1">{r.reason}</p>
-                  <p className="text-xs text-gray-400 mt-1">{r.id} · {r.from} → {r.to}</p>
+                  <p className="font-medium text-[#071B34]">{r.student} · Room {r.room}</p>
+                  <p className="text-sm text-[#374151] mt-1">{r.reason}</p>
+                  <p className="text-xs text-[#374151] mt-1">{r.id} · {r.from} → {r.to}</p>
                 </div>
                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 ${r.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
                   {r.status === 'Approved' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}{r.status}

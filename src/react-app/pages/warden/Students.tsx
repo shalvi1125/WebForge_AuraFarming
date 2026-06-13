@@ -13,22 +13,23 @@ const students = [
 export default function WardenStudents() {
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
-      <PortalNav portal="Warden Portal" userName="Dr. Priya Mehta" userMeta="Tagore Hostel" avatar="PM" homeHref="/warden/dashboard" dark />
+      <PortalNav portal="Warden Portal" userName="Dr. Priya Mehta" userMeta="Tagore Hostel" avatar="PM" homeHref="/warden/dashboard" dark
+        links={[{ label: 'Operations Map', href: '/student/room?view=warden' }, { label: 'Complaints', href: '/warden/complaints' }, { label: 'Students', href: '/warden/students' }]} />
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
         <Link to="/warden/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
-        <h1 className="text-2xl font-extrabold text-gray-900">Students</h1>
+        <h1 className="text-2xl font-extrabold text-[#071B34]">Students</h1>
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#374151]" />
           <input placeholder="Search students..." className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#4CC9F0]/30 outline-none" />
         </div>
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <table className="w-full text-sm">
-            <thead><tr className="bg-gray-50 text-left text-xs text-gray-500 uppercase"><th className="px-6 py-3">Name</th><th className="px-6 py-3">Roll No</th><th className="px-6 py-3">Room</th><th className="px-6 py-3">Year</th><th className="px-6 py-3">Status</th></tr></thead>
+            <thead><tr className="bg-gray-50 text-left text-xs text-[#374151] uppercase"><th className="px-6 py-3">Name</th><th className="px-6 py-3">Roll No</th><th className="px-6 py-3">Room</th><th className="px-6 py-3">Year</th><th className="px-6 py-3">Status</th></tr></thead>
             <tbody className="divide-y divide-gray-50">
               {students.map((s) => (
                 <tr key={s.roll} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium text-gray-800">{s.name}</td>
-                  <td className="px-6 py-4 text-gray-500">{s.roll}</td>
+                  <td className="px-6 py-4 font-medium text-[#071B34]">{s.name}</td>
+                  <td className="px-6 py-4 text-[#374151]">{s.roll}</td>
                   <td className="px-6 py-4">{s.room}</td>
                   <td className="px-6 py-4">{s.year}</td>
                   <td className="px-6 py-4"><span className={`text-xs px-2 py-0.5 rounded-full font-medium ${s.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>{s.status}</span></td>

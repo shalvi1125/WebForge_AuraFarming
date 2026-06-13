@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Building2, ArrowLeft, Mail, Lock, KeyRound } from 'lucide-react';
+import { ArrowLeft, Mail, Lock, KeyRound } from 'lucide-react';
+import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -78,14 +79,12 @@ export default function Login() {
             <span>Back to Home</span>
           </Link>
           
-          <div className="w-16 h-16 bg-[#071B34] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
-            <Building2 className="w-8 h-8 text-white" />
-          </div>
+          <HostelIQLogoMark size="lg" className="mx-auto mb-4" />
           
           <h1 className="text-3xl font-bold text-[#071B34] mb-2">
             Welcome Back
           </h1>
-          <p className="text-gray-500">Sign in to your HostelIQ account</p>
+          <p className="text-[#374151]">Sign in to your HostelIQ account</p>
         </div>
 
         {/* Login Form */}
@@ -94,11 +93,11 @@ export default function Login() {
             <>
               <form onSubmit={handleLogin} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-[#374151] mb-2">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#374151] w-5 h-5" />
                     <input
                       type="email"
                       value={email}
@@ -111,11 +110,11 @@ export default function Login() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-[#374151] mb-2">
                     Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#374151] w-5 h-5" />
                     <input
                       type="password"
                       value={password}
@@ -149,7 +148,7 @@ export default function Login() {
                 >
                   Forgot Password?
                 </button>
-                <p className="text-gray-600">
+                <p className="text-[#374151]">
                   Don't have an account?{' '}
                   <Link to="/signup" className="text-[#1B4F72] hover:text-[#071B34] font-semibold">
                     Sign up here
@@ -165,16 +164,16 @@ export default function Login() {
                   <KeyRound className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-[#071B34] mb-2">Reset Password</h2>
-                <p className="text-gray-500 text-sm">Enter your email address and we'll send you a link to reset your password.</p>
+                <p className="text-[#374151] text-sm">Enter your email address and we'll send you a link to reset your password.</p>
               </div>
 
               <form onSubmit={handleForgotPassword} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-[#374151] mb-2">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#374151] w-5 h-5" />
                     <input
                       type="email"
                       value={resetEmail}

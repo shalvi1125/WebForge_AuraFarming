@@ -25,7 +25,7 @@ const visitors: Visitor[] = [
 const statusStyles = {
   approved: 'bg-green-100 text-green-700',
   pending: 'bg-amber-100 text-amber-700',
-  completed: 'bg-gray-100 text-gray-600',
+  completed: 'bg-gray-100 text-[#374151]',
 };
 
 export default function VisitorRequest() {
@@ -40,6 +40,11 @@ export default function VisitorRequest() {
         userMeta="Room 204 · Block B"
         avatar="AS"
         homeHref="/student/dashboard"
+        links={[
+          { label: 'Complaints', href: '/student/complaints' },
+          { label: 'Leave', href: '/student/leave' },
+          { label: 'Room Map', href: '/student/room' },
+        ]}
       />
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
@@ -48,8 +53,8 @@ export default function VisitorRequest() {
             <Link to="/student/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] hover:text-[#071B34] mb-2 font-medium">
               <ArrowLeft className="w-4 h-4" /> Back to Dashboard
             </Link>
-            <h1 className="text-2xl font-extrabold text-gray-900">Visitor Management</h1>
-            <p className="text-gray-500 text-sm mt-1">Register visitors, generate QR passes, and track visit history</p>
+            <h1 className="text-2xl font-extrabold text-[#071B34]">Visitor Management</h1>
+            <p className="text-[#374151] text-sm mt-1">Register visitors, generate QR passes, and track visit history</p>
           </div>
           <button onClick={() => setShowForm(!showForm)}
             className="bg-[#071B34] text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-md">
@@ -69,7 +74,7 @@ export default function VisitorRequest() {
               <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm card-hover">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-gray-500">{s.label}</p>
+                    <p className="text-xs text-[#374151]">{s.label}</p>
                     <p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p>
                   </div>
                   <div className={`w-10 h-10 ${s.bg} rounded-xl flex items-center justify-center`}>
@@ -83,11 +88,11 @@ export default function VisitorRequest() {
 
         {showForm && (
           <div className="bg-white rounded-2xl border border-[#071B34]/10 shadow-lg p-6 animate-fade-up">
-            <h2 className="font-semibold text-gray-800 mb-4">Register Visitor</h2>
+            <h2 className="font-semibold text-[#071B34] mb-4">Register Visitor</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {['Visitor Name', 'Relation', 'Visit Date', 'Expected Time', 'Phone Number', 'Purpose'].map((label) => (
                 <div key={label}>
-                  <label className="text-xs text-gray-500 font-medium">{label}</label>
+                  <label className="text-xs text-[#374151] font-medium">{label}</label>
                   <input type={label.includes('Date') ? 'date' : label.includes('Time') ? 'time' : 'text'}
                     className="w-full mt-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#4CC9F0]/30 outline-none" />
                 </div>
@@ -100,7 +105,7 @@ export default function VisitorRequest() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-100">
-              <h2 className="font-semibold text-gray-800">Visitor History</h2>
+              <h2 className="font-semibold text-[#071B34]">Visitor History</h2>
             </div>
             <div className="divide-y divide-gray-50">
               {visitors.map((v) => (
@@ -110,8 +115,8 @@ export default function VisitorRequest() {
                       <UserCheck className="w-5 h-5 text-[#1B4F72]" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-800">{v.name}</p>
-                      <p className="text-xs text-gray-400">{v.id} · {v.relation} · {v.date} at {v.time}</p>
+                      <p className="text-sm font-medium text-[#071B34]">{v.name}</p>
+                      <p className="text-xs text-[#374151]">{v.id} · {v.relation} · {v.date} at {v.time}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -131,16 +136,16 @@ export default function VisitorRequest() {
             {showPass && (
               <div className="bg-white rounded-2xl border-2 border-[#071B34]/10 shadow-xl overflow-hidden animate-fade-up">
                 <div className="bg-[#071B34] px-5 py-4 text-center">
-                  <p className="text-[#4A5568] text-xs">HostelIQ Visitor Pass</p>
+                  <p className="text-[#374151] text-xs">HostelIQ Visitor Pass</p>
                   <p className="text-white font-bold text-lg">{showPass}</p>
                 </div>
                 <div className="p-6 flex flex-col items-center">
                   <div className="w-40 h-40 bg-gray-100 rounded-2xl flex items-center justify-center border-2 border-dashed border-gray-200 mb-4">
-                    <QrCode className="w-24 h-24 text-gray-800" />
+                    <QrCode className="w-24 h-24 text-[#071B34]" />
                   </div>
-                  <p className="text-sm font-semibold text-gray-800">Rahul Sharma</p>
-                  <p className="text-xs text-gray-500">Visiting: Aryan Sharma · Room 204</p>
-                  <p className="text-xs text-gray-400 mt-1 flex items-center gap-1"><Calendar className="w-3 h-3" /> 14 Jun 2025 · 2:00 PM</p>
+                  <p className="text-sm font-semibold text-[#071B34]">Rahul Sharma</p>
+                  <p className="text-xs text-[#374151]">Visiting: Aryan Sharma · Room 204</p>
+                  <p className="text-xs text-[#374151] mt-1 flex items-center gap-1"><Calendar className="w-3 h-3" /> 14 Jun 2025 · 2:00 PM</p>
                   <button className="mt-4 flex items-center gap-2 text-[#1B4F72] text-sm font-medium hover:text-[#071B34]">
                     <Download className="w-4 h-4" /> Download Pass
                   </button>
@@ -149,13 +154,13 @@ export default function VisitorRequest() {
             )}
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <h2 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+              <h2 className="font-semibold text-[#071B34] mb-3 flex items-center gap-2">
                 <Shield className="w-5 h-5 text-[#1B4F72]" /> Security Dashboard
               </h2>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-gray-500">Today's Visitors</span><span className="font-medium">2</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Active Passes</span><span className="font-medium text-green-600">1</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Gate Status</span><span className="font-medium text-green-600">Secure</span></div>
+                <div className="flex justify-between"><span className="text-[#374151]">Today's Visitors</span><span className="font-medium">2</span></div>
+                <div className="flex justify-between"><span className="text-[#374151]">Active Passes</span><span className="font-medium text-green-600">1</span></div>
+                <div className="flex justify-between"><span className="text-[#374151]">Gate Status</span><span className="font-medium text-green-600">Secure</span></div>
               </div>
             </div>
 
@@ -164,7 +169,7 @@ export default function VisitorRequest() {
                 <BrainCircuit className="w-5 h-5 text-cyan-400" />
                 <p className="text-white font-semibold text-sm">AI Visit Analytics</p>
               </div>
-              <p className="text-[#4A5568] text-xs">Peak visitor hours: 2–5 PM on weekends. Pre-register 24h ahead for faster gate clearance.</p>
+              <p className="text-[#374151] text-xs">Peak visitor hours: 2–5 PM on weekends. Pre-register 24h ahead for faster gate clearance.</p>
             </div>
           </div>
         </div>

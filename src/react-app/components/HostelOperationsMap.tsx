@@ -116,22 +116,22 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
     const blockRooms = visibleRooms.filter((r) => r.block === block && r.floor === floor);
     if (blockRooms.length === 0) return null;
 
-    const gridPlacement: Record<string, { col: string; row: string }> = block === 'B' && floor === 2 ? {
-      '201': { col: '1', row: '1' },
-      '202': { col: '2', row: '1' },
-      '203': { col: '4', row: '1' },
-      '204': { col: '1', row: '2 / 4' },
-      '205': { col: '2', row: '2' },
-      '206': { col: '3', row: '2' },
-      '207': { col: '4', row: '2' },
-      '208': { col: '2 / 4', row: '3' },
+    const gridPlacement: Record<string, { col: string; row: string; shape?: string }> = block === 'B' && floor === 2 ? {
+      '201': { col: '1', row: '2', shape: 'room-shape-a' },
+      '202': { col: '2', row: '2', shape: 'room-shape-b' },
+      '203': { col: '4', row: '2', shape: 'room-shape-c' },
+      '204': { col: '1', row: '3 / 5', shape: 'room-shape-d' },
+      '205': { col: '2', row: '3', shape: 'room-shape-a' },
+      '206': { col: '3', row: '3', shape: 'room-shape-b' },
+      '207': { col: '4', row: '3', shape: 'room-shape-c' },
+      '208': { col: '2 / 5', row: '5', shape: 'room-shape-a' },
     } : {
-      '101': { col: '1', row: '1' },
-      '102': { col: '2', row: '1' },
-      '103': { col: '3', row: '1 / 3' },
-      '104': { col: '4', row: '1' },
-      '105': { col: '1', row: '3' },
-      '106': { col: '2 / 4', row: '3' },
+      '101': { col: '1', row: '2', shape: 'room-shape-a' },
+      '102': { col: '2', row: '2', shape: 'room-shape-b' },
+      '103': { col: '3', row: '2 / 4', shape: 'room-shape-d' },
+      '104': { col: '4', row: '2', shape: 'room-shape-c' },
+      '105': { col: '1', row: '4', shape: 'room-shape-b' },
+      '106': { col: '2 / 5', row: '4', shape: 'room-shape-a' },
     };
 
     return (
@@ -141,16 +141,16 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
           <h3 className="text-sm font-semibold text-[#071B34]">Block {block} · Floor {floor}</h3>
         </div>
         <div
-          className="relative rounded-xl border-2 border-[#071B34]/8 bg-[#FAFBFC] p-4 lg:p-6"
+          className="relative rounded-xl border-2 border-[#071B34]/8 bg-gradient-to-br from-[#FAFBFC] to-[#F0F4F8] p-4 lg:p-6"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, minmax(64px, 1fr)) 28px',
-            gridTemplateRows: block === 'B' ? '72px 72px 72px 48px' : '72px 28px 72px',
-            gap: '10px',
+            gridTemplateColumns: 'repeat(4, minmax(68px, 1fr)) 32px',
+            gridTemplateRows: block === 'B' ? '28px 76px 76px 76px 52px' : '28px 76px 76px 76px',
+            gap: '8px',
           }}
         >
-          <div className="col-span-5 text-center py-0.5" style={{ gridColumn: '1 / -1', gridRow: '1' }}>
-            <span className="text-[10px] uppercase tracking-widest text-[#4A5568] font-semibold">North Corridor</span>
+          <div className="floor-hallway flex items-center justify-center" style={{ gridColumn: '1 / 6', gridRow: '1' }}>
+            <span className="text-[10px] uppercase tracking-widest text-[#374151] font-bold">Main Corridor · Block {block}</span>
           </div>
 
           {blockRooms.map((room) => {
@@ -170,28 +170,43 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
                   gridRow: placement.row,
                   backgroundColor: baseColor,
                   boxShadow: heat ? `inset 0 0 0 100px ${heat}` : undefined,
+                  minHeight: placement.row.includes('/') ? '120px' : '68px',
                 }}
-                className={`room-cell relative rounded-lg border border-[#071B34]/12 flex flex-col items-center justify-center p-2 transition-all duration-200 hover:shadow-md hover:scale-[1.02] hover:saturate-[1.1] ${
+                className={`room-cell relative border border-[#071B34]/14 flex flex-col items-center justify-center p-2 transition-all duration-200 hover:shadow-md hover:scale-[1.02] hover:saturate-[1.1] ${placement.shape || 'rounded-lg'} ${
                   isSelected ? 'ring-2 ring-[#1B4F72] ring-offset-2 shadow-lg z-10' : ''
                 } ${room.status === 'critical' ? 'status-pulse-critical' : ''} ${isUserRoom ? 'ring-1 ring-[#4CC9F0]' : ''}`}
               >
                 <span className="text-sm font-bold text-[#071B34]">R{room.number}</span>
-                <span className="text-[10px] text-[#4A5568] font-semibold">{room.occupants.length}/{room.capacity}</span>
+                <span className="text-[10px] text-[#374151] font-semibold">{room.occupants.length}/{room.capacity}</span>
                 {room.complaints.length > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#1B4F72]/50 status-pulse" />}
                 {isUserRoom && <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[9px] bg-[#1B4F72] text-white px-2 py-0.5 rounded-full font-semibold">You</span>}
               </button>
             );
           })}
 
-          <div className="flex items-center justify-center bg-[#E9ECEF] rounded-md border border-dashed border-[#071B34]/15"
-            style={{ gridColumn: '5', gridRow: block === 'B' ? '2 / 4' : '1 / 3' }}>
-            <span className="text-[9px] text-[#4A5568] font-bold tracking-wider" style={{ writingMode: 'vertical-rl' }}>STAIRS</span>
+          <div className="floor-stairs flex items-center justify-center"
+            style={{ gridColumn: '5', gridRow: block === 'B' ? '2 / 5' : '2 / 4' }}>
+            <span className="text-[9px] text-[#374151] font-bold tracking-widest" style={{ writingMode: 'vertical-rl' }}>STAIRS</span>
           </div>
 
           {block === 'B' && (
-            <div className="flex items-center justify-center bg-[#071B34]/6 rounded-lg border border-[#071B34]/10"
-              style={{ gridColumn: '2 / 5', gridRow: '4' }}>
-              <span className="text-xs text-[#4A5568] font-semibold">Common Area · Washroom Wing</span>
+            <div className="floor-hallway flex items-center justify-center"
+              style={{ gridColumn: '2', gridRow: '4' }}>
+              <span className="text-[9px] text-[#374151] font-semibold uppercase" style={{ writingMode: 'vertical-rl' }}>Hall</span>
+            </div>
+          )}
+
+          {block === 'B' && (
+            <div className="floor-common flex items-center justify-center rounded-lg"
+              style={{ gridColumn: '2 / 5', gridRow: '5' }}>
+              <span className="text-xs text-[#374151] font-semibold">Common Room · Washroom Wing</span>
+            </div>
+          )}
+
+          {block === 'A' && (
+            <div className="floor-common flex items-center justify-center rounded-lg"
+              style={{ gridColumn: '1 / 3', gridRow: '3' }}>
+              <span className="text-[10px] text-[#374151] font-semibold">Lounge</span>
             </div>
           )}
         </div>
@@ -204,7 +219,7 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
       {/* Controls */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex flex-wrap items-center gap-3">
-          <Filter className="w-4 h-4 text-[#4A5568]" />
+          <Filter className="w-4 h-4 text-[#374151]" />
           {view === 'admin' && (
             <select value={blockFilter} onChange={(e) => setBlockFilter(e.target.value as 'all' | 'A' | 'B')}
               className="text-sm border border-[#071B34]/12 rounded-lg px-3 py-2 bg-white text-[#071B34] font-medium">
@@ -220,7 +235,7 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
           {(['none', 'occupancy', 'complaint', 'maintenance'] as HeatmapMode[]).map((mode) => (
             <button key={mode} onClick={() => setHeatmapMode(mode)}
               className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                heatmapMode === mode ? 'bg-[#071B34] text-white' : 'bg-white text-[#4A5568] border border-[#071B34]/10 hover:border-[#4CC9F0]/40'
+                heatmapMode === mode ? 'bg-[#071B34] text-white' : 'bg-white text-[#374151] border border-[#071B34]/10 hover:border-[#4CC9F0]/40'
               }`}>
               {mode === 'none' ? 'Status View' : `${mode.charAt(0).toUpperCase() + mode.slice(1)} Heatmap`}
             </button>
@@ -250,7 +265,7 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
       {/* Legend */}
       <div className="flex flex-wrap gap-4 mt-6 pt-6 border-t border-[#071B34]/8">
         {(Object.keys(STATUS_COLORS) as RoomStatus[]).map((s) => (
-          <div key={s} className="flex items-center gap-2 text-xs text-[#4A5568] font-medium">
+          <div key={s} className="flex items-center gap-2 text-xs text-[#374151] font-medium">
             <div className="w-4 h-4 rounded" style={{ backgroundColor: STATUS_COLORS[s] }} />
             {STATUS_LABELS[s]}
           </div>
@@ -262,32 +277,32 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
         <div className="mt-8 surface-panel rounded-2xl overflow-hidden border border-[#071B34]/8">
           <div className="grid lg:grid-cols-5">
             <div className="lg:col-span-2 p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-[#071B34]/8" style={{ backgroundColor: STATUS_COLORS[selectedRoom.status] }}>
-              <p className="text-xs uppercase tracking-widest text-[#4A5568] font-semibold mb-2">Room Intelligence</p>
+              <p className="text-xs uppercase tracking-widest text-[#374151] font-semibold mb-2">Room Intelligence</p>
               <h3 className="text-3xl font-bold text-[#071B34]">Room {selectedRoom.number}</h3>
-              <p className="text-sm text-[#4A5568] font-medium mt-2">Block {selectedRoom.block} · Floor {selectedRoom.floor} · {STATUS_LABELS[selectedRoom.status]}</p>
+              <p className="text-sm text-[#374151] font-medium mt-2">Block {selectedRoom.block} · Floor {selectedRoom.floor} · {STATUS_LABELS[selectedRoom.status]}</p>
               {view === 'student' && selectedRoom.id === studentRoomId && (
                 <p className="mt-4 text-sm font-medium text-[#1B4F72] bg-white/60 rounded-lg px-3 py-2 inline-block">This is your assigned room</p>
               )}
             </div>
             <div className="lg:col-span-3 p-6 lg:p-8 grid sm:grid-cols-2 gap-6">
               <div>
-                <p className="text-xs uppercase tracking-widest text-[#4A5568] font-semibold mb-2 flex items-center gap-1"><Users className="w-3.5 h-3.5" /> Occupants</p>
+                <p className="text-xs uppercase tracking-widest text-[#374151] font-semibold mb-2 flex items-center gap-1"><Users className="w-3.5 h-3.5" /> Occupants</p>
                 <p className="text-sm font-medium text-[#071B34]">{selectedRoom.occupants.length ? selectedRoom.occupants.join(', ') : 'Vacant'}</p>
-                <p className="text-xs text-[#4A5568] mt-1">{selectedRoom.occupants.length}/{selectedRoom.capacity} beds</p>
+                <p className="text-xs text-[#374151] mt-1">{selectedRoom.occupants.length}/{selectedRoom.capacity} beds</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-[#4A5568] font-semibold mb-2 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> Active Complaints</p>
+                <p className="text-xs uppercase tracking-widest text-[#374151] font-semibold mb-2 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> Active Complaints</p>
                 {selectedRoom.complaints.length ? selectedRoom.complaints.map((c, i) => (
                   <p key={i} className="text-sm font-medium text-[#071B34]">{c.title} <span className="text-[#1B4F72]">({c.severity})</span></p>
-                )) : <p className="text-sm text-[#4A5568]">None</p>}
+                )) : <p className="text-sm text-[#374151]">None</p>}
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-[#4A5568] font-semibold mb-2 flex items-center gap-1"><Wrench className="w-3.5 h-3.5" /> Assigned Staff</p>
+                <p className="text-xs uppercase tracking-widest text-[#374151] font-semibold mb-2 flex items-center gap-1"><Wrench className="w-3.5 h-3.5" /> Assigned Staff</p>
                 <p className="text-sm font-medium text-[#071B34]">{selectedRoom.assignedStaff || '—'}</p>
-                <p className="text-xs text-[#4A5568] mt-1">{selectedRoom.maintenanceStatus}</p>
+                <p className="text-xs text-[#374151] mt-1">{selectedRoom.maintenanceStatus}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-[#4A5568] font-semibold mb-2 flex items-center gap-1"><UserCheck className="w-3.5 h-3.5" /> Visitor Activity</p>
+                <p className="text-xs uppercase tracking-widest text-[#374151] font-semibold mb-2 flex items-center gap-1"><UserCheck className="w-3.5 h-3.5" /> Visitor Activity</p>
                 <p className="text-sm font-medium text-[#071B34]">{selectedRoom.visitorActivity}</p>
               </div>
               <div className="sm:col-span-2 p-4 rounded-xl bg-[#071B34]/5 border border-[#071B34]/8">
@@ -312,9 +327,9 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
               <div key={stat.label} className="surface-panel rounded-xl p-4 flex items-start gap-3 elevate-hover">
                 <Icon className="w-5 h-5 text-[#1B4F72] shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs text-[#4A5568] font-medium">{stat.label}</p>
+                  <p className="text-xs text-[#374151] font-medium">{stat.label}</p>
                   <p className="text-xl font-bold text-[#071B34]">{stat.value}</p>
-                  <p className="text-xs text-[#4A5568] mt-0.5">{stat.sub}</p>
+                  <p className="text-xs text-[#374151] mt-0.5">{stat.sub}</p>
                 </div>
               </div>
             );

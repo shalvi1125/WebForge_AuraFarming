@@ -11,7 +11,8 @@ const blocks = [
 export default function AdminRooms() {
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
-      <PortalNav portal="Admin Portal" userName="Dr. Rajesh Kumar" avatar="RK" homeHref="/admin/dashboard" dark />
+      <PortalNav portal="Admin Portal" userName="Dr. Rajesh Kumar" avatar="RK" homeHref="/admin/dashboard" dark
+        links={[{ label: 'Campus Map', href: '/student/room?view=admin' }, { label: 'Rooms', href: '/admin/rooms' }, { label: 'Reports', href: '/admin/reports' }]} />
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
         <Link to="/admin/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -25,7 +26,7 @@ export default function AdminRooms() {
             <div key={b.name} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm card-hover">
               <div className="flex items-center gap-2 mb-3"><BedDouble className="w-5 h-5 text-[#1B4F72]" /><h3 className="font-semibold">{b.name}</h3></div>
               <p className="text-2xl font-extrabold text-[#1B4F72]">{Math.round((b.occupied / b.total) * 100)}%</p>
-              <p className="text-xs text-[#4A5568] font-medium mt-1">{b.occupied}/{b.total} occupied · {b.maintenance} maintenance</p>
+              <p className="text-xs text-[#374151] font-medium mt-1">{b.occupied}/{b.total} occupied · {b.maintenance} maintenance</p>
               <div className="h-2 bg-gray-100 rounded-full mt-3 overflow-hidden"><div className="h-full bg-[#4CC9F0] rounded-full" style={{ width: `${(b.occupied / b.total) * 100}%` }} /></div>
             </div>
           ))}

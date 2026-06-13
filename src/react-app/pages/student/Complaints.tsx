@@ -2,11 +2,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import {
-  Building2, AlertCircle, ChevronRight, X, Plus,
+  AlertCircle, ChevronRight, X, Plus,
   BrainCircuit, Clock, CheckCircle2, Wrench, Zap,
   Trash2, ShieldAlert, Wifi, Sofa, Droplets,
-  Upload, Filter, ArrowLeft,
+  Upload, Filter,
 } from 'lucide-react';
+import PortalNav from '@/react-app/components/PortalNav';
 
 // ── Types ─────────────────────────────────────────────────
 type Status = 'Open' | 'In Progress' | 'Resolved';
@@ -111,7 +112,7 @@ function ComplaintModal({ complaint, onClose }: { complaint: Complaint; onClose:
           <button onClick={onClose} className="absolute top-4 right-4 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
             <X className="w-4 h-4" />
           </button>
-          <p className="text-[#4A5568] text-xs mb-1">{complaint.id}</p>
+          <p className="text-[#374151] text-xs mb-1">{complaint.id}</p>
           <h2 className="text-lg font-bold pr-8">{complaint.title}</h2>
           <div className="flex items-center gap-2 mt-2">
             <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{complaint.category}</span>
@@ -119,24 +120,24 @@ function ComplaintModal({ complaint, onClose }: { complaint: Complaint; onClose:
           </div>
         </div>
         <div className="p-5 space-y-4">
-          <p className="text-gray-600 text-sm leading-relaxed">{complaint.description}</p>
+          <p className="text-[#374151] text-sm leading-relaxed">{complaint.description}</p>
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-400 mb-1">Status</p>
+              <p className="text-xs text-[#374151] mb-1">Status</p>
               <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${statusStyles[complaint.status]}`}>{complaint.status}</span>
             </div>
             <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-400 mb-1">Priority</p>
+              <p className="text-xs text-[#374151] mb-1">Priority</p>
               <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${priorityStyles[complaint.priority]}`}>{complaint.priority}</span>
             </div>
             <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-400 mb-1">Assigned To</p>
-              <p className="text-xs font-semibold text-gray-700">{complaint.assignedTo}</p>
+              <p className="text-xs text-[#374151] mb-1">Assigned To</p>
+              <p className="text-xs font-semibold text-[#071B34]">{complaint.assignedTo}</p>
             </div>
           </div>
           {/* Timeline */}
           <div className="space-y-2 pt-1">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Timeline</p>
+            <p className="text-xs font-semibold text-[#374151] uppercase tracking-wide">Timeline</p>
             <div className="space-y-2">
               {[
                 { label: 'Complaint Filed', date: complaint.date, done: true },
@@ -145,11 +146,11 @@ function ComplaintModal({ complaint, onClose }: { complaint: Complaint; onClose:
               ].map((t) => (
                 <div key={t.label} className="flex items-center gap-3">
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${t.done ? 'bg-[#071B34]' : 'bg-gray-200'}`}>
-                    <CheckCircle2 className={`w-3 h-3 ${t.done ? 'text-white' : 'text-gray-400'}`} />
+                    <CheckCircle2 className={`w-3 h-3 ${t.done ? 'text-white' : 'text-[#374151]'}`} />
                   </div>
                   <div className="flex-1 flex items-center justify-between">
-                    <p className={`text-xs font-medium ${t.done ? 'text-gray-800' : 'text-gray-400'}`}>{t.label}</p>
-                    <p className="text-xs text-gray-400">{t.date}</p>
+                    <p className={`text-xs font-medium ${t.done ? 'text-[#071B34]' : 'text-[#374151]'}`}>{t.label}</p>
+                    <p className="text-xs text-[#374151]">{t.date}</p>
                   </div>
                 </div>
               ))}
@@ -220,31 +221,26 @@ export default function StudentComplaints() {
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
 
-      {/* Navbar */}
-      <nav className="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 bg-[#071B34] rounded-xl flex items-center justify-center">
-              <Building2 className="w-4 h-4 text-white" />
-            </div>
-            <div className="leading-none">
-              <p className="font-bold text-gray-900 text-sm">HostelIQ</p>
-              <p className="text-xs text-[#1B4F72]">Student Portal</p>
-            </div>
-          </div>
-          <Link to="/student/dashboard" className="flex items-center gap-1 text-sm text-[#1B4F72] hover:text-[#071B34] font-medium">
-            <ArrowLeft className="w-4 h-4" /> Dashboard
-          </Link>
-        </div>
-      </nav>
+      <PortalNav
+        portal="Student Portal"
+        userName="Aryan Sharma"
+        userMeta="CS21B047"
+        avatar="AS"
+        homeHref="/student/dashboard"
+        links={[
+          { label: 'Complaints', href: '/student/complaints' },
+          { label: 'Leave', href: '/student/leave' },
+          { label: 'Room Map', href: '/student/room' },
+        ]}
+      />
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-extrabold text-gray-900">My Complaints</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Track and manage all your hostel complaints</p>
+            <h1 className="text-2xl font-extrabold text-[#071B34]">My Complaints</h1>
+            <p className="text-sm text-[#374151] mt-0.5">Track and manage all your hostel complaints</p>
           </div>
           <button
             onClick={() => setShowForm(true)}
@@ -258,7 +254,7 @@ export default function StudentComplaints() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map(s => (
             <div key={s.label} className={`bg-white rounded-2xl p-5 border ${s.border} shadow-sm`}>
-              <p className="text-xs text-gray-500 font-medium">{s.label}</p>
+              <p className="text-xs text-[#374151] font-medium">{s.label}</p>
               <p className={`text-3xl font-extrabold mt-1 ${s.color}`}>{s.value}</p>
             </div>
           ))}
@@ -267,20 +263,20 @@ export default function StudentComplaints() {
         {/* Analytics */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <h2 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <h2 className="font-semibold text-[#071B34] mb-4 flex items-center gap-2">
               <BrainCircuit className="w-5 h-5 text-[#1B4F72]" /> Complaint Trends
             </h2>
             <div className="flex items-end gap-2 h-28">
               {[3, 5, 2, 4, 6, 3, 2].map((v, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
                   <div className="w-full bg-[#1B4F72] rounded-t-md" style={{ height: `${(v / 6) * 100}%`, minHeight: '8px' }} />
-                  <span className="text-[10px] text-gray-400">{['W1','W2','W3','W4','W5','W6','W7'][i]}</span>
+                  <span className="text-[10px] text-[#374151]">{['W1','W2','W3','W4','W5','W6','W7'][i]}</span>
                 </div>
               ))}
             </div>
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <h2 className="font-semibold text-gray-800 mb-4">Department Breakdown</h2>
+            <h2 className="font-semibold text-[#071B34] mb-4">Department Breakdown</h2>
             <div className="space-y-3">
               {[
                 { dept: 'Plumbing', pct: 28, color: 'bg-blue-500' },
@@ -291,7 +287,7 @@ export default function StudentComplaints() {
               ].map((d) => (
                 <div key={d.dept}>
                   <div className="flex justify-between text-xs mb-1">
-                    <span className="text-gray-600">{d.dept}</span>
+                    <span className="text-[#374151]">{d.dept}</span>
                     <span className="font-medium">{d.pct}%</span>
                   </div>
                   <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -315,7 +311,7 @@ export default function StudentComplaints() {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                   active
                     ? 'bg-[#071B34] text-white border-[#1B4F72] shadow-sm'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-[#4CC9F0]/30 hover:text-[#1B4F72]'
+                    : 'bg-white text-[#374151] border-gray-200 hover:border-[#4CC9F0]/30 hover:text-[#1B4F72]'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -331,7 +327,7 @@ export default function StudentComplaints() {
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                   filterStatus === s
                     ? 'bg-gray-900 text-white border-gray-900'
-                    : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
+                    : 'bg-white text-[#374151] border-gray-200 hover:border-gray-400'
                 }`}
               >
                 {s}
@@ -345,14 +341,14 @@ export default function StudentComplaints() {
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-5 h-5 text-rose-500" />
-              <h2 className="font-semibold text-gray-800">Complaints</h2>
-              <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full font-medium">{filtered.length}</span>
+              <h2 className="font-semibold text-[#071B34]">Complaints</h2>
+              <span className="bg-gray-100 text-[#374151] text-xs px-2 py-0.5 rounded-full font-medium">{filtered.length}</span>
             </div>
           </div>
 
           {filtered.length === 0 ? (
-            <div className="py-16 text-center text-gray-400">
-              <AlertCircle className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <div className="py-16 text-center text-[#374151]">
+              <AlertCircle className="w-10 h-10 mx-auto mb-3 text-[#374151]" />
               <p className="text-sm">No complaints match your filters.</p>
             </div>
           ) : (
@@ -365,17 +361,17 @@ export default function StudentComplaints() {
                     onClick={() => setSelected(c)}
                     className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50 cursor-pointer transition-colors group"
                   >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${categoryColors[c.category] || 'bg-gray-100 text-gray-500'}`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${categoryColors[c.category] || 'bg-gray-100 text-[#374151]'}`}>
                       <CatIcon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold text-gray-800 truncate">{c.title}</p>
+                        <p className="text-sm font-semibold text-[#071B34] truncate">{c.title}</p>
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium hidden sm:inline-flex items-center gap-1 ${statusStyles[c.status]}`}>
                           <StatusIcon s={c.status} /> {c.status}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 mt-0.5 text-xs text-gray-400">
+                      <div className="flex items-center gap-3 mt-0.5 text-xs text-[#374151]">
                         <span>{c.id}</span>
                         <span>·</span>
                         <span>{c.date}</span>
@@ -386,7 +382,7 @@ export default function StudentComplaints() {
                     <div className="flex items-center gap-2 shrink-0">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${priorityStyles[c.priority]}`}>{c.priority}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium sm:hidden ${statusStyles[c.status]}`}>{c.status}</span>
-                      <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#4A5568] transition-colors" />
+                      <ChevronRight className="w-4 h-4 text-[#374151] group-hover:text-[#071B34] transition-colors" />
                     </div>
                   </div>
                 );
@@ -414,13 +410,13 @@ export default function StudentComplaints() {
                 <AlertCircle className="w-5 h-5" />
                 <h2 className="text-lg font-bold">File New Complaint</h2>
               </div>
-              <p className="text-[#4A5568] text-xs mt-1">AI will automatically categorize and prioritize your complaint</p>
+              <p className="text-[#374151] text-xs mt-1">AI will automatically categorize and prioritize your complaint</p>
             </div>
 
             <div className="p-6 space-y-5">
               {/* Title */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Complaint Title <span className="text-rose-500">*</span></label>
+                <label className="block text-sm font-semibold text-[#374151] mb-1.5">Complaint Title <span className="text-rose-500">*</span></label>
                 <input
                   value={formTitle}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTitleChange(e.target.value)}
@@ -444,18 +440,18 @@ export default function StudentComplaints() {
                       { label: 'Est. Resolution', value: aiResult.resolution },
                     ].map(row => (
                       <div key={row.label} className="bg-white/10 rounded-xl p-2.5 text-center">
-                        <p className="text-[#4A5568] text-xs mb-1">{row.label}</p>
+                        <p className="text-[#374151] text-xs mb-1">{row.label}</p>
                         <p className="text-white text-xs font-bold">{row.value}</p>
                       </div>
                     ))}
                   </div>
-                  <p className="text-[#4A5568] text-xs">AI will auto-assign this to the relevant department upon submission.</p>
+                  <p className="text-[#374151] text-xs">AI will auto-assign this to the relevant department upon submission.</p>
                 </div>
               )}
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Description <span className="text-rose-500">*</span></label>
+                <label className="block text-sm font-semibold text-[#374151] mb-1.5">Description <span className="text-rose-500">*</span></label>
                 <textarea
                   value={formDesc}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormDesc(e.target.value)}
@@ -467,7 +463,7 @@ export default function StudentComplaints() {
 
               {/* Category */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Category <span className="text-rose-500">*</span></label>
+                <label className="block text-sm font-semibold text-[#374151] mb-1.5">Category <span className="text-rose-500">*</span></label>
                 <div className="grid grid-cols-3 gap-2">
                   {categories.map(cat => {
                     const Icon = categoryIcons[cat];
@@ -479,7 +475,7 @@ export default function StudentComplaints() {
                         className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
                           formCategory === cat
                             ? 'bg-[#071B34] text-white border-[#1B4F72] shadow-sm'
-                            : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-[#4CC9F0]/30'
+                            : 'bg-gray-50 text-[#374151] border-gray-200 hover:border-[#4CC9F0]/30'
                         }`}
                       >
                         <Icon className="w-4 h-4" /> {cat}
@@ -491,11 +487,11 @@ export default function StudentComplaints() {
 
               {/* Photo Upload */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Attach Photo <span className="text-gray-400 font-normal">(optional)</span></label>
+                <label className="block text-sm font-semibold text-[#374151] mb-1.5">Attach Photo <span className="text-[#374151] font-normal">(optional)</span></label>
                 <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-[#4CC9F0]/30 transition-colors cursor-pointer">
-                  <Upload className="w-7 h-7 text-gray-300 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400">Click to upload or drag & drop</p>
-                  <p className="text-xs text-gray-300 mt-0.5">PNG, JPG up to 5MB</p>
+                  <Upload className="w-7 h-7 text-[#374151] mx-auto mb-2" />
+                  <p className="text-sm text-[#374151] font-medium">Click to upload or drag & drop</p>
+                  <p className="text-xs text-[#374151] mt-0.5">PNG, JPG up to 5MB</p>
                 </div>
               </div>
 

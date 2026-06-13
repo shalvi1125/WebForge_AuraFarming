@@ -39,7 +39,7 @@ export default function CampusNetwork({ className = '' }: { className?: string }
           <g key={n.id} className="network-node">
             <circle cx={n.x} cy={n.y} r="4" fill="#1B4F72" opacity="0.7" />
             <circle cx={n.x} cy={n.y} r="6" fill="none" stroke="#4CC9F0" strokeWidth="0.4" opacity="0.4" className="network-pulse" />
-            <text x={n.x} y={n.y + 12} textAnchor="middle" fill="#4A5568" fontSize="3.5" fontWeight="500">{n.label}</text>
+            <text x={n.x} y={n.y + 12} textAnchor="middle" fill="#374151" fontSize="3.5" fontWeight="500">{n.label}</text>
             <text x={n.x} y={n.y + 1.5} textAnchor="middle" fill="#F8FAFC" fontSize="3" fontWeight="600">{n.count}</text>
           </g>
         ))}

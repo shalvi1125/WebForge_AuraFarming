@@ -32,10 +32,10 @@ export default function RoomAllocation() {
         dark={view !== 'student'}
         links={
           view === 'student'
-            ? [{ label: 'Dashboard', href: '/student/dashboard' }, { label: 'Complaints', href: '/student/complaints' }]
+            ? [{ label: 'Complaints', href: '/student/complaints' }, { label: 'Leave', href: '/student/leave' }, { label: 'Room Map', href: '/student/room' }]
             : view === 'warden'
-            ? [{ label: 'Dashboard', href: '/warden/dashboard' }, { label: 'Complaints', href: '/warden/complaints' }]
-            : [{ label: 'Dashboard', href: '/admin/dashboard' }, { label: 'Reports', href: '/admin/reports' }]
+            ? [{ label: 'Operations Map', href: '/student/room?view=warden' }, { label: 'Complaints', href: '/warden/complaints' }, { label: 'Students', href: '/warden/students' }]
+            : [{ label: 'Campus Map', href: '/student/room?view=admin' }, { label: 'Rooms', href: '/admin/rooms' }, { label: 'Reports', href: '/admin/reports' }]
         }
       />
 
@@ -48,7 +48,7 @@ export default function RoomAllocation() {
             <span className="w-1.5 h-1.5 rounded-full bg-[#4CC9F0] live-indicator" />
           </div>
           <h1 className="text-3xl lg:text-5xl font-semibold text-[#F8FAFC] tracking-tight mb-3">Smart Hostel Operations Map</h1>
-          <p className="text-[#C5D0D8] max-w-2xl text-sm lg:text-base">
+          <p className="text-[#D1DEE6] max-w-2xl text-sm lg:text-base">
             {view === 'student'
               ? 'Your floor plan with live room status, nearby alerts, and AI recommendations.'
               : view === 'warden'
@@ -56,7 +56,7 @@ export default function RoomAllocation() {
               : 'Campus-wide hostel map with cross-block analytics, heatmaps, and AI forecasting.'}
           </p>
           <div className="flex flex-wrap items-center gap-6 mt-8 pt-6 border-t border-white/10">
-            <div className="flex items-center gap-2 text-sm text-[#C5D0D8]"><BrainCircuit className="w-4 h-4 text-[#4CC9F0]" /> AI Engine Active</div>
+            <div className="flex items-center gap-2 text-sm text-[#D1DEE6]"><BrainCircuit className="w-4 h-4 text-[#4CC9F0]" /> AI Engine Active</div>
             {view === 'student' && (
               <div className="flex flex-wrap gap-3">
                 {nearbyAlerts.map((a) => (

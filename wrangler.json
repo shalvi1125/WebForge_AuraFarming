@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "019a16a5-92c1-7cc3-887f-edb2f2e32b32",
+  "main": "./src/worker/index.ts",
+  "compatibility_date": "2025-06-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "upload_source_maps": true,
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  "vars": {
+    "UNSPLASH_API_KEY": "67c4eddeec704780b6db4b4f073821bf",
+    "OPENAI_API_KEY": "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"
+  }
+}

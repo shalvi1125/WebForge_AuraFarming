@@ -12,7 +12,7 @@ export default function WardenLeave() {
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
       <PortalNav portal="Warden Portal" userName="Dr. Priya Mehta" avatar="PM" homeHref="/warden/dashboard" dark
-        links={[{ label: 'Operations Map', href: '/student/room?view=warden' }, { label: 'Complaints', href: '/warden/complaints' }, { label: 'Students', href: '/warden/students' }]} />
+        links={[{ label: 'Operations Map', href: '/warden/room' }, { label: 'Complaints', href: '/warden/complaints' }, { label: 'Students', href: '/warden/students' }]} />
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
         <Link to="/warden/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
         <h1 className="text-2xl font-extrabold text-[#071B34]">Leave Approvals</h1>

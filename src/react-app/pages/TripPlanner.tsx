@@ -33,7 +33,7 @@ export default function AdminDashboard() {
       <HostelBlueprint className="blueprint-decor w-[500px] h-[360px] -right-16 top-24 hidden xl:block" />
 
       <PortalNav portal="Admin Portal" userName="Dr. Rajesh Kumar" userMeta="Campus Administrator" avatar="RK" homeHref="/admin/dashboard" dark
-        links={[{ label: 'Campus Map', href: '/student/room?view=admin' }, { label: 'Rooms', href: '/admin/rooms' }, { label: 'Reports', href: '/admin/reports' }]} />
+        links={[{ label: 'Campus Map', href: '/admin/room' }, { label: 'Rooms', href: '/admin/rooms' }, { label: 'Reports', href: '/admin/reports' }]} />
 
       <section className="gradient-mesh-hero relative">
         <div className="glow-orb w-[600px] h-[600px] bg-[#4CC9F0]/10 top-0 right-0" />
@@ -55,7 +55,7 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10 space-y-10">
 
         <div className="grid lg:grid-cols-3 gap-6">
-          <Link to="/student/room?view=admin" className="lg:col-span-2 surface-panel rounded-2xl p-6 elevate-hover flex items-center justify-between group border border-[#4CC9F0]/15">
+          <Link to="/admin/room" className="lg:col-span-2 surface-panel rounded-2xl p-6 elevate-hover flex items-center justify-between group border border-[#4CC9F0]/15">
             <div>
               <div className="flex items-center gap-2 mb-2"><Map className="w-5 h-5 text-[#1B4F72]" /><p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold">Campus Operations Map</p></div>
               <h2 className="text-lg font-bold text-[#071B34]">Full hostel visibility across all blocks</h2>
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
 
         <section className="flex flex-wrap gap-3">
           {[
-            { label: 'Campus Map', href: '/student/room?view=admin', icon: Map },
+            { label: 'Campus Map', href: '/admin/room', icon: Map },
             { label: 'Room Management', href: '/admin/rooms', icon: BedDouble },
             { label: 'Student Records', href: '/admin/students', icon: Users },
             { label: 'Reports', href: '/admin/reports', icon: Activity },

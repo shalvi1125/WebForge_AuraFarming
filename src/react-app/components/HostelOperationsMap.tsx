@@ -4,6 +4,7 @@ import {
   BrainCircuit, ChevronRight, AlertCircle, Users, Wrench,
   UserCheck, Filter, Layers, TrendingUp,
 } from 'lucide-react';
+import { type ComplaintPriority, type ComplaintStatus, type HostelComplaint, useComplaints } from '@/react-app/lib/complaints';
 
 export type RoomStatus =
   | 'normal'
@@ -24,7 +25,7 @@ export interface RoomIntel {
   status: RoomStatus;
   occupants: string[];
   capacity: number;
-  complaints: { title: string; severity: 'Low' | 'Medium' | 'High' | 'Critical' }[];
+  complaints: { title: string; severity: ComplaintPriority; status?: ComplaintStatus }[];
   assignedStaff: string | null;
   visitorActivity: string;
   maintenanceStatus: string;
@@ -46,16 +47,16 @@ export const STATUS_COLORS: Record<RoomStatus, string> = {
   pending_complaint: '#FFD6D6',
   critical: '#FFB3C1',
   maintenance: '#D6F0FF',
-  vacant: '#E9ECEF',
+  vacant: '#D6F0FF',
 };
 
 export const STATUS_LABELS: Record<RoomStatus, string> = {
-  normal: 'Normal',
-  complaint_progress: 'Complaint In Progress',
-  pending_complaint: 'Pending Complaint',
-  critical: 'Critical Issue',
+  normal: 'Resolved / Clear',
+  complaint_progress: 'In Progress',
+  pending_complaint: 'Open Complaint',
+  critical: 'Critical',
   maintenance: 'Maintenance',
-  vacant: 'Vacant',
+  vacant: 'Available',
 };
 
 const ALL_ROOMS: RoomIntel[] = [
@@ -75,6 +76,46 @@ const ALL_ROOMS: RoomIntel[] = [
   { id: '208', number: '208', block: 'B', floor: 2, status: 'vacant', occupants: [], capacity: 4, complaints: [], assignedStaff: null, visitorActivity: 'None', maintenanceStatus: 'Ready', aiRecommendation: '100% vacancy — near common area, popular choice.', occupancy: 0, complaintScore: 0, maintenanceScore: 0, colSpan: 1, rowSpan: 1 },
 ];
 
+function priorityScore(priority: ComplaintPriority): number {
+  if (priority === 'Critical') return 1;
+  if (priority === 'High') return 0.8;
+  if (priority === 'Medium') return 0.55;
+  return 0.3;
+}
+
+function deriveRoomStatus(baseStatus: RoomStatus, roomComplaints: HostelComplaint[]): RoomStatus {
+  if (roomComplaints.length === 0) return baseStatus;
+  if (roomComplaints.some((c) => c.status === 'Open' && (c.priority === 'Critical' || c.priority === 'High'))) return 'critical';
+  if (roomComplaints.some((c) => c.status === 'Open')) return 'pending_complaint';
+  if (roomComplaints.some((c) => c.status === 'In Progress')) return 'complaint_progress';
+  return 'normal';
+}
+
+function applyComplaintState(room: RoomIntel, complaints: HostelComplaint[]): RoomIntel {
+  const roomComplaints = complaints.filter((complaint) => complaint.roomId === room.id);
+  if (roomComplaints.length === 0) return room;
+
+  const activeComplaints = roomComplaints.filter((complaint) => complaint.status !== 'Resolved');
+  const highestScore = Math.max(...roomComplaints.map((complaint) => priorityScore(complaint.priority)), 0);
+  const assignedStaff = activeComplaints[0]?.assignedTo || roomComplaints[0]?.assignedTo || room.assignedStaff;
+
+  return {
+    ...room,
+    status: deriveRoomStatus(room.status, roomComplaints),
+    complaints: roomComplaints.map((complaint) => ({
+      title: complaint.title,
+      severity: complaint.priority,
+      status: complaint.status,
+    })),
+    assignedStaff,
+    complaintScore: Math.max(room.complaintScore, highestScore),
+    maintenanceScore: Math.max(room.maintenanceScore, activeComplaints.some((c) => c.category !== 'Internet') ? highestScore : 0),
+    aiRecommendation: activeComplaints.length
+      ? `${activeComplaints.length} active complaint${activeComplaints.length > 1 ? 's' : ''}. Prioritize ${activeComplaints[0].category.toLowerCase()} follow-up for Room ${room.number}.`
+      : 'Recent complaints resolved. Keep room under routine monitoring.',
+  };
+}
+
 interface HostelOperationsMapProps {
   view?: MapView;
   studentRoomId?: string;
@@ -82,24 +123,28 @@ interface HostelOperationsMapProps {
 }
 
 export default function HostelOperationsMap({ view = 'student', studentRoomId = '204', className = '' }: HostelOperationsMapProps) {
-  const [selectedRoom, setSelectedRoom] = useState<RoomIntel | null>(
-    ALL_ROOMS.find((r) => r.id === studentRoomId) || ALL_ROOMS[0]
-  );
+  const { complaints } = useComplaints();
+  const rooms = useMemo(() => ALL_ROOMS.map((room) => applyComplaintState(room, complaints)), [complaints]);
+  const [selectedRoomId, setSelectedRoomId] = useState(studentRoomId);
   const [heatmapMode, setHeatmapMode] = useState<HeatmapMode>('none');
   const [blockFilter, setBlockFilter] = useState<'all' | 'A' | 'B'>('all');
   const [floorFilter, setFloorFilter] = useState<number | 'all'>('all');
+  const selectedRoom = useMemo(
+    () => rooms.find((r) => r.id === selectedRoomId) || rooms.find((r) => r.id === studentRoomId) || rooms[0] || null,
+    [rooms, selectedRoomId, studentRoomId]
+  );
 
   const visibleRooms = useMemo(() => {
-    let rooms = ALL_ROOMS;
+    let scopedRooms = rooms;
     if (view === 'student') {
-      rooms = rooms.filter((r) => r.block === 'B' && r.floor === 2);
+      scopedRooms = scopedRooms.filter((r) => r.block === 'B' && r.floor === 2);
     } else if (view === 'warden') {
-      rooms = rooms.filter((r) => r.block === 'B');
+      scopedRooms = scopedRooms.filter((r) => r.block === 'B');
     }
-    if (blockFilter !== 'all') rooms = rooms.filter((r) => r.block === blockFilter);
-    if (floorFilter !== 'all') rooms = rooms.filter((r) => r.floor === floorFilter);
-    return rooms;
-  }, [view, blockFilter, floorFilter]);
+    if (blockFilter !== 'all') scopedRooms = scopedRooms.filter((r) => r.block === blockFilter);
+    if (floorFilter !== 'all') scopedRooms = scopedRooms.filter((r) => r.floor === floorFilter);
+    return scopedRooms;
+  }, [rooms, view, blockFilter, floorFilter]);
 
   const getHeatOverlay = (room: RoomIntel): string | undefined => {
     if (heatmapMode === 'none') return undefined;
@@ -110,7 +155,7 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
     return `rgba(27, 79, 114, ${0.08 + intensity * 0.35})`;
   };
 
-  const priorityAlerts = ALL_ROOMS.filter((r) => r.status === 'critical' || r.status === 'pending_complaint').slice(0, 3);
+  const priorityAlerts = rooms.filter((r) => r.status === 'critical' || r.status === 'pending_complaint').slice(0, 3);
 
   const renderBlock = (block: 'A' | 'B', floor: number) => {
     const blockRooms = visibleRooms.filter((r) => r.block === block && r.floor === floor);
@@ -164,7 +209,7 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
             return (
               <button
                 key={room.id}
-                onClick={() => setSelectedRoom(room)}
+                onClick={() => setSelectedRoomId(room.id)}
                 style={{
                   gridColumn: placement.col,
                   gridRow: placement.row,
@@ -176,10 +221,27 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
                   isSelected ? 'ring-2 ring-[#1B4F72] ring-offset-2 shadow-lg z-10' : ''
                 } ${room.status === 'critical' ? 'status-pulse-critical' : ''} ${isUserRoom ? 'ring-1 ring-[#4CC9F0]' : ''}`}
               >
+                {(room.status === 'critical' || room.complaints.some((c) => c.severity === 'High' || c.severity === 'Critical')) && (
+                  <span className="absolute top-1.5 left-1.5 w-4 h-4 rounded-full bg-[#FFB3C1] border border-white/80 flex items-center justify-center status-pulse" title="High-priority alert">
+                    <AlertCircle className="w-2.5 h-2.5 text-[#071B34]" />
+                  </span>
+                )}
                 <span className="text-sm font-bold text-[#071B34]">R{room.number}</span>
                 <span className="text-[10px] text-[#374151] font-semibold">{room.occupants.length}/{room.capacity}</span>
-                {room.complaints.length > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#1B4F72]/50 status-pulse" />}
+                {room.complaints.length > 0 && (
+                  <span className="absolute top-1.5 right-1.5 min-w-4 h-4 rounded-full bg-[#1B4F72]/70 text-white text-[9px] leading-4 font-bold status-pulse" title="Complaint marker">
+                    {room.complaints.length}
+                  </span>
+                )}
+                {(room.status === 'maintenance' || room.maintenanceScore > 0.75) && (
+                  <span className="absolute bottom-3.5 left-1.5 w-4 h-4 rounded-full bg-white/75 border border-[#071B34]/10 flex items-center justify-center" title="Maintenance marker">
+                    <Wrench className="w-2.5 h-2.5 text-[#1B4F72]" />
+                  </span>
+                )}
                 {isUserRoom && <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[9px] bg-[#1B4F72] text-white px-2 py-0.5 rounded-full font-semibold">You</span>}
+                <span className="absolute bottom-1.5 left-2 right-2 h-1 rounded-full bg-white/60 overflow-hidden" title="Occupancy indicator">
+                  <span className="block h-full bg-[#1B4F72]/70 rounded-full" style={{ width: `${Math.round(room.occupancy * 100)}%` }} />
+                </span>
               </button>
             );
           })}
@@ -247,7 +309,7 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
       {(view === 'warden' || view === 'admin') && priorityAlerts.length > 0 && (
         <div className="mb-6 flex flex-wrap gap-3">
           {priorityAlerts.map((r) => (
-            <button key={r.id} onClick={() => setSelectedRoom(r)}
+            <button key={r.id} onClick={() => setSelectedRoomId(r.id)}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FFD6D6] border border-[#FFB3C1]/50 text-sm font-medium text-[#071B34] hover:shadow-md transition-all alert-slide">
               <AlertCircle className="w-4 h-4" />
               Room {r.number} — {r.complaints[0]?.title || 'Attention required'}
@@ -270,6 +332,22 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
             {STATUS_LABELS[s]}
           </div>
         ))}
+        <div className="flex items-center gap-2 text-xs text-[#374151] font-medium">
+          <div className="w-4 h-4 rounded-full bg-[#1B4F72]/70 text-white text-[9px] leading-4 text-center font-bold">2</div>
+          Complaint marker
+        </div>
+        <div className="flex items-center gap-2 text-xs text-[#374151] font-medium">
+          <div className="w-4 h-4 rounded-full bg-white border border-[#071B34]/10 flex items-center justify-center"><Wrench className="w-2.5 h-2.5 text-[#1B4F72]" /></div>
+          Maintenance marker
+        </div>
+        <div className="flex items-center gap-2 text-xs text-[#374151] font-medium">
+          <div className="w-4 h-4 rounded-full bg-[#FFB3C1] flex items-center justify-center"><AlertCircle className="w-2.5 h-2.5 text-[#071B34]" /></div>
+          High-priority alert
+        </div>
+        <div className="flex items-center gap-2 text-xs text-[#374151] font-medium">
+          <div className="w-8 h-1 rounded-full bg-[#1B4F72]/70" />
+          Occupancy indicator
+        </div>
       </div>
 
       {/* Room Intelligence Panel */}
@@ -293,7 +371,7 @@ export default function HostelOperationsMap({ view = 'student', studentRoomId = 
               <div>
                 <p className="text-xs uppercase tracking-widest text-[#374151] font-semibold mb-2 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> Active Complaints</p>
                 {selectedRoom.complaints.length ? selectedRoom.complaints.map((c, i) => (
-                  <p key={i} className="text-sm font-medium text-[#071B34]">{c.title} <span className="text-[#1B4F72]">({c.severity})</span></p>
+                  <p key={i} className="text-sm font-medium text-[#071B34]">{c.title} <span className="text-[#1B4F72]">({c.status ? `${c.status} Â· ` : ''}{c.severity})</span></p>
                 )) : <p className="text-sm text-[#374151]">None</p>}
               </div>
               <div>

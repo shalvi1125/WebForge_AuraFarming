@@ -12,12 +12,12 @@ export default function AdminRooms() {
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
       <PortalNav portal="Admin Portal" userName="Dr. Rajesh Kumar" avatar="RK" homeHref="/admin/dashboard" dark
-        links={[{ label: 'Campus Map', href: '/student/room?view=admin' }, { label: 'Rooms', href: '/admin/rooms' }, { label: 'Reports', href: '/admin/reports' }]} />
+        links={[{ label: 'Campus Map', href: '/admin/room' }, { label: 'Rooms', href: '/admin/rooms' }, { label: 'Reports', href: '/admin/reports' }]} />
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
         <Link to="/admin/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-2xl font-bold text-[#071B34]">Room Management</h1>
-          <Link to="/student/room?view=admin" className="inline-flex items-center gap-2 text-sm font-semibold text-[#1B4F72] hover:text-[#4CC9F0] bg-white px-4 py-2 rounded-lg border border-[#071B34]/10">
+          <Link to="/admin/room" className="inline-flex items-center gap-2 text-sm font-semibold text-[#1B4F72] hover:text-[#4CC9F0] bg-white px-4 py-2 rounded-lg border border-[#071B34]/10">
             Open Campus Operations Map
           </Link>
         </div>

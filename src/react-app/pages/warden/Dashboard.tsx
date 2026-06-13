@@ -39,7 +39,7 @@ export default function WardenDashboard() {
       <HostelBlueprint className="blueprint-decor w-[420px] h-[300px] right-0 top-32 hidden lg:block" />
 
       <PortalNav portal="Warden Portal" userName={warden.name} userMeta={`${warden.hostel} · ${warden.block}`} avatar={warden.avatar} homeHref="/warden/dashboard" dark
-        links={[{ label: 'Operations Map', href: '/student/room?view=warden' }, { label: 'Complaints', href: '/warden/complaints' }, { label: 'Students', href: '/warden/students' }]} />
+        links={[{ label: 'Operations Map', href: '/warden/room' }, { label: 'Complaints', href: '/warden/complaints' }, { label: 'Students', href: '/warden/students' }]} />
 
       <section className="gradient-mesh-hero relative">
         <div className="glow-orb w-[500px] h-[500px] bg-[#1B4F72]/30 -top-32 -left-32" />
@@ -72,7 +72,7 @@ export default function WardenDashboard() {
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Operations Map link */}
-          <Link to="/student/room?view=warden" className="lg:col-span-2 surface-panel rounded-2xl p-6 elevate-hover flex items-center justify-between group border border-[#4CC9F0]/15">
+          <Link to="/warden/room" className="lg:col-span-2 surface-panel rounded-2xl p-6 elevate-hover flex items-center justify-between group border border-[#4CC9F0]/15">
             <div>
               <div className="flex items-center gap-2 mb-2"><Map className="w-5 h-5 text-[#1B4F72]" /><p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold">Block Operations Map</p></div>
               <h2 className="text-lg font-bold text-[#071B34]">View full Block B floor plan</h2>

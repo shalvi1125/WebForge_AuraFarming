@@ -1,8 +1,13 @@
 import { Link } from 'react-router';
 import { BedDouble, Users, BarChart3, AlertCircle, BrainCircuit, Map } from 'lucide-react';
 import PortalNav from '@/react-app/components/PortalNav';
+import { getStatusCounts, useComplaints } from '@/react-app/lib/complaints';
 
 export default function AdminDashboard() {
+  const { complaints } = useComplaints();
+  const complaintCounts = getStatusCounts(complaints);
+  const activeComplaintCount = complaintCounts.open + complaintCounts.inProgress;
+
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
       <PortalNav
@@ -13,7 +18,7 @@ export default function AdminDashboard() {
         homeHref="/admin/dashboard"
         dark
         links={[
-          { label: 'Campus Map', href: '/student/room' },
+          { label: 'Campus Map', href: '/admin/room' },
           { label: 'Rooms', href: '/admin/rooms' },
           { label: 'Students', href: '/admin/students' },
           { label: 'Reports', href: '/admin/reports' },
@@ -33,7 +38,7 @@ export default function AdminDashboard() {
             {[
               ['4,820', 'Total Students'],
               ['91%', 'Occupancy'],
-              ['14', 'Active Complaints'],
+              [String(activeComplaintCount), 'Active Complaints'],
               ['₹12.4L', 'Fees Due'],
             ].map(([v, l]) => (
               <div key={l}>
@@ -51,7 +56,7 @@ export default function AdminDashboard() {
             { label: 'Rooms', href: '/admin/rooms', icon: BedDouble, desc: 'Occupancy & allocation' },
             { label: 'Students', href: '/admin/students', icon: Users, desc: 'Student records' },
             { label: 'Reports', href: '/admin/reports', icon: BarChart3, desc: 'Analytics & exports' },
-            { label: 'Complaints', href: '/warden/complaints', icon: AlertCircle, desc: 'Campus complaint view' },
+            { label: 'Complaints', href: '/admin/dashboard#complaint-overview', icon: AlertCircle, desc: 'Campus complaint view' },
           ].map((item) => {
             const Icon = item.icon;
             return (
@@ -67,6 +72,23 @@ export default function AdminDashboard() {
               </Link>
             );
           })}
+        </div>
+
+        <div id="complaint-overview" className="surface-panel rounded-2xl p-6">
+          <p className="font-semibold text-[#071B34] text-sm mb-4">Complaint Overview</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: 'Total', value: complaintCounts.total, color: 'text-[#1B4F72]' },
+              { label: 'Open', value: complaintCounts.open, color: 'text-rose-600' },
+              { label: 'In Progress', value: complaintCounts.inProgress, color: 'text-amber-600' },
+              { label: 'Resolved', value: complaintCounts.resolved, color: 'text-green-600' },
+            ].map((item) => (
+              <div key={item.label} className="bg-[#F5F7FA] rounded-xl p-4 border border-[#071B34]/8">
+                <p className="text-xs text-[#374151]">{item.label}</p>
+                <p className={`text-2xl font-extrabold mt-1 ${item.color}`}>{item.value}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="surface-panel rounded-2xl p-6 flex items-start gap-3">

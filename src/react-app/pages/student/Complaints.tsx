@@ -8,32 +8,15 @@ import {
   Upload, Filter,
 } from 'lucide-react';
 import PortalNav from '@/react-app/components/PortalNav';
+import { type ComplaintPriority, type ComplaintStatus, type HostelComplaint, useComplaints } from '@/react-app/lib/complaints';
 
 // ── Types ─────────────────────────────────────────────────
-type Status = 'Open' | 'In Progress' | 'Resolved';
-type Priority = 'High' | 'Medium' | 'Low';
+type Status = ComplaintStatus;
+type Priority = ComplaintPriority;
 
-interface Complaint {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  status: Status;
-  priority: Priority;
-  date: string;
-  assignedTo: string;
-}
+type Complaint = HostelComplaint;
 
 // ── Mock Data ─────────────────────────────────────────────
-const mockComplaints: Complaint[] = [
-  { id: 'CMP-041', title: 'Water leakage near bathroom sink', description: 'There is a constant drip from the pipe under the sink causing the floor to stay wet.', category: 'Plumbing', status: 'In Progress', priority: 'High', date: '10 Jun 2025', assignedTo: 'Rajan Kumar' },
-  { id: 'CMP-038', title: 'Wi-Fi not working in room', description: 'Internet has been down in Room 204 for 3 days. Cannot attend online classes.', category: 'Internet', status: 'Open', priority: 'Medium', date: '07 Jun 2025', assignedTo: 'Unassigned' },
-  { id: 'CMP-035', title: 'Broken wardrobe door hinge', description: 'The door of the wardrobe in Room 204 has a broken hinge and keeps falling off.', category: 'Furniture', status: 'Open', priority: 'Low', date: '04 Jun 2025', assignedTo: 'Unassigned' },
-  { id: 'CMP-031', title: 'Mess food quality issue', description: 'The dinner served on 01 Jun was undercooked and caused stomach issues.', category: 'Hygiene', status: 'Resolved', priority: 'Medium', date: '01 Jun 2025', assignedTo: 'Mess Supervisor' },
-  { id: 'CMP-027', title: 'Room light flickering', description: 'The tube light in the study area flickers constantly and causes eye strain.', category: 'Electrical', status: 'Resolved', priority: 'Low', date: '25 May 2025', assignedTo: 'Electrician Team' },
-  { id: 'CMP-022', title: 'Suspicious person near block gate', description: 'Unfamiliar individual loitering near Block B gate late at night.', category: 'Security', status: 'Resolved', priority: 'High', date: '18 May 2025', assignedTo: 'Security Dept.' },
-];
-
 const categories = ['Plumbing', 'Electrical', 'Hygiene', 'Furniture', 'Security', 'Internet'];
 
 const categoryIcons: Record<string, any> = {
@@ -61,6 +44,7 @@ const statusStyles: Record<Status, string> = {
 };
 
 const priorityStyles: Record<Priority, string> = {
+  Critical: 'bg-red-50 text-red-600 border border-red-200',
   High:   'bg-rose-50 text-rose-600 border border-rose-200',
   Medium: 'bg-amber-50 text-amber-600 border border-amber-200',
   Low:    'bg-green-50 text-green-600 border border-green-200',
@@ -164,7 +148,7 @@ function ComplaintModal({ complaint, onClose }: { complaint: Complaint; onClose:
 
 // ── Main Page ─────────────────────────────────────────────
 export default function StudentComplaints() {
-  const [complaints, setComplaints] = useState<Complaint[]>(mockComplaints);
+  const { complaints, addComplaint } = useComplaints();
   const [filterStatus, setFilterStatus] = useState<string>('All');
   const [filterCategory, setFilterCategory] = useState<string>('All');
   const [selected, setSelected] = useState<Complaint | null>(null);
@@ -176,15 +160,16 @@ export default function StudentComplaints() {
   const [formCategory, setFormCategory] = useState('');
   const [aiResult, setAiResult] = useState<ReturnType<typeof getAIResult> | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const studentComplaints = complaints.filter((c: Complaint) => c.student === 'Aryan Sharma');
 
   const stats = [
-    { label: 'Total',       value: complaints.length,                                                          color: 'text-[#1B4F72]', bg: 'bg-[#F5F7FA]', border: 'border-[#071B34]/10' },
-    { label: 'Open',        value: complaints.filter((c: Complaint) => c.status === 'Open').length,            color: 'text-rose-600',   bg: 'bg-rose-50',   border: 'border-rose-100' },
-    { label: 'In Progress', value: complaints.filter((c: Complaint) => c.status === 'In Progress').length,     color: 'text-amber-600',  bg: 'bg-amber-50',  border: 'border-amber-100' },
-    { label: 'Resolved',    value: complaints.filter((c: Complaint) => c.status === 'Resolved').length,        color: 'text-green-600',  bg: 'bg-green-50',  border: 'border-green-100' },
+    { label: 'Total',       value: studentComplaints.length,                                                          color: 'text-[#1B4F72]', bg: 'bg-[#F5F7FA]', border: 'border-[#071B34]/10' },
+    { label: 'Open',        value: studentComplaints.filter((c: Complaint) => c.status === 'Open').length,            color: 'text-rose-600',   bg: 'bg-rose-50',   border: 'border-rose-100' },
+    { label: 'In Progress', value: studentComplaints.filter((c: Complaint) => c.status === 'In Progress').length,     color: 'text-amber-600',  bg: 'bg-amber-50',  border: 'border-amber-100' },
+    { label: 'Resolved',    value: studentComplaints.filter((c: Complaint) => c.status === 'Resolved').length,        color: 'text-green-600',  bg: 'bg-green-50',  border: 'border-green-100' },
   ];
 
-  const filtered = complaints.filter((c: Complaint) => {
+  const filtered = studentComplaints.filter((c: Complaint) => {
     const matchStatus   = filterStatus === 'All'   || c.status === filterStatus;
     const matchCategory = filterCategory === 'All' || c.category === filterCategory;
     return matchStatus && matchCategory;
@@ -200,8 +185,7 @@ export default function StudentComplaints() {
   function handleSubmit() {
     if (!formTitle.trim() || !formDesc.trim() || !formCategory) return;
     const ai = getAIResult(formTitle);
-    const newComplaint: Complaint = {
-      id: `CMP-${String(Math.floor(Math.random() * 900) + 100)}`,
+    addComplaint({
       title: formTitle,
       description: formDesc,
       category: formCategory,
@@ -209,8 +193,10 @@ export default function StudentComplaints() {
       priority: ai.priority,
       date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
       assignedTo: 'Unassigned',
-    };
-    setComplaints([newComplaint, ...complaints]);
+      student: 'Aryan Sharma',
+      room: '204',
+      roomId: '204',
+    });
     setSubmitted(true);
     setTimeout(() => {
       setShowForm(false);

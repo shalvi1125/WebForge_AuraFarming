@@ -6,7 +6,7 @@ export default function AdminStudents() {
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
       <PortalNav portal="Admin Portal" userName="Dr. Rajesh Kumar" avatar="RK" homeHref="/admin/dashboard" dark
-        links={[{ label: 'Campus Map', href: '/student/room?view=admin' }, { label: 'Rooms', href: '/admin/rooms' }, { label: 'Reports', href: '/admin/reports' }]} />
+        links={[{ label: 'Campus Map', href: '/admin/room' }, { label: 'Rooms', href: '/admin/rooms' }, { label: 'Reports', href: '/admin/reports' }]} />
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
         <Link to="/admin/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
         <h1 className="text-2xl font-extrabold text-[#071B34]">Student Records</h1>

@@ -5,6 +5,7 @@ import {
   ChevronRight, Pin, ThumbsUp, MessageCircle, Vote, Sparkles, Clock,
 } from 'lucide-react';
 import PortalNav from '@/react-app/components/PortalNav';
+import { STUDENT_NAME, useAnnouncements, useStudentProfile } from '@/react-app/lib/studentState';
 
 type NoticeType = 'general' | 'mess' | 'maintenance' | 'emergency' | 'event';
 
@@ -37,30 +38,49 @@ const upcomingEvents = [
   { title: 'Fee Payment Deadline', date: '30 Jun', time: '11:59 PM', location: 'Online Portal' },
 ];
 
-const activePoll = {
-  question: 'Preferred mess closing time on weekends?',
-  options: [
-    { label: '9:00 PM', votes: 45, pct: 38 },
-    { label: '9:30 PM', votes: 52, pct: 44 },
-    { label: '10:00 PM', votes: 21, pct: 18 },
-  ],
-  totalVotes: 118,
-};
-
 const featured = notices.find((n) => n.pinned) || notices[0];
 
 export default function Announcements() {
+  const { announcements: notices, toggleLike, addComment, deleteComment } = useAnnouncements();
+  const { profile } = useStudentProfile();
   const [filter, setFilter] = useState<NoticeType | 'all'>('all');
+  const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
   const filtered = filter === 'all' ? notices : notices.filter((n) => n.type === filter);
+  const featured = notices.find((n) => n.pinned) || notices[0];
+  const pollSeed = (['general', 'mess', 'maintenance', 'emergency', 'event'] as NoticeType[])
+    .map((type) => ({
+      label: typeLabels[type],
+      votes: notices
+        .filter((notice) => notice.type === type)
+        .reduce((sum, notice) => sum + notice.likes + notice.commentsList.length, 0),
+    }))
+    .filter((option) => option.votes > 0);
+  const totalPollVotes = pollSeed.reduce((sum, option) => sum + option.votes, 0);
+  const activePoll = {
+    question: 'Notice engagement by category',
+    options: (pollSeed.length ? pollSeed : [{ label: 'No notices', votes: 0 }]).map((option) => ({
+      ...option,
+      pct: totalPollVotes ? Math.round((option.votes / totalPollVotes) * 100) : 0,
+    })),
+    totalVotes: totalPollVotes,
+  };
+  const readRate = notices.length
+    ? Math.round((notices.filter((notice) => notice.likes > 0 || notice.commentsList.length > 0).length / notices.length) * 100)
+    : 0;
+
+  function submitComment(noticeId: string) {
+    addComment(noticeId, commentDrafts[noticeId] || '');
+    setCommentDrafts((current) => ({ ...current, [noticeId]: '' }));
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
-      <PortalNav portal="Campus Notice Board" userName="Aryan Sharma" userMeta="Tagore Hostel" avatar="AS" homeHref="/student/dashboard"
+      <PortalNav portal="Campus Notice Board" userName={profile.name} userMeta={profile.hostel} avatar={profile.avatar} homeHref="/student/dashboard"
         links={[{ label: 'Dashboard', href: '/student/dashboard' }, { label: 'Leave', href: '/student/leave' }, { label: 'Fees', href: '/student/fees' }]} />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16 lg:py-20">
         <header className="mb-16">
-          <p className="text-xs text-[#1B4F72] uppercase tracking-widest mb-3">Tagore Hostel</p>
+          <p className="text-xs text-[#1B4F72] uppercase tracking-widest mb-3">{profile.hostel}</p>
           <h1 className="text-4xl lg:text-5xl font-semibold text-[#071B34] tracking-tight">Campus Notice Board</h1>
           <p className="text-[#374151] mt-4 max-w-xl">Notices, events, mess updates, and emergency alerts — curated for your hostel.</p>
         </header>
@@ -78,7 +98,7 @@ export default function Announcements() {
               <p className="text-[#374151] leading-relaxed">{featured.body}</p>
               <div className="flex items-center gap-6 mt-8 text-sm text-[#374151]">
                 <span className="flex items-center gap-1.5"><ThumbsUp className="w-4 h-4" /> {featured.likes}</span>
-                <span className="flex items-center gap-1.5"><MessageCircle className="w-4 h-4" /> {featured.comments}</span>
+                <span className="flex items-center gap-1.5"><MessageCircle className="w-4 h-4" /> {featured.commentsList.length}</span>
               </div>
             </div>
             <div className="bg-[#0A2342] min-h-[240px] flex items-center justify-center relative overflow-hidden">
@@ -111,8 +131,41 @@ export default function Announcements() {
                 <h3 className="text-xl font-semibold text-[#071B34] mb-3 group-hover:text-[#1B4F72] transition-colors">{notice.title}</h3>
                 <p className="text-[#374151] leading-relaxed max-w-2xl">{notice.body}</p>
                 <div className="flex items-center gap-6 mt-6 text-sm text-[#374151]">
-                  <button className="flex items-center gap-1.5 hover:text-[#4CC9F0] transition-colors"><ThumbsUp className="w-4 h-4" /> {notice.likes}</button>
-                  <button className="flex items-center gap-1.5 hover:text-[#4CC9F0] transition-colors"><MessageCircle className="w-4 h-4" /> {notice.comments}</button>
+                  <button onClick={() => toggleLike(notice.id)}
+                    className={`flex items-center gap-1.5 transition-colors ${notice.likedBy.includes(STUDENT_NAME) ? 'text-[#1B4F72] font-semibold' : 'hover:text-[#4CC9F0]'}`}>
+                    <ThumbsUp className="w-4 h-4" /> {notice.likes}
+                  </button>
+                  <span className="flex items-center gap-1.5"><MessageCircle className="w-4 h-4" /> {notice.commentsList.length}</span>
+                </div>
+                <div className="mt-5 space-y-3">
+                  {notice.commentsList.map((comment) => (
+                    <div key={comment.id} className="bg-white border border-[#071B34]/6 rounded-xl px-4 py-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-xs font-semibold text-[#071B34]">{comment.author}</p>
+                          <p className="text-sm text-[#374151] mt-1">{comment.body}</p>
+                          <p className="text-[10px] text-[#374151] mt-1">{comment.date}</p>
+                        </div>
+                        {comment.author === STUDENT_NAME && (
+                          <button onClick={() => deleteComment(notice.id, comment.id)} className="text-xs text-rose-600 font-semibold hover:text-rose-700">
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <div className="flex gap-2">
+                    <input
+                      value={commentDrafts[notice.id] || ''}
+                      onChange={(e) => setCommentDrafts((current) => ({ ...current, [notice.id]: e.target.value }))}
+                      placeholder="Add a comment"
+                      className="flex-1 border border-[#071B34]/10 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-[#4CC9F0]/30 outline-none"
+                    />
+                    <button onClick={() => submitComment(notice.id)} disabled={!(commentDrafts[notice.id] || '').trim()}
+                      className="px-4 py-2 bg-[#071B34] text-[#F8FAFC] rounded-lg text-sm font-semibold disabled:opacity-40">
+                      Post
+                    </button>
+                  </div>
                 </div>
               </article>
             ))}
@@ -125,7 +178,7 @@ export default function Announcements() {
               <div className="border-l-2 border-[#4CC9F0] pl-6">
                 <AlertTriangle className="w-5 h-5 text-[#4CC9F0] mb-3" />
                 <p className="font-medium text-[#071B34]">Fire drill on 16 Jun, 4 PM</p>
-                <p className="text-sm text-[#374151] mt-2">Mandatory for all Block B residents.</p>
+                <p className="text-sm text-[#374151] mt-2">Mandatory for all {profile.block} residents.</p>
               </div>
             </div>
 
@@ -166,8 +219,8 @@ export default function Announcements() {
             <div className="pt-8 border-t border-[#071B34]/5">
               <p className="text-xs text-[#1B4F72] uppercase tracking-widest mb-4">Engagement</p>
               <div className="flex gap-12">
-                <div><p className="text-3xl font-semibold text-[#071B34]">94%</p><p className="text-xs text-[#374151] mt-1">Read rate</p></div>
-                <div><p className="text-3xl font-semibold text-[#071B34]">12</p><p className="text-xs text-[#374151] mt-1">Active polls</p></div>
+                <div><p className="text-3xl font-semibold text-[#071B34]">{readRate}%</p><p className="text-xs text-[#374151] mt-1">Read rate</p></div>
+                <div><p className="text-3xl font-semibold text-[#071B34]">{activePoll.options.length}</p><p className="text-xs text-[#374151] mt-1">Poll categories</p></div>
               </div>
             </div>
 

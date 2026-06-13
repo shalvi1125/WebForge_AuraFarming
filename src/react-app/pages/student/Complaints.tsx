@@ -5,10 +5,11 @@ import {
   AlertCircle, ChevronRight, X, Plus,
   BrainCircuit, Clock, CheckCircle2, Wrench, Zap,
   Trash2, ShieldAlert, Wifi, Sofa, Droplets,
-  Upload, Filter,
+  Upload, Filter, Pencil,
 } from 'lucide-react';
 import PortalNav from '@/react-app/components/PortalNav';
 import { type ComplaintPriority, type ComplaintStatus, type HostelComplaint, useComplaints } from '@/react-app/lib/complaints';
+import { useStudentProfile } from '@/react-app/lib/studentState';
 
 // ── Types ─────────────────────────────────────────────────
 type Status = ComplaintStatus;
@@ -88,7 +89,7 @@ function StatusIcon({ s }: { s: Status }) {
 }
 
 // ── Complaint Detail Modal ────────────────────────────────
-function ComplaintModal({ complaint, onClose }: { complaint: Complaint; onClose: () => void }) {
+function ComplaintModal({ complaint, onClose, onEdit }: { complaint: Complaint; onClose: () => void; onEdit: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden">
@@ -105,6 +106,10 @@ function ComplaintModal({ complaint, onClose }: { complaint: Complaint; onClose:
         </div>
         <div className="p-5 space-y-4">
           <p className="text-[#374151] text-sm leading-relaxed">{complaint.description}</p>
+          <button onClick={onEdit}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1B4F72] bg-[#071B34]/5 border border-[#071B34]/10 px-3 py-1.5 rounded-lg">
+            <Pencil className="w-3.5 h-3.5" /> Edit complaint
+          </button>
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-gray-50 rounded-xl p-3 text-center">
               <p className="text-xs text-[#374151] mb-1">Status</p>
@@ -148,11 +153,13 @@ function ComplaintModal({ complaint, onClose }: { complaint: Complaint; onClose:
 
 // ── Main Page ─────────────────────────────────────────────
 export default function StudentComplaints() {
-  const { complaints, addComplaint } = useComplaints();
+  const { complaints, addComplaint, updateComplaint } = useComplaints();
+  const { profile } = useStudentProfile();
   const [filterStatus, setFilterStatus] = useState<string>('All');
   const [filterCategory, setFilterCategory] = useState<string>('All');
   const [selected, setSelected] = useState<Complaint | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState<Complaint | null>(null);
 
   // Form state
   const [formTitle, setFormTitle] = useState('');
@@ -160,7 +167,7 @@ export default function StudentComplaints() {
   const [formCategory, setFormCategory] = useState('');
   const [aiResult, setAiResult] = useState<ReturnType<typeof getAIResult> | null>(null);
   const [submitted, setSubmitted] = useState(false);
-  const studentComplaints = complaints.filter((c: Complaint) => c.student === 'Aryan Sharma');
+  const studentComplaints = complaints.filter((c: Complaint) => c.student === profile.name || c.room === profile.room || c.roomId === profile.room);
 
   const stats = [
     { label: 'Total',       value: studentComplaints.length,                                                          color: 'text-[#1B4F72]', bg: 'bg-[#F5F7FA]', border: 'border-[#071B34]/10' },
@@ -174,6 +181,29 @@ export default function StudentComplaints() {
     const matchCategory = filterCategory === 'All' || c.category === filterCategory;
     return matchStatus && matchCategory;
   });
+  const trendLabels = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7'];
+  const complaintTrend = trendLabels.map((_, index) => studentComplaints.filter((__, complaintIndex) => complaintIndex % trendLabels.length === index).length);
+  const maxComplaintTrend = Math.max(1, ...complaintTrend);
+  const departmentColors: Record<string, string> = {
+    Plumbing: 'bg-blue-500',
+    Electrical: 'bg-yellow-500',
+    Hygiene: 'bg-green-500',
+    Furniture: 'bg-orange-500',
+    Security: 'bg-red-500',
+    Internet: 'bg-[#1B4F72]',
+  };
+  const departmentCounts = categories
+    .map((category) => ({
+      dept: category,
+      count: studentComplaints.filter((complaint) => complaint.category === category).length,
+      color: departmentColors[category] || 'bg-gray-400',
+    }))
+    .filter((item) => item.count > 0);
+  const departmentBreakdown = (departmentCounts.length ? departmentCounts : [{ dept: 'No complaints', count: 0, color: 'bg-gray-400' }])
+    .map((item) => ({
+      ...item,
+      pct: studentComplaints.length ? Math.round((item.count / studentComplaints.length) * 100) : 0,
+    }));
 
   function handleTitleChange(val: string): void {
     setFormTitle(val);
@@ -182,9 +212,47 @@ export default function StudentComplaints() {
     setSubmitted(false);
   }
 
+  function resetForm() {
+    setFormTitle('');
+    setFormDesc('');
+    setFormCategory('');
+    setAiResult(null);
+    setSubmitted(false);
+    setEditing(null);
+  }
+
+  function startNewComplaint() {
+    resetForm();
+    setShowForm(true);
+  }
+
+  function startEditComplaint(complaint: Complaint) {
+    setEditing(complaint);
+    setFormTitle(complaint.title);
+    setFormDesc(complaint.description);
+    setFormCategory(complaint.category);
+    setAiResult(getAIResult(complaint.title));
+    setSelected(null);
+    setShowForm(true);
+  }
+
   function handleSubmit() {
     if (!formTitle.trim() || !formDesc.trim() || !formCategory) return;
     const ai = getAIResult(formTitle);
+    if (editing) {
+      updateComplaint(editing.id, {
+        title: formTitle,
+        description: formDesc,
+        category: formCategory,
+        priority: ai.priority,
+      });
+      setSubmitted(true);
+      setTimeout(() => {
+        setShowForm(false);
+        resetForm();
+      }, 1000);
+      return;
+    }
     addComplaint({
       title: formTitle,
       description: formDesc,
@@ -193,14 +261,14 @@ export default function StudentComplaints() {
       priority: ai.priority,
       date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
       assignedTo: 'Unassigned',
-      student: 'Aryan Sharma',
-      room: '204',
-      roomId: '204',
+      student: profile.name,
+      room: profile.room,
+      roomId: profile.room,
     });
     setSubmitted(true);
     setTimeout(() => {
       setShowForm(false);
-      setFormTitle(''); setFormDesc(''); setFormCategory(''); setAiResult(null); setSubmitted(false);
+      resetForm();
     }, 1800);
   }
 
@@ -209,9 +277,9 @@ export default function StudentComplaints() {
 
       <PortalNav
         portal="Student Portal"
-        userName="Aryan Sharma"
-        userMeta="CS21B047"
-        avatar="AS"
+        userName={profile.name}
+        userMeta={profile.rollNo}
+        avatar={profile.avatar}
         homeHref="/student/dashboard"
         links={[
           { label: 'Complaints', href: '/student/complaints' },
@@ -229,7 +297,7 @@ export default function StudentComplaints() {
             <p className="text-sm text-[#374151] mt-0.5">Track and manage all your hostel complaints</p>
           </div>
           <button
-            onClick={() => setShowForm(true)}
+            onClick={startNewComplaint}
             className="flex items-center gap-2 bg-[#071B34] text-white px-5 py-2.5 rounded-xl hover:bg-[#0A2342] transition-all font-semibold shadow-sm text-sm"
           >
             <Plus className="w-4 h-4" /> File New Complaint
@@ -253,10 +321,10 @@ export default function StudentComplaints() {
               <BrainCircuit className="w-5 h-5 text-[#1B4F72]" /> Complaint Trends
             </h2>
             <div className="flex items-end gap-2 h-28">
-              {[3, 5, 2, 4, 6, 3, 2].map((v, i) => (
+              {complaintTrend.map((v, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <div className="w-full bg-[#1B4F72] rounded-t-md" style={{ height: `${(v / 6) * 100}%`, minHeight: '8px' }} />
-                  <span className="text-[10px] text-[#374151]">{['W1','W2','W3','W4','W5','W6','W7'][i]}</span>
+                  <div className="w-full bg-[#1B4F72] rounded-t-md" style={{ height: `${(v / maxComplaintTrend) * 100}%`, minHeight: '8px' }} />
+                  <span className="text-[10px] text-[#374151]">{trendLabels[i]}</span>
                 </div>
               ))}
             </div>
@@ -264,13 +332,7 @@ export default function StudentComplaints() {
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
             <h2 className="font-semibold text-[#071B34] mb-4">Department Breakdown</h2>
             <div className="space-y-3">
-              {[
-                { dept: 'Plumbing', pct: 28, color: 'bg-blue-500' },
-                { dept: 'Internet', pct: 22, color: 'bg-[#F5F7FA]0' },
-                { dept: 'Hygiene', pct: 18, color: 'bg-green-500' },
-                { dept: 'Electrical', pct: 15, color: 'bg-yellow-500' },
-                { dept: 'Other', pct: 17, color: 'bg-gray-400' },
-              ].map((d) => (
+              {departmentBreakdown.map((d) => (
                 <div key={d.dept}>
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-[#374151]">{d.dept}</span>
@@ -379,7 +441,7 @@ export default function StudentComplaints() {
       </div>
 
       {/* ── Detail Modal ── */}
-      {selected && <ComplaintModal complaint={selected} onClose={() => setSelected(null)} />}
+      {selected && <ComplaintModal complaint={selected} onClose={() => setSelected(null)} onEdit={() => startEditComplaint(selected)} />}
 
       {/* ── File Complaint Modal ── */}
       {showForm && (
@@ -388,13 +450,13 @@ export default function StudentComplaints() {
 
             {/* Modal header */}
             <div className="bg-[#071B34] px-6 py-5 text-white relative sticky top-0 z-10">
-              <button onClick={() => { setShowForm(false); setFormTitle(''); setFormDesc(''); setFormCategory(''); setAiResult(null); setSubmitted(false); }}
+              <button onClick={() => { setShowForm(false); resetForm(); }}
                 className="absolute top-4 right-4 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
                 <X className="w-4 h-4" />
               </button>
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-5 h-5" />
-                <h2 className="text-lg font-bold">File New Complaint</h2>
+                <h2 className="text-lg font-bold">{editing ? 'Edit Complaint' : 'File New Complaint'}</h2>
               </div>
               <p className="text-[#374151] text-xs mt-1">AI will automatically categorize and prioritize your complaint</p>
             </div>
@@ -484,7 +546,7 @@ export default function StudentComplaints() {
               {/* Submit */}
               {submitted ? (
                 <div className="flex items-center justify-center gap-2 bg-green-50 border border-green-200 text-green-700 py-3 rounded-xl text-sm font-semibold">
-                  <CheckCircle2 className="w-5 h-5" /> Complaint filed successfully!
+                  <CheckCircle2 className="w-5 h-5" /> Complaint {editing ? 'updated' : 'filed'} successfully!
                 </div>
               ) : (
                 <button
@@ -492,7 +554,7 @@ export default function StudentComplaints() {
                   disabled={!formTitle.trim() || !formDesc.trim() || !formCategory}
                   className="w-full bg-[#071B34] text-white py-3 rounded-xl font-semibold text-sm hover:bg-[#0A2342] transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
                 >
-                  Submit Complaint
+                  {editing ? 'Update Complaint' : 'Submit Complaint'}
                 </button>
               )}
             </div>

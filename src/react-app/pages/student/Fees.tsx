@@ -5,6 +5,7 @@ import {
   ArrowLeft, Download, BrainCircuit, TrendingUp, Calendar,
 } from 'lucide-react';
 import PortalNav from '@/react-app/components/PortalNav';
+import { getFeeSummary, useFees, useStudentProfile } from '@/react-app/lib/studentState';
 
 interface Payment {
   id: string;
@@ -28,22 +29,57 @@ const statusStyles = {
   overdue: { label: 'Overdue', class: 'bg-rose-100 text-rose-700' },
 };
 
-const monthlyTrend = [8000, 3500, 0, 8000, 3500, 4500];
-
 export default function StudentFees() {
+  const { payments, payOutstanding } = useFees();
+  const { profile } = useStudentProfile();
   const [selectedPeriod, setSelectedPeriod] = useState('all');
+  const [lastReceipt, setLastReceipt] = useState<string | null>(null);
 
-  const totalPaid = payments.filter((p) => p.status === 'paid').reduce((s, p) => s + p.amount, 0);
-  const outstanding = payments.filter((p) => p.status !== 'paid').reduce((s, p) => s + p.amount, 0);
+  const { totalPaid, outstanding } = getFeeSummary(payments);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+  const monthlyTrend = months.map((month) => payments
+    .filter((payment) => payment.date.includes(month) || payment.paidOn?.includes(month))
+    .reduce((sum, payment) => sum + payment.amount, 0));
+  const visiblePayments = selectedPeriod === 'all'
+    ? payments
+    : payments.filter((payment) => payment.date.includes(selectedPeriod) || payment.paidOn?.includes(selectedPeriod));
   const maxTrend = Math.max(...monthlyTrend, 1);
+
+  function handlePayOutstanding() {
+    if (!outstanding) return;
+    setLastReceipt(payOutstanding());
+  }
+
+  function downloadReceipt() {
+    const paidPayments = payments.filter((payment) => payment.status === 'paid');
+    const receiptNo = lastReceipt || paidPayments[0]?.receiptNo || 'RCT-STUDENT';
+    const receipt = [
+      'HostelIQ Fee Receipt',
+      `Receipt: ${receiptNo}`,
+      `Student: ${profile.name} (${profile.rollNo})`,
+      `Generated: ${new Date().toLocaleString()}`,
+      '',
+      ...paidPayments.map((payment) => `${payment.id} | ${payment.description} | Rs. ${payment.amount.toLocaleString()} | ${payment.paidOn || payment.date}`),
+      '',
+      `Total paid: Rs. ${totalPaid.toLocaleString()}`,
+      `Outstanding: Rs. ${outstanding.toLocaleString()}`,
+    ].join('\n');
+    const blob = new Blob([receipt], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${receiptNo}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
       <PortalNav
         portal="Fee Management"
-        userName="Aryan Sharma"
-        userMeta="CS21B047"
-        avatar="AS"
+        userName={profile.name}
+        userMeta={profile.rollNo}
+        avatar={profile.avatar}
         homeHref="/student/dashboard"
         links={[
           { label: 'Complaints', href: '/student/complaints' },
@@ -65,7 +101,7 @@ export default function StudentFees() {
           <div className="bg-[#071B34] rounded-2xl p-6 text-white shadow-lg">
             <p className="text-[#374151] text-sm">Total Paid</p>
             <p className="text-3xl font-extrabold mt-1">₹{totalPaid.toLocaleString()}</p>
-            <p className="text-[#374151] text-xs mt-2 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> 3 payments this semester</p>
+            <p className="text-[#374151] text-xs mt-2 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> {payments.filter((p) => p.status === 'paid').length} payments this semester</p>
           </div>
           <div className="bg-white rounded-2xl p-6 border border-rose-100 shadow-sm">
             <p className="text-[#374151] text-sm">Outstanding</p>
@@ -91,7 +127,7 @@ export default function StudentFees() {
               </select>
             </div>
             <div className="divide-y divide-gray-50">
-              {payments.map((p) => (
+              {visiblePayments.map((p) => (
                 <div key={p.id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${p.status === 'paid' ? 'bg-green-50' : 'bg-amber-50'}`}>
@@ -118,17 +154,18 @@ export default function StudentFees() {
                 {monthlyTrend.map((v, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center gap-1">
                     <div className="w-full bg-[#1B4F72] rounded-t-md transition-all" style={{ height: `${(v / maxTrend) * 100}%`, minHeight: v ? '4px' : '2px' }} />
-                    <span className="text-[10px] text-[#374151]">{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'][i]}</span>
+                    <span className="text-[10px] text-[#374151]">{months[i]}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <button className="w-full bg-[#071B34] text-white py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-md hover:shadow-[#4CC9F0]/20 transition-shadow">
-              <CreditCard className="w-5 h-5" /> Pay ₹{outstanding.toLocaleString()} Now
+            <button onClick={handlePayOutstanding} disabled={!outstanding}
+              className="w-full bg-[#071B34] text-white py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-md hover:shadow-[#4CC9F0]/20 transition-shadow disabled:opacity-50 disabled:cursor-not-allowed">
+              <CreditCard className="w-5 h-5" /> {outstanding ? `Pay Rs. ${outstanding.toLocaleString()} Now` : 'All dues paid'}
             </button>
 
-            <button className="w-full border border-gray-200 text-[#374151] py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
+            <button onClick={downloadReceipt} className="w-full border border-gray-200 text-[#374151] py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
               <Download className="w-4 h-4" /> Download Receipt
             </button>
 
@@ -136,7 +173,7 @@ export default function StudentFees() {
               <BrainCircuit className="w-5 h-5 text-[#1B4F72] shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-[#071B34]">AI Payment Reminder</p>
-                <p className="text-xs text-[#1B4F72] mt-0.5">Pay before 25 Jun to avoid additional late fees. Set up auto-reminder?</p>
+                <p className="text-xs text-[#1B4F72] mt-0.5">{outstanding ? 'Pay before 25 Jun to avoid additional late fees. Set up auto-reminder?' : 'Your hostel account is clear. Receipts are available for download.'}</p>
               </div>
             </div>
           </div>

@@ -5,6 +5,15 @@ import {
 } from 'lucide-react';
 import PortalNav from '@/react-app/components/PortalNav';
 import HostelBlueprint from '@/react-app/components/HostelBlueprint';
+import { useComplaints } from '@/react-app/lib/complaints';
+import {
+  formatShortDate,
+  getFeeSummary,
+  useAnnouncements,
+  useFees,
+  useLeaveRequests,
+  useStudentProfile,
+} from '@/react-app/lib/studentState';
 
 const getGreeting = () => {
   const h = new Date().getHours();
@@ -46,10 +55,65 @@ const aiInsights = [
 
 const statusStyles: Record<string, string> = {
   Open: 'text-[#1B4F72] font-semibold', 'In Progress': 'text-[#0A2342] font-semibold', Resolved: 'text-[#374151]',
-  Pending: 'text-[#1B4F72] font-semibold', Approved: 'text-[#1B4F72] font-semibold', Rejected: 'text-[#374151]',
+  Pending: 'text-[#1B4F72] font-semibold', Approved: 'text-[#1B4F72] font-semibold', Rejected: 'text-[#374151]', Cancelled: 'text-[#374151]',
 };
 
 export default function StudentDashboard() {
+  const { profile } = useStudentProfile();
+  const { complaints: allComplaints } = useComplaints();
+  const { leaveRequests: allLeaveRequests } = useLeaveRequests();
+  const { payments } = useFees();
+  const { announcements } = useAnnouncements();
+  const { outstanding } = getFeeSummary(payments);
+  const student = { name: profile.name, rollNo: profile.rollNo, room: profile.room, block: profile.block, hostel: profile.hostel, avatar: profile.avatar };
+  const roomCapacity = Math.max(1, profile.roomCapacity || 4);
+  const occupiedBeds = Math.min(roomCapacity, Math.max(0, profile.occupiedBeds || 3));
+  const occupancyPercent = Math.round((occupiedBeds / roomCapacity) * 100);
+  const complaints = allComplaints
+    .filter((complaint) => complaint.student === profile.name || complaint.room === profile.room || complaint.roomId === profile.room)
+    .map((complaint) => ({
+      id: complaint.id,
+      title: complaint.title,
+      status: complaint.status,
+      priority: complaint.priority,
+      date: complaint.date,
+      icon: complaint.category === 'Internet' ? Wifi : complaint.category === 'Hygiene' ? Utensils : Wrench,
+    }));
+  const activeComplaintCount = complaints.filter((complaint) => complaint.status !== 'Resolved').length;
+  const leaveRequests = allLeaveRequests.slice(0, 3).map((leave) => ({
+    id: leave.id,
+    reason: leave.reason,
+    from: formatShortDate(leave.fromDate),
+    to: formatShortDate(leave.toDate),
+    status: leave.status,
+  }));
+  const pendingLeaveCount = allLeaveRequests.filter((leave) => leave.status === 'Pending').length;
+  const latestPayment = payments.find((payment) => payment.status === 'paid');
+  const latestAnnouncement = announcements[0];
+  const recentActivity = [
+    ...complaints.slice(0, 2).map((complaint) => ({ text: `Complaint ${complaint.id} is ${complaint.status}`, time: complaint.date, icon: AlertCircle })),
+    ...allLeaveRequests.slice(0, 1).map((leave) => ({ text: `Leave ${leave.id} is ${leave.status}`, time: formatShortDate(leave.appliedOn), icon: Calendar })),
+    ...(latestPayment ? [{ text: `Fee payment ${latestPayment.id} recorded`, time: latestPayment.paidOn || latestPayment.date, icon: IndianRupee }] : []),
+    ...(latestAnnouncement ? [{ text: `Notice: ${latestAnnouncement.title}`, time: latestAnnouncement.date, icon: Megaphone }] : []),
+  ].slice(0, 4);
+  const aiInsights = [
+    activeComplaintCount
+      ? { text: `${activeComplaintCount} active complaint${activeComplaintCount > 1 ? 's' : ''} in your room profile`, type: 'pattern' }
+      : { text: 'No active complaints in your student record', type: 'pattern' },
+    outstanding
+      ? { text: `Outstanding fees: Rs. ${outstanding.toLocaleString()}`, type: 'alert' }
+      : { text: 'Your fee balance is currently clear', type: 'tip' },
+    pendingLeaveCount
+      ? { text: `${pendingLeaveCount} leave request${pendingLeaveCount > 1 ? 's' : ''} awaiting review`, type: 'tip' }
+      : { text: 'No leave request is pending review', type: 'tip' },
+  ];
+  const summaryStats = [
+    [String(activeComplaintCount), 'Active complaints', '#F8FAFC'],
+    [String(pendingLeaveCount), 'Pending leave', '#4CC9F0'],
+    [`Rs. ${outstanding.toLocaleString()}`, 'Outstanding fees', '#F8FAFC'],
+    [String(announcements.length), 'Announcements', '#F8FAFC'],
+  ];
+
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter relative">
       <HostelBlueprint className="blueprint-decor w-96 h-72 -left-10 top-48 hidden xl:block" />
@@ -71,12 +135,12 @@ export default function StudentDashboard() {
             </div>
             <div className="bg-white/8 border border-white/12 rounded-xl px-5 py-4 backdrop-blur-sm">
               <p className="text-xs text-[#D1DEE6] uppercase tracking-widest font-semibold mb-1">Today's Status</p>
-              <p className="text-sm text-[#F8FAFC] font-medium">2 active issues · 1 leave pending</p>
+              <p className="text-sm text-[#F8FAFC] font-medium">{activeComplaintCount} active issues · {pendingLeaveCount} leave pending</p>
               <p className="text-xs text-[#4CC9F0] mt-1">Curfew 10 PM · Mess closes 9 PM</p>
             </div>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10 mt-8 pt-8 border-t border-white/10">
-            {[['2', 'Active complaints', '#F8FAFC'], ['1', 'Pending leave', '#4CC9F0'], ['₹4,500', 'Outstanding fees', '#F8FAFC'], ['3', 'Visitors this month', '#F8FAFC']].map(([v, l, c]) => (
+            {summaryStats.map(([v, l, c]) => (
               <div key={l}><p className="text-2xl font-bold" style={{ color: c }}>{v}</p><p className="text-xs text-[#D1DEE6] mt-1 uppercase tracking-wider font-medium">{l}</p></div>
             ))}
           </div>
@@ -108,13 +172,13 @@ export default function StudentDashboard() {
           <section className="lg:col-span-2 surface-panel rounded-2xl p-6 lg:p-8">
             <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold mb-3">Your Space</p>
             <h2 className="text-2xl font-bold text-[#071B34] mb-2">Room {student.room}</h2>
-            <p className="text-sm text-[#374151] font-medium mb-6">{student.block} · Tagore Hostel · 3 of 4 beds occupied</p>
+            <p className="text-sm text-[#374151] font-medium mb-6">{student.block} · {student.hostel} · {occupiedBeds} of {roomCapacity} beds occupied</p>
             <div className="mb-6">
-              <div className="flex justify-between text-sm mb-2"><span className="text-[#374151] font-medium">Occupancy</span><span className="text-[#071B34] font-bold">75%</span></div>
-              <div className="h-2 bg-[#071B34]/8 rounded-full"><div className="h-full w-3/4 bg-[#4CC9F0] rounded-full" /></div>
+              <div className="flex justify-between text-sm mb-2"><span className="text-[#374151] font-medium">Occupancy</span><span className="text-[#071B34] font-bold">{occupancyPercent}%</span></div>
+              <div className="h-2 bg-[#071B34]/8 rounded-full"><div className="h-full bg-[#4CC9F0] rounded-full" style={{ width: `${occupancyPercent}%` }} /></div>
             </div>
             <div className="grid grid-cols-4 gap-3">
-              {[['Room 204', 'Assigned'], ['Block B', 'Location'], ['3 / 4', 'Beds'], ['Active', 'Status']].map(([v, l]) => (
+              {[[`Room ${student.room}`, 'Assigned'], [student.block, 'Location'], [`${occupiedBeds} / ${roomCapacity}`, 'Beds'], [activeComplaintCount ? 'Attention' : 'Active', 'Status']].map(([v, l]) => (
                 <div key={l} className="bg-[#F5F7FA] rounded-lg p-4 border border-[#071B34]/6">
                   <p className="text-[10px] text-[#374151] uppercase tracking-wider font-semibold mb-1">{l}</p>
                   <p className="text-sm font-bold text-[#071B34]">{v}</p>

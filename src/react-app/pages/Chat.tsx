@@ -7,6 +7,14 @@ import {
   AlertCircle, Calendar, ShieldCheck, BarChart3,
 } from 'lucide-react';
 import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
+import { useComplaints } from '@/react-app/lib/complaints';
+import {
+  getFeeSummary,
+  useAnnouncements,
+  useFees,
+  useLeaveRequests,
+  useStudentProfile,
+} from '@/react-app/lib/studentState';
 
 interface Message {
   id: string;
@@ -51,6 +59,18 @@ export default function Chat() {
   const [expanded, setExpanded] = useState(false);
   const [statusText, setStatusText] = useState<string | null>(null);
   const [statusTrail, setStatusTrail] = useState<string[]>([]);
+  const { profile } = useStudentProfile();
+  const { complaints } = useComplaints();
+  const { leaveRequests } = useLeaveRequests();
+  const { payments } = useFees();
+  const { announcements } = useAnnouncements();
+  const { totalPaid, outstanding } = getFeeSummary(payments);
+  const studentComplaints = complaints.filter((complaint) => complaint.student === profile.name || complaint.room === profile.room || complaint.roomId === profile.room);
+  const activeComplaints = studentComplaints.filter((complaint) => complaint.status !== 'Resolved');
+  const pendingLeave = leaveRequests.filter((leave) => leave.status === 'Pending');
+  const approvedLeaveDays = leaveRequests.filter((leave) => leave.status === 'Approved').reduce((sum, leave) => sum + leave.days, 0);
+  const lastPayment = payments.find((payment) => payment.status === 'paid');
+  const unsupportedResponse = "I am HostelIQ's hostel management assistant. I can help with complaints, leave requests, fees, room allocation, visitors, announcements, hostel rules, facilities, mess timings and emergency contacts.";
   const mockResponses: Record<string, string> = {
     leave: "To apply for leave in HostelIQ:\n\n1. Go to **Leave Management** from your dashboard\n2. Click **Apply for Leave** and fill in dates + reason\n3. Your warden (Dr. Priya Mehta) will review within 24 hours\n4. Once approved, security is notified automatically\n\n📋 You have **18 leave days** remaining this semester. Your pending request LV-014 is awaiting warden approval.",
     complaint: "For your water leakage complaint (CMP-041):\n\n✅ **Status:** In Progress — assigned to Rajan Kumar (Plumbing)\n🔴 **Priority:** High (AI-detected based on duration)\n⏱️ **Expected resolution:** 16 Jun 2025\n\nI've flagged this as high priority since it's been open 6 days. Would you like me to escalate to the warden?",
@@ -68,6 +88,103 @@ export default function Chat() {
     if (lower.includes('visitor') || lower.includes('pass') || lower.includes('guest')) return mockResponses.visitor;
     if (lower.includes('rule') || lower.includes('curfew') || lower.includes('policy')) return mockResponses.rule;
     return mockResponses.default;
+  };
+
+  const getSmartResponse = (input: string): string => {
+    const lower = input.toLowerCase();
+    const has = (words: string[]) => words.some((word) => lower.includes(word));
+
+    if (has(['complaint', 'issue', 'leak', 'water', 'wifi', 'wi-fi', 'electrical', 'plumbing', 'status'])) {
+      if (!studentComplaints.length) return 'I checked your complaint records. You have no complaints filed yet. Create one from the Complaints page and it will sync with the Operations Map.';
+      const latest = studentComplaints[0];
+      return [
+        'Here is your latest complaint status:',
+        '',
+        `Complaint: ${latest.title} (${latest.id})`,
+        `Status: ${latest.status}`,
+        `Priority: ${latest.priority}`,
+        `Assigned team: ${latest.assignedTo}`,
+        `Room: ${latest.room}`,
+        '',
+        activeComplaints.length
+          ? `You currently have ${activeComplaints.length} active complaint${activeComplaints.length > 1 ? 's' : ''}. Open or In Progress complaints also affect your room color on the Operations Map.`
+          : 'All of your complaints are resolved, so your room should appear clear/resolved on the Operations Map.',
+      ].join('\n');
+    }
+
+    if (has(['leave', 'days used', 'approval', 'apply'])) {
+      const latest = leaveRequests[0];
+      return [
+        'I checked your leave history.',
+        '',
+        `Leave days used: ${approvedLeaveDays}`,
+        `Pending requests: ${pendingLeave.length}`,
+        latest ? `Latest request: ${latest.id} - ${latest.reason} (${latest.status})` : 'Latest request: none yet',
+        '',
+        pendingLeave.length
+          ? 'Pending leave can be cancelled from the Leave Management page until the warden reviews it.'
+          : 'You do not currently have a leave request awaiting review.',
+      ].join('\n');
+    }
+
+    if (has(['fee', 'fees', 'payment', 'pay', 'due', 'balance', 'outstanding'])) {
+      return [
+        'I checked your fee records.',
+        '',
+        `Outstanding balance: Rs. ${outstanding.toLocaleString()}`,
+        `Total paid: Rs. ${totalPaid.toLocaleString()}`,
+        lastPayment ? `Last payment: ${lastPayment.description} - Rs. ${lastPayment.amount.toLocaleString()} on ${lastPayment.paidOn || lastPayment.date}` : 'Last payment: none recorded',
+        `Payment status: ${outstanding ? 'Action needed before the due date' : 'All dues paid'}`,
+      ].join('\n');
+    }
+
+    if (has(['room', 'allocation', 'assigned', 'hostel', 'block'])) {
+      return [
+        `You are assigned to Room ${profile.room}, ${profile.block}, ${profile.hostel}.`,
+        `Student ID: ${profile.rollNo}`,
+        'Use the Smart Hostel Operations Map for live room status, complaints, maintenance markers and nearby alerts.',
+      ].join('\n');
+    }
+
+    if (has(['announcement', 'notice', 'notices', 'recent'])) {
+      return [
+        'Recent announcements from your notice board:',
+        '',
+        ...announcements.slice(0, 3).map((notice) => `- ${notice.title} (${notice.date})`),
+        '',
+        'You can like notices and add or delete your own comments from the Announcements page.',
+      ].join('\n');
+    }
+
+    if (has(['visitor', 'guest', 'pass'])) {
+      return 'Visitor guidance: register visitors at least 24 hours in advance, keep visits within 10 AM to 6 PM, and ensure visitors carry a government ID. Visitor entries are checked at the gate and should match your room details.';
+    }
+
+    if (has(['rule', 'rules', 'curfew', 'policy', 'quiet'])) {
+      return 'Hostel rules summary: curfew is 10 PM, quiet hours are 11 PM to 6 AM, cooking in rooms is not allowed, visitors must be pre-registered, and maintenance or room issues should be filed through the Complaints page.';
+    }
+
+    if (has(['mess', 'food', 'timing', 'dinner', 'lunch', 'breakfast'])) {
+      return 'Mess timings: breakfast 7:30 AM to 9:30 AM, lunch 12:30 PM to 2:30 PM, snacks 5 PM to 6 PM, and dinner 7 PM to 9 PM. Mess notices and menu changes appear on the Announcements page.';
+    }
+
+    if (has(['facility', 'facilities', 'laundry', 'gym', 'library', 'common'])) {
+      return 'Hostel facilities include Wi-Fi, common room, study areas, laundry access, drinking water stations, visitor desk, security desk, and maintenance support through the complaint workflow.';
+    }
+
+    if (has(['emergency', 'contact', 'medical', 'security', 'parent', 'profile', 'phone', 'email'])) {
+      return [
+        'Here are the student details available in HostelIQ:',
+        '',
+        `Name: ${profile.name}`,
+        `Email: ${profile.email}`,
+        `Phone: ${profile.phone}`,
+        `Emergency contact: ${profile.emergencyContact.name} (${profile.emergencyContact.relation}) - ${profile.emergencyContact.phone}`,
+        `Parent: ${profile.parent.name} - ${profile.parent.phone}`,
+      ].join('\n');
+    }
+
+    return unsupportedResponse;
   };
 
   useEffect(() => {
@@ -113,7 +230,7 @@ export default function Chat() {
 
       await new Promise((r) => setTimeout(r, 1200));
 
-      const responseText = getMockResponse(userMessage.content);
+      const responseText = getSmartResponse(userMessage.content);
       setMessages((prev: Message[]) =>
         prev.map((msg: Message) => msg.id === assistantId ? { ...msg, content: responseText } : msg)
       );

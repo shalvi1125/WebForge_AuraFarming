@@ -5,8 +5,9 @@ import {
   Plus, User,
 } from 'lucide-react';
 import PortalNav from '@/react-app/components/PortalNav';
+import { daysBetweenInclusive, formatShortDate, useLeaveRequests } from '@/react-app/lib/studentState';
 
-type LeaveStatus = 'Pending' | 'Approved' | 'Rejected';
+type LeaveStatus = 'Pending' | 'Approved' | 'Rejected' | 'Cancelled';
 
 interface LeaveRequest {
   id: string;
@@ -27,7 +28,7 @@ const leaveHistory: LeaveRequest[] = [
 ];
 
 const statusColor: Record<LeaveStatus, string> = {
-  Pending: 'text-[#4CC9F0]', Approved: 'text-[#67E8F9]', Rejected: 'text-[#374151]',
+  Pending: 'text-[#4CC9F0]', Approved: 'text-[#67E8F9]', Rejected: 'text-[#374151]', Cancelled: 'text-[#374151]',
 };
 
 const calendarDays = Array.from({ length: 30 }, (_, i) => {
@@ -38,11 +39,32 @@ const calendarDays = Array.from({ length: 30 }, (_, i) => {
 });
 
 export default function LeaveManagement() {
+  const { leaveRequests, addLeaveRequest, cancelLeaveRequest } = useLeaveRequests();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ reason: '', from: '', to: '' });
 
-  const pending = leaveHistory.filter((l) => l.status === 'Pending').length;
-  const approved = leaveHistory.filter((l) => l.status === 'Approved').length;
+  const pending = leaveRequests.filter((l) => l.status === 'Pending').length;
+  const approved = leaveRequests.filter((l) => l.status === 'Approved').length;
+  const daysUsed = leaveRequests.filter((l) => l.status === 'Approved').reduce((sum, l) => sum + l.days, 0);
+  const remainingDays = Math.max(0, 25 - daysUsed);
+  const selectedDays = form.from && form.to ? daysBetweenInclusive(form.from, form.to) : 0;
+  const liveCalendarDays = Array.from({ length: 30 }, (_, i) => {
+    const day = i + 1;
+    const current = new Date(`2025-06-${String(day).padStart(2, '0')}T00:00:00`);
+    const leave = leaveRequests.find((item) => {
+      const from = new Date(`${item.fromDate}T00:00:00`);
+      const to = new Date(`${item.toDate}T00:00:00`);
+      return current >= from && current <= to && item.status !== 'Rejected' && item.status !== 'Cancelled';
+    });
+    return { day, onLeave: Boolean(leave), pending: leave?.status === 'Pending' };
+  });
+
+  function handleSubmit() {
+    if (!form.reason.trim() || !form.from || !form.to) return;
+    addLeaveRequest({ reason: form.reason.trim(), fromDate: form.from, toDate: form.to });
+    setForm({ reason: '', from: '', to: '' });
+    setShowForm(false);
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
@@ -57,8 +79,8 @@ export default function LeaveManagement() {
             <p className="text-[#374151] mt-4">Apply, track, and manage hostel leave requests.</p>
           </div>
           <div className="flex flex-wrap gap-10">
-            <div><p className="text-2xl font-semibold text-[#071B34]">7</p><p className="text-xs text-[#374151] uppercase tracking-wider mt-1">Days used</p></div>
-            <div><p className="text-2xl font-semibold text-[#4CC9F0]">18</p><p className="text-xs text-[#374151] uppercase tracking-wider mt-1">Remaining</p></div>
+            <div><p className="text-2xl font-semibold text-[#071B34]">{daysUsed}</p><p className="text-xs text-[#374151] uppercase tracking-wider mt-1">Days used</p></div>
+            <div><p className="text-2xl font-semibold text-[#4CC9F0]">{remainingDays}</p><p className="text-xs text-[#374151] uppercase tracking-wider mt-1">Remaining</p></div>
             <div><p className="text-2xl font-semibold text-[#071B34]">{pending}</p><p className="text-xs text-[#374151] uppercase tracking-wider mt-1">Pending</p></div>
             <div><p className="text-2xl font-semibold text-[#071B34]">{approved}</p><p className="text-xs text-[#374151] uppercase tracking-wider mt-1">Approved</p></div>
           </div>
@@ -89,12 +111,15 @@ export default function LeaveManagement() {
               </div>
             </div>
             <div className="flex items-center gap-4 mt-8">
-              <button className="bg-[#071B34] text-[#F8FAFC] px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#0A2342]">Submit Application</button>
+              <button onClick={handleSubmit} disabled={!form.reason.trim() || !form.from || !form.to}
+                className="bg-[#071B34] text-[#F8FAFC] px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#0A2342] disabled:opacity-40 disabled:cursor-not-allowed">
+                Submit Application
+              </button>
               <button onClick={() => setShowForm(false)} className="text-[#374151] text-sm hover:text-[#071B34]">Cancel</button>
             </div>
             <div className="mt-6 flex items-start gap-3 p-4 bg-[#071B34]/5 rounded-lg">
               <BrainCircuit className="w-4 h-4 text-[#1B4F72] shrink-0 mt-0.5" />
-              <p className="text-xs text-[#374151]">AI Tip: Your selected dates overlap with exam week. Consider applying 3 days earlier for faster approval.</p>
+              <p className="text-xs text-[#374151]">AI Tip: {selectedDays ? `${selectedDays} day${selectedDays > 1 ? 's' : ''} selected. ` : ''}Apply at least 24 hours before travel for faster approval.</p>
             </div>
           </section>
         )}
@@ -104,9 +129,9 @@ export default function LeaveManagement() {
           <div className="lg:col-span-2">
             <p className="text-xs text-[#1B4F72] uppercase tracking-widest mb-8">Request Timeline</p>
             <div className="space-y-0">
-              {leaveHistory.map((l, i) => (
+              {leaveRequests.map((l, i) => (
                 <div key={l.id} className="flex gap-8 pb-12 relative">
-                  {i < leaveHistory.length - 1 && <div className="absolute left-[11px] top-8 bottom-0 w-px bg-[#071B34]/10" />}
+                  {i < leaveRequests.length - 1 && <div className="absolute left-[11px] top-8 bottom-0 w-px bg-[#071B34]/10" />}
                   <div className={`w-6 h-6 rounded-full shrink-0 mt-1 flex items-center justify-center ${l.status === 'Approved' ? 'bg-[#1B4F72]' : l.status === 'Rejected' ? 'bg-[#374151]/30' : 'bg-[#4CC9F0]/30 ring-2 ring-[#4CC9F0]'}`}>
                     {l.status === 'Approved' && <CheckCircle2 className="w-3 h-3 text-[#F8FAFC]" />}
                     {l.status === 'Rejected' && <XCircle className="w-3 h-3 text-[#374151]" />}
@@ -116,8 +141,8 @@ export default function LeaveManagement() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="font-medium text-[#071B34]">{l.reason}</p>
-                        <p className="text-sm text-[#374151] mt-2">{l.id} · Applied {l.appliedOn} · {l.days} day{l.days > 1 ? 's' : ''}</p>
-                        <p className="text-sm text-[#374151] mt-1">{l.from} → {l.to}</p>
+                        <p className="text-sm text-[#374151] mt-2">{l.id} · Applied {formatShortDate(l.appliedOn)} · {l.days} day{l.days > 1 ? 's' : ''}</p>
+                        <p className="text-sm text-[#374151] mt-1">{formatShortDate(l.fromDate)} → {formatShortDate(l.toDate)}</p>
                       </div>
                       <span className={`text-xs font-medium uppercase tracking-wider shrink-0 ${statusColor[l.status]}`}>{l.status}</span>
                     </div>
@@ -127,6 +152,9 @@ export default function LeaveManagement() {
                           <div className="flex-1 h-1 bg-[#071B34]/5 rounded-full"><div className="h-full w-1/2 bg-[#4CC9F0] rounded-full" /></div>
                           <span className="text-xs text-[#374151]">Warden review</span>
                         </div>
+                        <button onClick={() => cancelLeaveRequest(l.id)} className="text-xs font-semibold text-rose-600 hover:text-rose-700">
+                          Cancel pending leave
+                        </button>
                       </div>
                     )}
                   </div>
@@ -143,7 +171,7 @@ export default function LeaveManagement() {
                 {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d) => (
                   <div key={d} className="text-xs text-[#374151] font-medium py-2">{d}</div>
                 ))}
-                {calendarDays.map(({ day, onLeave, pending }) => (
+                {liveCalendarDays.map(({ day, onLeave, pending }) => (
                   <div key={day} className={`text-xs py-2.5 rounded-lg font-medium ${onLeave && pending ? 'bg-[#4CC9F0]/20 text-[#1B4F72]' : onLeave ? 'bg-[#1B4F72]/10 text-[#071B34]' : 'text-[#374151] hover:bg-white'}`}>{day}</div>
                 ))}
               </div>

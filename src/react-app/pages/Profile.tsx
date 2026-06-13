@@ -1,29 +1,19 @@
+import { useState } from 'react';
 import { Link } from 'react-router';
 import {
-  User, Mail, Building2, BedDouble, IndianRupee, AlertCircle,
+  Mail, Building2, BedDouble, IndianRupee, AlertCircle,
   Calendar, Users, Award, Clock, ChevronRight, ArrowLeft,
-  Trophy, Star, BrainCircuit, CheckCircle2,
+  Trophy, Star, BrainCircuit, CheckCircle2, Save, Pencil,
 } from 'lucide-react';
 import PortalNav from '@/react-app/components/PortalNav';
-
-const student = {
-  name: 'Aryan Sharma',
-  rollNo: 'CS21B047',
-  email: 'aryan.sharma@university.edu',
-  year: '3rd Year · CSE',
-  hostel: 'Tagore Hostel',
-  block: 'Block B',
-  room: '204',
-  joined: 'Aug 2022',
-  avatar: 'AS',
-};
-
-const stats = [
-  { label: 'Complaints Filed', value: '8', sub: '2 active', icon: AlertCircle, color: 'text-rose-600', bg: 'bg-rose-50' },
-  { label: 'Leave Requests', value: '5', sub: '1 pending', icon: Calendar, color: 'text-amber-600', bg: 'bg-amber-50' },
-  { label: 'Visitors Hosted', value: '12', sub: '3 this month', icon: Users, color: 'text-cyan-600', bg: 'bg-cyan-50' },
-  { label: 'Outstanding Fees', value: '₹4,500', sub: 'Due 30 Jun', icon: IndianRupee, color: 'text-[#1B4F72]', bg: 'bg-[#F5F7FA]' },
-];
+import { useComplaints } from '@/react-app/lib/complaints';
+import {
+  getFeeSummary,
+  useFees,
+  useLeaveRequests,
+  useStudentProfile,
+  type StudentProfileData,
+} from '@/react-app/lib/studentState';
 
 const badges = [
   { name: 'Early Adopter', icon: Star, color: 'text-amber-500' },
@@ -31,22 +21,64 @@ const badges = [
   { name: 'Community Star', icon: Trophy, color: 'text-[#1B4F72]' },
 ];
 
-const activity = [
-  { action: 'Complaint CMP-041 updated to In Progress', time: '2 hours ago', icon: AlertCircle },
-  { action: 'Leave request LV-014 submitted', time: '3 days ago', icon: Calendar },
-  { action: 'Visitor pass issued for Rahul Sharma', time: '5 days ago', icon: Users },
-  { action: 'Fee payment of ₹8,000 received', time: '1 week ago', icon: IndianRupee },
-  { action: 'Room allocation confirmed — Block B, 204', time: '2 weeks ago', icon: BedDouble },
-];
-
 export default function StudentProfile() {
+  const { profile, setProfile } = useStudentProfile();
+  const { complaints } = useComplaints();
+  const { leaveRequests } = useLeaveRequests();
+  const { payments } = useFees();
+  const { outstanding } = getFeeSummary(payments);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState<StudentProfileData>(profile);
+
+  const studentComplaints = complaints.filter((complaint) => complaint.student === profile.name);
+  const activeComplaints = studentComplaints.filter((complaint) => complaint.status !== 'Resolved').length;
+  const pendingLeave = leaveRequests.filter((leave) => leave.status === 'Pending').length;
+  const lastPayment = payments.find((payment) => payment.status === 'paid');
+
+  const stats = [
+    { label: 'Complaints Filed', value: String(studentComplaints.length), sub: `${activeComplaints} active`, icon: AlertCircle, color: 'text-rose-600', bg: 'bg-rose-50' },
+    { label: 'Leave Requests', value: String(leaveRequests.length), sub: `${pendingLeave} pending`, icon: Calendar, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { label: 'Visitors Hosted', value: '12', sub: '3 this month', icon: Users, color: 'text-cyan-600', bg: 'bg-cyan-50' },
+    { label: 'Outstanding Fees', value: `Rs. ${outstanding.toLocaleString()}`, sub: outstanding ? 'Due 30 Jun' : 'Paid up', icon: IndianRupee, color: 'text-[#1B4F72]', bg: 'bg-[#F5F7FA]' },
+  ];
+
+  const activity = [
+    ...studentComplaints.slice(0, 2).map((complaint) => ({ action: `Complaint ${complaint.id} is ${complaint.status}`, time: complaint.date, icon: AlertCircle })),
+    ...leaveRequests.slice(0, 2).map((leave) => ({ action: `Leave request ${leave.id} is ${leave.status}`, time: leave.appliedOn, icon: Calendar })),
+    ...(lastPayment ? [{ action: `Fee payment ${lastPayment.id} recorded`, time: lastPayment.paidOn || lastPayment.date, icon: IndianRupee }] : []),
+    { action: `Room allocation confirmed - ${profile.block}, ${profile.room}`, time: profile.joined, icon: BedDouble },
+  ];
+
+  function updateDraft(path: string, value: string) {
+    setDraft((current) => {
+      if (path.startsWith('emergencyContact.')) {
+        const key = path.replace('emergencyContact.', '') as keyof StudentProfileData['emergencyContact'];
+        return { ...current, emergencyContact: { ...current.emergencyContact, [key]: value } };
+      }
+      if (path.startsWith('parent.')) {
+        const key = path.replace('parent.', '') as keyof StudentProfileData['parent'];
+        return { ...current, parent: { ...current.parent, [key]: value } };
+      }
+      return { ...current, [path]: value };
+    });
+  }
+
+  function saveProfile() {
+    const avatar = draft.name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'AS';
+    setProfile({ ...draft, avatar });
+    setDraft({ ...draft, avatar });
+    setEditing(false);
+  }
+
+  const yearLine = `${profile.year} - ${profile.department}`;
+
   return (
     <div className="min-h-screen bg-[#F5F7FA] page-enter">
       <PortalNav
         portal="Student Profile"
-        userName={student.name}
-        userMeta={student.rollNo}
-        avatar={student.avatar}
+        userName={profile.name}
+        userMeta={profile.rollNo}
+        avatar={profile.avatar}
         homeHref="/student/dashboard"
         links={[
           { label: 'Complaints', href: '/student/complaints' },
@@ -56,27 +88,36 @@ export default function StudentProfile() {
       />
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
-        <Link to="/student/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] hover:text-[#071B34] font-medium">
-          <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-        </Link>
+        <div className="flex items-center justify-between gap-4">
+          <Link to="/student/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] hover:text-[#071B34] font-medium">
+            <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+          </Link>
+          <button
+            onClick={() => editing ? saveProfile() : setEditing(true)}
+            className="inline-flex items-center gap-2 bg-[#071B34] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#0A2342]"
+          >
+            {editing ? <Save className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
+            {editing ? 'Save Profile' : 'Edit Profile'}
+          </button>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="bg-[#071B34] px-6 py-8 flex flex-col items-center">
                 <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-white text-3xl font-extrabold border-4 border-white/30 mb-3">
-                  {student.avatar}
+                  {profile.avatar}
                 </div>
-                <h1 className="text-xl font-extrabold text-white">{student.name}</h1>
-                <p className="text-[#374151] text-sm">{student.rollNo}</p>
-                <p className="text-[#374151] text-xs mt-1">{student.year}</p>
+                <h1 className="text-xl font-extrabold text-white">{profile.name}</h1>
+                <p className="text-[#D1DEE6] text-sm">{profile.rollNo}</p>
+                <p className="text-[#D1DEE6] text-xs mt-1">{yearLine}</p>
               </div>
               <div className="p-5 space-y-3">
                 {[
-                  { icon: Mail, label: 'Email', value: student.email },
-                  { icon: Building2, label: 'Hostel', value: student.hostel },
-                  { icon: BedDouble, label: 'Room', value: `${student.room}, ${student.block}` },
-                  { icon: Clock, label: 'Member Since', value: student.joined },
+                  { icon: Mail, label: 'Email', value: profile.email },
+                  { icon: Building2, label: 'Hostel', value: profile.hostel },
+                  { icon: BedDouble, label: 'Room', value: `${profile.room}, ${profile.block}` },
+                  { icon: Clock, label: 'Member Since', value: profile.joined },
                 ].map((row) => {
                   const Icon = row.icon;
                   return (
@@ -131,21 +172,74 @@ export default function StudentProfile() {
               })}
             </div>
 
+            {editing && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6">
+                <h2 className="font-semibold text-[#071B34]">Edit Details</h2>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {[
+                    ['name', 'Full Name', draft.name],
+                    ['email', 'Email', draft.email],
+                    ['phone', 'Phone', draft.phone],
+                    ['year', 'Year', draft.year],
+                    ['department', 'Department', draft.department],
+                    ['room', 'Room', draft.room],
+                  ].map(([key, label, value]) => (
+                    <label key={key} className="text-xs text-[#374151] font-semibold">
+                      {label}
+                      <input value={value} onChange={(e) => updateDraft(key, e.target.value)}
+                        className="mt-1 w-full border border-[#071B34]/10 rounded-lg px-3 py-2 text-sm font-normal text-[#071B34] focus:ring-2 focus:ring-[#4CC9F0]/30 outline-none" />
+                    </label>
+                  ))}
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <section className="bg-[#F5F7FA] rounded-xl p-4 border border-[#071B34]/8">
+                    <p className="text-xs text-[#1B4F72] font-bold uppercase tracking-widest mb-3">Emergency Contact</p>
+                    {[
+                      ['emergencyContact.name', 'Name', draft.emergencyContact.name],
+                      ['emergencyContact.relation', 'Relation', draft.emergencyContact.relation],
+                      ['emergencyContact.phone', 'Phone', draft.emergencyContact.phone],
+                    ].map(([key, label, value]) => (
+                      <label key={key} className="block text-xs text-[#374151] font-semibold mb-3">
+                        {label}
+                        <input value={value} onChange={(e) => updateDraft(key, e.target.value)}
+                          className="mt-1 w-full border border-[#071B34]/10 rounded-lg px-3 py-2 text-sm font-normal text-[#071B34] outline-none" />
+                      </label>
+                    ))}
+                  </section>
+                  <section className="bg-[#F5F7FA] rounded-xl p-4 border border-[#071B34]/8">
+                    <p className="text-xs text-[#1B4F72] font-bold uppercase tracking-widest mb-3">Parent Information</p>
+                    {[
+                      ['parent.name', 'Name', draft.parent.name],
+                      ['parent.phone', 'Phone', draft.parent.phone],
+                      ['parent.email', 'Email', draft.parent.email],
+                      ['parent.address', 'Address', draft.parent.address],
+                    ].map(([key, label, value]) => (
+                      <label key={key} className="block text-xs text-[#374151] font-semibold mb-3">
+                        {label}
+                        <input value={value} onChange={(e) => updateDraft(key, e.target.value)}
+                          className="mt-1 w-full border border-[#071B34]/10 rounded-lg px-3 py-2 text-sm font-normal text-[#071B34] outline-none" />
+                      </label>
+                    ))}
+                  </section>
+                </div>
+              </div>
+            )}
+
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <h2 className="font-semibold text-[#071B34] mb-4">Room & Fee Summary</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-[#F5F7FA] rounded-xl p-4 border border-[#071B34]/10">
                   <p className="text-xs text-[#1B4F72] font-medium mb-2">Room Details</p>
-                  <p className="text-sm font-bold text-[#071B34]">Room 204, Block B</p>
-                  <p className="text-xs text-[#374151] mt-1">3/4 occupancy · AC · Attached washroom</p>
+                  <p className="text-sm font-bold text-[#071B34]">Room {profile.room}, {profile.block}</p>
+                  <p className="text-xs text-[#374151] mt-1">{profile.hostel} - 3/4 occupancy</p>
                   <Link to="/student/room" className="inline-flex items-center gap-1 text-xs text-[#1B4F72] mt-2 font-medium">
                     View allocation <ChevronRight className="w-3 h-3" />
                   </Link>
                 </div>
                 <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
                   <p className="text-xs text-emerald-600 font-medium mb-2">Fee Status</p>
-                  <p className="text-sm font-bold text-[#071B34]">₹4,500 outstanding</p>
-                  <p className="text-xs text-[#374151] mt-1">Last payment: ₹8,000 on 01 May</p>
+                  <p className="text-sm font-bold text-[#071B34]">Rs. {outstanding.toLocaleString()} outstanding</p>
+                  <p className="text-xs text-[#374151] mt-1">Last payment: {lastPayment ? `Rs. ${lastPayment.amount.toLocaleString()} on ${lastPayment.paidOn || lastPayment.date}` : 'No payment yet'}</p>
                   <Link to="/student/fees" className="inline-flex items-center gap-1 text-xs text-emerald-600 mt-2 font-medium">
                     Pay now <ChevronRight className="w-3 h-3" />
                   </Link>
@@ -181,7 +275,7 @@ export default function StudentProfile() {
                 <BrainCircuit className="w-6 h-6 text-cyan-400" />
                 <div>
                   <p className="text-white font-semibold text-sm">AI Profile Insights</p>
-                  <p className="text-[#374151] text-xs">Your complaint resolution rate is 87% — above hostel average.</p>
+                  <p className="text-[#D1DEE6] text-xs">{activeComplaints ? `${activeComplaints} active complaint${activeComplaints > 1 ? 's' : ''} need follow-up.` : 'No active complaints. Profile is in good standing.'}</p>
                 </div>
               </div>
               <Link to="/chat" className="text-cyan-300 text-xs font-medium hover:text-white flex items-center gap-1">

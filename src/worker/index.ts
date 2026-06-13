@@ -42,7 +42,7 @@ async function validateSession(sessionToken: string, env: any): Promise<any | nu
   if (!sql) return null;
 
   const sessions = await sql`
-    SELECT s.*, u.first_name, u.last_name, u.username, u.email, u.preferences
+    SELECT s.*, u.first_name, u.last_name, u.username, u.email, u.preferences, u.role
     FROM user_sessions s
     JOIN users u ON s.user_id = u.id
     WHERE s.token = ${sessionToken}
@@ -1107,6 +1107,7 @@ app.post('/api/auth/login', async (c) => {
         lastName: user.last_name,
         username: user.username,
         email: user.email,
+        role: user.role ?? 'student',
         preferences: userPreferences
       }
     });
@@ -1117,6 +1118,20 @@ app.post('/api/auth/login', async (c) => {
 });
 
 /* Logout and session validation */
+
+app.post('/api/auth/logout', async (c) => {
+  try {
+    const body = await c.req.json().catch(() => ({}));
+    const { sessionToken } = body as { sessionToken?: string };
+    if (sessionToken) {
+      await destroySession(sessionToken, c.env as any);
+    }
+    return c.json({ success: true });
+  } catch (error: unknown) {
+    console.error('Logout error:', error);
+    return c.json({ error: 'Logout failed', details: safeErrorMessage(error) }, 500);
+  }
+});
 
 app.post('/api/auth/validate-session', async (c) => {
   try {
@@ -1153,6 +1168,7 @@ app.post('/api/auth/validate-session', async (c) => {
         lastName: sessionData.last_name,
         username: sessionData.username,
         email: sessionData.email,
+        role: sessionData.role ?? 'student',
         preferences: userPreferences
       }
     });

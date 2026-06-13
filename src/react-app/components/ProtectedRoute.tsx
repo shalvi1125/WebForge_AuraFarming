@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router';
-import { useAuth, UserRole } from '@/react-app/hooks/useAuth';
+import { roleDashboard, useAuth, UserRole } from '@/react-app/hooks/useAuth';
 
 interface Props {
   children: React.ReactNode;
@@ -22,10 +22,7 @@ export default function ProtectedRoute({ children, role }: Props) {
   }
 
   if (user.role !== role) {
-    // Redirect to their own dashboard if they hit the wrong role's URL
-    if (user.role === 'warden') return <Navigate to="/warden/dashboard" replace />;
-    if (user.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
-    return <Navigate to="/student/dashboard" replace />;
+    return <Navigate to={roleDashboard(user.role)} replace />;
   }
 
   return <>{children}</>;

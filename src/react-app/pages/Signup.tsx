@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { ArrowLeft, User, Mail, Lock, Eye, EyeOff, GraduationCap, Shield, BarChart3 } from 'lucide-react';
 import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
-import { roleDashboard, UserRole } from '@/react-app/hooks/useAuth';
+import { createMockSession, roleDashboard, saveMockUser, UserRole } from '@/react-app/hooks/useAuth';
 
 interface UserPreferences {
   complaints: boolean;
@@ -60,21 +60,19 @@ export default function Signup() {
   const handleSignup = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, role, preferences }),
-      });
+      const user = {
+        id: Date.now(),
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        username: formData.username.trim(),
+        email: formData.email.trim().toLowerCase(),
+        role,
+        preferences,
+      };
 
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.sessionToken);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        navigate(roleDashboard(data.user.role as UserRole));
-      } else {
-        const err = await response.json().catch(() => ({}));
-        alert(err.error || 'Signup failed');
-      }
+      saveMockUser(user, formData.password);
+      createMockSession(user);
+      navigate(roleDashboard(user.role as UserRole));
     } catch {
       alert('Signup failed. Please try again.');
     }

@@ -41,14 +41,6 @@ export default function PortalNav({
   const navigate = useNavigate();
 
   function handleLogout() {
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionToken: token }),
-      }).catch(() => {});
-    }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/');

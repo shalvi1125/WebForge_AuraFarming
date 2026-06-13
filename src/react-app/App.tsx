@@ -35,7 +35,7 @@ export default function App() {
         <Route path="/features" element={<Features />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/student/dashboard" element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>} />
-        <Route path="/student/room" element={<ProtectedRoute role="student"><RoomAllocation /></ProtectedRoute>} />
+        <Route path="/student/room" element={<ProtectedRoute role="student"><RoomAllocation view="student" /></ProtectedRoute>} />
         <Route path="/student/complaints" element={<ProtectedRoute role="student"><StudentComplaints /></ProtectedRoute>} />
         <Route path="/student/leave" element={<ProtectedRoute role="student"><LeaveManagement /></ProtectedRoute>} />
         <Route path="/student/fees" element={<ProtectedRoute role="student"><StudentFees /></ProtectedRoute>} />
@@ -45,10 +45,12 @@ export default function App() {
         <Route path="/visitor/request" element={<ProtectedRoute role="student"><VisitorRequest /></ProtectedRoute>} />
         <Route path="/announcements" element={<ProtectedRoute role="student"><Announcements /></ProtectedRoute>} />
         <Route path="/warden/dashboard" element={<ProtectedRoute role="warden"><WardenDashboard /></ProtectedRoute>} />
+        <Route path="/warden/room" element={<ProtectedRoute role="warden"><RoomAllocation view="warden" /></ProtectedRoute>} />
         <Route path="/warden/students" element={<ProtectedRoute role="warden"><WardenStudents /></ProtectedRoute>} />
         <Route path="/warden/complaints" element={<ProtectedRoute role="warden"><WardenComplaints /></ProtectedRoute>} />
         <Route path="/warden/leave" element={<ProtectedRoute role="warden"><WardenLeave /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/room" element={<ProtectedRoute role="admin"><RoomAllocation view="admin" /></ProtectedRoute>} />
         <Route path="/admin/rooms" element={<ProtectedRoute role="admin"><AdminRooms /></ProtectedRoute>} />
         <Route path="/admin/students" element={<ProtectedRoute role="admin"><AdminStudents /></ProtectedRoute>} />
         <Route path="/admin/reports" element={<ProtectedRoute role="admin"><AdminReports /></ProtectedRoute>} />

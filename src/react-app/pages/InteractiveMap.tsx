@@ -9,9 +9,13 @@ const nearbyAlerts = [
   { room: '205', text: 'Maintenance in progress — plumbing repair until 16 Jun', severity: 'maintenance' },
 ];
 
-export default function RoomAllocation() {
+interface RoomAllocationProps {
+  view?: MapView;
+}
+
+export default function RoomAllocation({ view: routeView }: RoomAllocationProps) {
   const [params] = useSearchParams();
-  const view = (params.get('view') as MapView) || 'student';
+  const view = routeView || (params.get('view') as MapView) || 'student';
 
   const portalMeta = {
     student: { portal: 'Smart Hostel Operations Map', meta: 'Room 204 · Block B', home: '/student/dashboard' },
@@ -34,8 +38,8 @@ export default function RoomAllocation() {
           view === 'student'
             ? [{ label: 'Complaints', href: '/student/complaints' }, { label: 'Leave', href: '/student/leave' }, { label: 'Room Map', href: '/student/room' }]
             : view === 'warden'
-            ? [{ label: 'Operations Map', href: '/student/room?view=warden' }, { label: 'Complaints', href: '/warden/complaints' }, { label: 'Students', href: '/warden/students' }]
-            : [{ label: 'Campus Map', href: '/student/room?view=admin' }, { label: 'Rooms', href: '/admin/rooms' }, { label: 'Reports', href: '/admin/reports' }]
+            ? [{ label: 'Operations Map', href: '/warden/room' }, { label: 'Complaints', href: '/warden/complaints' }, { label: 'Students', href: '/warden/students' }]
+            : [{ label: 'Campus Map', href: '/admin/room' }, { label: 'Rooms', href: '/admin/rooms' }, { label: 'Reports', href: '/admin/reports' }]
         }
       />
 

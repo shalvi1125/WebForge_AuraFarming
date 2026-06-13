@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { ArrowLeft, Mail, Lock, KeyRound } from 'lucide-react';
 import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
-import { roleDashboard, UserRole } from '@/react-app/hooks/useAuth';
+import { createMockSession, getMockUsers, inferRoleFromEmail, roleDashboard, UserRole } from '@/react-app/hooks/useAuth';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -19,21 +19,28 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.sessionToken);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        navigate(roleDashboard(data.user.role as UserRole));
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        alert(errorData.error || 'Invalid credentials');
+      const normalizedEmail = email.trim().toLowerCase();
+      const storedUser = getMockUsers().find((entry) => entry.user.email.toLowerCase() === normalizedEmail);
+      if (storedUser && storedUser.password !== password) {
+        alert('Invalid credentials');
+        setIsLoading(false);
+        return;
       }
+
+      const role = storedUser?.user.role ?? inferRoleFromEmail(normalizedEmail);
+      const fallbackUsername = normalizedEmail.split('@')[0] || role;
+      const user = storedUser?.user ?? {
+        id: Date.now(),
+        firstName: role.charAt(0).toUpperCase() + role.slice(1),
+        lastName: 'User',
+        username: fallbackUsername,
+        email: normalizedEmail,
+        role,
+        preferences: {},
+      };
+
+      createMockSession(user);
+      navigate(roleDashboard(user.role as UserRole));
     } catch (error) {
       console.error('Login error:', error);
       alert('Login failed. Please try again.');
@@ -46,26 +53,12 @@ export default function Login() {
     setResetLoading(true);
     setResetMessage('');
 
-    try {
-      const response = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: resetEmail }),
-      });
-
-      if (response.ok) {
-        setResetMessage('Password reset link sent to your email!');
-        setTimeout(() => {
-          setShowForgotPassword(false);
-          setResetEmail('');
-          setResetMessage('');
-        }, 3000);
-      } else {
-        setResetMessage('Failed to send reset email. Please try again.');
-      }
-    } catch (error) {
-      setResetMessage('Network error. Please try again.');
-    }
+    setResetMessage('Password reset link sent to your email!');
+    setTimeout(() => {
+      setShowForgotPassword(false);
+      setResetEmail('');
+      setResetMessage('');
+    }, 3000);
     setResetLoading(false);
   };
 

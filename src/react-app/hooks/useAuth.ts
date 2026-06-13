@@ -12,59 +12,63 @@ export interface AuthUser {
   preferences: unknown;
 }
 
+export interface MockStoredUser {
+  user: AuthUser;
+  password: string;
+}
+
+const MOCK_USERS_KEY = 'mockUsers';
+
+export function getMockUsers(): MockStoredUser[] {
+  try {
+    const stored = localStorage.getItem(MOCK_USERS_KEY);
+    return stored ? (JSON.parse(stored) as MockStoredUser[]) : [];
+  } catch {
+    localStorage.removeItem(MOCK_USERS_KEY);
+    return [];
+  }
+}
+
+export function saveMockUser(user: AuthUser, password: string): void {
+  const users = getMockUsers().filter((entry) => entry.user.email !== user.email);
+  localStorage.setItem(MOCK_USERS_KEY, JSON.stringify([{ user, password }, ...users]));
+}
+
+export function createMockSession(user: AuthUser): void {
+  localStorage.setItem('token', `mock-session-${user.role}-${user.id}`);
+  localStorage.setItem('user', JSON.stringify(user));
+}
+
+export function inferRoleFromEmail(email: string): UserRole {
+  const normalized = email.toLowerCase();
+  if (normalized.includes('admin')) return 'admin';
+  if (normalized.includes('warden')) return 'warden';
+  return 'student';
+}
+
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     const stored = localStorage.getItem('user');
 
-    if (!token || !stored) {
+    if (!stored) {
       setLoading(false);
       return;
     }
 
-    // Optimistically set user from localStorage, then validate with server
     try {
       setUser(JSON.parse(stored) as AuthUser);
     } catch {
-      // Corrupt localStorage — clear it
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      setLoading(false);
-      return;
     }
 
-    fetch('/api/auth/validate-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionToken: token }),
-    })
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data) => {
-        const freshUser = data.user as AuthUser;
-        setUser(freshUser);
-        localStorage.setItem('user', JSON.stringify(freshUser));
-      })
-      .catch(() => {
-        // Session invalid — clear
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
-      })
-      .finally(() => setLoading(false));
+    setLoading(false);
   }, []);
 
   function logout() {
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionToken: token }),
-      }).catch(() => {});
-    }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);

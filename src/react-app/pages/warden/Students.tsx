@@ -12,14 +12,14 @@ const students = [
 
 export default function WardenStudents() {
   return (
-    <div className="min-h-screen bg-gray-50 page-enter">
-      <PortalNav portal="Warden Portal" portalColor="text-emerald-600" userName="Dr. Priya Mehta" userMeta="Tagore Hostel" avatar="PM" homeHref="/warden/dashboard" />
+    <div className="min-h-screen bg-[#F5F7FA] page-enter">
+      <PortalNav portal="Warden Portal" userName="Dr. Priya Mehta" userMeta="Tagore Hostel" avatar="PM" homeHref="/warden/dashboard" dark />
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
-        <Link to="/warden/dashboard" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
+        <Link to="/warden/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
         <h1 className="text-2xl font-extrabold text-gray-900">Students</h1>
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input placeholder="Search students..." className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 outline-none" />
+          <input placeholder="Search students..." className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#4CC9F0]/30 outline-none" />
         </div>
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <table className="w-full text-sm">
@@ -37,9 +37,9 @@ export default function WardenStudents() {
             </tbody>
           </table>
         </div>
-        <div className="flex items-start gap-3 bg-indigo-50 rounded-xl p-4 border border-indigo-100">
-          <BrainCircuit className="w-5 h-5 text-indigo-600 shrink-0" />
-          <p className="text-sm text-indigo-700">AI Insight: 3 students have overlapping leave requests for 14–17 Jun. Review capacity impact.</p>
+        <div className="flex items-start gap-3 bg-[#F5F7FA] rounded-xl p-4 border border-[#071B34]/10">
+          <BrainCircuit className="w-5 h-5 text-[#1B4F72] shrink-0" />
+          <p className="text-sm text-[#071B34]">AI Insight: 3 students have overlapping leave requests for 14–17 Jun. Review capacity impact.</p>
         </div>
       </div>
     </div>

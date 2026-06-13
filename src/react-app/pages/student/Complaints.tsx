@@ -50,7 +50,7 @@ const categoryColors: Record<string, string> = {
   Hygiene:    'bg-green-100 text-green-700',
   Furniture:  'bg-orange-100 text-orange-700',
   Security:   'bg-red-100 text-red-700',
-  Internet:   'bg-purple-100 text-purple-700',
+  Internet:   'bg-[#071B34]/5 text-[#1B4F72]',
 };
 
 const statusStyles: Record<Status, string> = {
@@ -107,11 +107,11 @@ function ComplaintModal({ complaint, onClose }: { complaint: Complaint; onClose:
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden">
-        <div className="bg-gradient-to-r from-indigo-600 to-blue-600 p-5 text-white relative">
+        <div className="bg-[#071B34] p-5 text-white relative">
           <button onClick={onClose} className="absolute top-4 right-4 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
             <X className="w-4 h-4" />
           </button>
-          <p className="text-indigo-200 text-xs mb-1">{complaint.id}</p>
+          <p className="text-[#4A5568] text-xs mb-1">{complaint.id}</p>
           <h2 className="text-lg font-bold pr-8">{complaint.title}</h2>
           <div className="flex items-center gap-2 mt-2">
             <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{complaint.category}</span>
@@ -144,7 +144,7 @@ function ComplaintModal({ complaint, onClose }: { complaint: Complaint; onClose:
                 { label: 'Resolved', date: complaint.status === 'Resolved' ? complaint.date : '—', done: complaint.status === 'Resolved' },
               ].map((t) => (
                 <div key={t.label} className="flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${t.done ? 'bg-indigo-600' : 'bg-gray-200'}`}>
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${t.done ? 'bg-[#071B34]' : 'bg-gray-200'}`}>
                     <CheckCircle2 className={`w-3 h-3 ${t.done ? 'text-white' : 'text-gray-400'}`} />
                   </div>
                   <div className="flex-1 flex items-center justify-between">
@@ -177,7 +177,7 @@ export default function StudentComplaints() {
   const [submitted, setSubmitted] = useState(false);
 
   const stats = [
-    { label: 'Total',       value: complaints.length,                                                          color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+    { label: 'Total',       value: complaints.length,                                                          color: 'text-[#1B4F72]', bg: 'bg-[#F5F7FA]', border: 'border-[#071B34]/10' },
     { label: 'Open',        value: complaints.filter((c: Complaint) => c.status === 'Open').length,            color: 'text-rose-600',   bg: 'bg-rose-50',   border: 'border-rose-100' },
     { label: 'In Progress', value: complaints.filter((c: Complaint) => c.status === 'In Progress').length,     color: 'text-amber-600',  bg: 'bg-amber-50',  border: 'border-amber-100' },
     { label: 'Resolved',    value: complaints.filter((c: Complaint) => c.status === 'Resolved').length,        color: 'text-green-600',  bg: 'bg-green-50',  border: 'border-green-100' },
@@ -218,21 +218,21 @@ export default function StudentComplaints() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 page-enter">
+    <div className="min-h-screen bg-[#F5F7FA] page-enter">
 
       {/* Navbar */}
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-[#071B34] rounded-xl flex items-center justify-center">
               <Building2 className="w-4 h-4 text-white" />
             </div>
             <div className="leading-none">
               <p className="font-bold text-gray-900 text-sm">HostelIQ</p>
-              <p className="text-xs text-indigo-500">Student Portal</p>
+              <p className="text-xs text-[#1B4F72]">Student Portal</p>
             </div>
           </div>
-          <Link to="/student/dashboard" className="flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+          <Link to="/student/dashboard" className="flex items-center gap-1 text-sm text-[#1B4F72] hover:text-[#071B34] font-medium">
             <ArrowLeft className="w-4 h-4" /> Dashboard
           </Link>
         </div>
@@ -248,7 +248,7 @@ export default function StudentComplaints() {
           </div>
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-5 py-2.5 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all font-semibold shadow-sm text-sm"
+            className="flex items-center gap-2 bg-[#071B34] text-white px-5 py-2.5 rounded-xl hover:bg-[#0A2342] transition-all font-semibold shadow-sm text-sm"
           >
             <Plus className="w-4 h-4" /> File New Complaint
           </button>
@@ -268,12 +268,12 @@ export default function StudentComplaints() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
             <h2 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <BrainCircuit className="w-5 h-5 text-indigo-600" /> Complaint Trends
+              <BrainCircuit className="w-5 h-5 text-[#1B4F72]" /> Complaint Trends
             </h2>
             <div className="flex items-end gap-2 h-28">
               {[3, 5, 2, 4, 6, 3, 2].map((v, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <div className="w-full bg-gradient-to-t from-indigo-600 to-cyan-400 rounded-t-md" style={{ height: `${(v / 6) * 100}%`, minHeight: '8px' }} />
+                  <div className="w-full bg-[#1B4F72] rounded-t-md" style={{ height: `${(v / 6) * 100}%`, minHeight: '8px' }} />
                   <span className="text-[10px] text-gray-400">{['W1','W2','W3','W4','W5','W6','W7'][i]}</span>
                 </div>
               ))}
@@ -284,7 +284,7 @@ export default function StudentComplaints() {
             <div className="space-y-3">
               {[
                 { dept: 'Plumbing', pct: 28, color: 'bg-blue-500' },
-                { dept: 'Internet', pct: 22, color: 'bg-purple-500' },
+                { dept: 'Internet', pct: 22, color: 'bg-[#F5F7FA]0' },
                 { dept: 'Hygiene', pct: 18, color: 'bg-green-500' },
                 { dept: 'Electrical', pct: 15, color: 'bg-yellow-500' },
                 { dept: 'Other', pct: 17, color: 'bg-gray-400' },
@@ -314,8 +314,8 @@ export default function StudentComplaints() {
                 onClick={() => setFilterCategory(cat)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                   active
-                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
+                    ? 'bg-[#071B34] text-white border-[#1B4F72] shadow-sm'
+                    : 'bg-white text-gray-600 border-gray-200 hover:border-[#4CC9F0]/30 hover:text-[#1B4F72]'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -386,7 +386,7 @@ export default function StudentComplaints() {
                     <div className="flex items-center gap-2 shrink-0">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${priorityStyles[c.priority]}`}>{c.priority}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium sm:hidden ${statusStyles[c.status]}`}>{c.status}</span>
-                      <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-indigo-400 transition-colors" />
+                      <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#4A5568] transition-colors" />
                     </div>
                   </div>
                 );
@@ -405,7 +405,7 @@ export default function StudentComplaints() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden max-h-[90vh] overflow-y-auto">
 
             {/* Modal header */}
-            <div className="bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-5 text-white relative sticky top-0 z-10">
+            <div className="bg-[#071B34] px-6 py-5 text-white relative sticky top-0 z-10">
               <button onClick={() => { setShowForm(false); setFormTitle(''); setFormDesc(''); setFormCategory(''); setAiResult(null); setSubmitted(false); }}
                 className="absolute top-4 right-4 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
                 <X className="w-4 h-4" />
@@ -414,7 +414,7 @@ export default function StudentComplaints() {
                 <AlertCircle className="w-5 h-5" />
                 <h2 className="text-lg font-bold">File New Complaint</h2>
               </div>
-              <p className="text-indigo-200 text-xs mt-1">AI will automatically categorize and prioritize your complaint</p>
+              <p className="text-[#4A5568] text-xs mt-1">AI will automatically categorize and prioritize your complaint</p>
             </div>
 
             <div className="p-6 space-y-5">
@@ -425,13 +425,13 @@ export default function StudentComplaints() {
                   value={formTitle}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTitleChange(e.target.value)}
                   placeholder="e.g. Water leakage near bathroom sink"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 transition"
                 />
               </div>
 
               {/* AI Categorization Card */}
               {aiResult && !submitted && (
-                <div className="bg-gradient-to-br from-indigo-900 to-blue-900 rounded-2xl p-4 space-y-3">
+                <div className="bg-[#071B34] rounded-2xl p-4 space-y-3">
                   <div className="flex items-center gap-2">
                     <BrainCircuit className="w-4 h-4 text-cyan-400" />
                     <p className="text-white font-semibold text-sm">AI Analysis</p>
@@ -444,12 +444,12 @@ export default function StudentComplaints() {
                       { label: 'Est. Resolution', value: aiResult.resolution },
                     ].map(row => (
                       <div key={row.label} className="bg-white/10 rounded-xl p-2.5 text-center">
-                        <p className="text-indigo-300 text-xs mb-1">{row.label}</p>
+                        <p className="text-[#4A5568] text-xs mb-1">{row.label}</p>
                         <p className="text-white text-xs font-bold">{row.value}</p>
                       </div>
                     ))}
                   </div>
-                  <p className="text-indigo-200 text-xs">AI will auto-assign this to the relevant department upon submission.</p>
+                  <p className="text-[#4A5568] text-xs">AI will auto-assign this to the relevant department upon submission.</p>
                 </div>
               )}
 
@@ -461,7 +461,7 @@ export default function StudentComplaints() {
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormDesc(e.target.value)}
                   rows={3}
                   placeholder="Describe the issue in detail..."
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition resize-none"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 transition resize-none"
                 />
               </div>
 
@@ -478,8 +478,8 @@ export default function StudentComplaints() {
                         onClick={() => setFormCategory(cat)}
                         className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
                           formCategory === cat
-                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                            : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-indigo-300'
+                            ? 'bg-[#071B34] text-white border-[#1B4F72] shadow-sm'
+                            : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-[#4CC9F0]/30'
                         }`}
                       >
                         <Icon className="w-4 h-4" /> {cat}
@@ -492,7 +492,7 @@ export default function StudentComplaints() {
               {/* Photo Upload */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Attach Photo <span className="text-gray-400 font-normal">(optional)</span></label>
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-indigo-300 transition-colors cursor-pointer">
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-[#4CC9F0]/30 transition-colors cursor-pointer">
                   <Upload className="w-7 h-7 text-gray-300 mx-auto mb-2" />
                   <p className="text-sm text-gray-400">Click to upload or drag & drop</p>
                   <p className="text-xs text-gray-300 mt-0.5">PNG, JPG up to 5MB</p>
@@ -508,7 +508,7 @@ export default function StudentComplaints() {
                 <button
                   onClick={handleSubmit}
                   disabled={!formTitle.trim() || !formDesc.trim() || !formCategory}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:from-indigo-700 hover:to-blue-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                  className="w-full bg-[#071B34] text-white py-3 rounded-xl font-semibold text-sm hover:bg-[#0A2342] transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
                 >
                   Submit Complaint
                 </button>

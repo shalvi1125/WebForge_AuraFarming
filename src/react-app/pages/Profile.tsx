@@ -22,13 +22,13 @@ const stats = [
   { label: 'Complaints Filed', value: '8', sub: '2 active', icon: AlertCircle, color: 'text-rose-600', bg: 'bg-rose-50' },
   { label: 'Leave Requests', value: '5', sub: '1 pending', icon: Calendar, color: 'text-amber-600', bg: 'bg-amber-50' },
   { label: 'Visitors Hosted', value: '12', sub: '3 this month', icon: Users, color: 'text-cyan-600', bg: 'bg-cyan-50' },
-  { label: 'Outstanding Fees', value: '₹4,500', sub: 'Due 30 Jun', icon: IndianRupee, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  { label: 'Outstanding Fees', value: '₹4,500', sub: 'Due 30 Jun', icon: IndianRupee, color: 'text-[#1B4F72]', bg: 'bg-[#F5F7FA]' },
 ];
 
 const badges = [
   { name: 'Early Adopter', icon: Star, color: 'text-amber-500' },
   { name: '5 Leave Streak', icon: Calendar, color: 'text-blue-500' },
-  { name: 'Community Star', icon: Trophy, color: 'text-indigo-500' },
+  { name: 'Community Star', icon: Trophy, color: 'text-[#1B4F72]' },
 ];
 
 const activity = [
@@ -41,7 +41,7 @@ const activity = [
 
 export default function StudentProfile() {
   return (
-    <div className="min-h-screen bg-gray-50 page-enter">
+    <div className="min-h-screen bg-[#F5F7FA] page-enter">
       <PortalNav
         portal="Student Profile"
         userName={student.name}
@@ -56,20 +56,20 @@ export default function StudentProfile() {
       />
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
-        <Link to="/student/dashboard" className="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+        <Link to="/student/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] hover:text-[#071B34] font-medium">
           <ArrowLeft className="w-4 h-4" /> Back to Dashboard
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 px-6 py-8 flex flex-col items-center">
+              <div className="bg-[#071B34] px-6 py-8 flex flex-col items-center">
                 <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-white text-3xl font-extrabold border-4 border-white/30 mb-3">
                   {student.avatar}
                 </div>
                 <h1 className="text-xl font-extrabold text-white">{student.name}</h1>
-                <p className="text-indigo-100 text-sm">{student.rollNo}</p>
-                <p className="text-indigo-200 text-xs mt-1">{student.year}</p>
+                <p className="text-[#4A5568] text-sm">{student.rollNo}</p>
+                <p className="text-[#4A5568] text-xs mt-1">{student.year}</p>
               </div>
               <div className="p-5 space-y-3">
                 {[
@@ -94,7 +94,7 @@ export default function StudentProfile() {
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mt-4">
               <h2 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                <Award className="w-5 h-5 text-indigo-600" /> Achievement Badges
+                <Award className="w-5 h-5 text-[#1B4F72]" /> Achievement Badges
               </h2>
               <div className="flex flex-wrap gap-2">
                 {badges.map((b) => {
@@ -134,11 +134,11 @@ export default function StudentProfile() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <h2 className="font-semibold text-gray-800 mb-4">Room & Fee Summary</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
-                  <p className="text-xs text-indigo-600 font-medium mb-2">Room Details</p>
+                <div className="bg-[#F5F7FA] rounded-xl p-4 border border-[#071B34]/10">
+                  <p className="text-xs text-[#1B4F72] font-medium mb-2">Room Details</p>
                   <p className="text-sm font-bold text-gray-800">Room 204, Block B</p>
                   <p className="text-xs text-gray-500 mt-1">3/4 occupancy · AC · Attached washroom</p>
-                  <Link to="/student/room" className="inline-flex items-center gap-1 text-xs text-indigo-600 mt-2 font-medium">
+                  <Link to="/student/room" className="inline-flex items-center gap-1 text-xs text-[#1B4F72] mt-2 font-medium">
                     View allocation <ChevronRight className="w-3 h-3" />
                   </Link>
                 </div>
@@ -176,12 +176,12 @@ export default function StudentProfile() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-indigo-900 to-blue-900 rounded-2xl p-5 flex items-center justify-between">
+            <div className="bg-[#071B34] rounded-2xl p-5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <BrainCircuit className="w-6 h-6 text-cyan-400" />
                 <div>
                   <p className="text-white font-semibold text-sm">AI Profile Insights</p>
-                  <p className="text-indigo-200 text-xs">Your complaint resolution rate is 87% — above hostel average.</p>
+                  <p className="text-[#4A5568] text-xs">Your complaint resolution rate is 87% — above hostel average.</p>
                 </div>
               </div>
               <Link to="/chat" className="text-cyan-300 text-xs font-medium hover:text-white flex items-center gap-1">

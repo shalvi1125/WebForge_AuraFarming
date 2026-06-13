@@ -103,10 +103,10 @@ export default function Signup() {
 
   if (step === 2) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center p-4">
         <div className="max-w-2xl w-full">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
+            <div className="w-16 h-16 bg-[#071B34] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
               <Building2 className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -123,8 +123,8 @@ export default function Signup() {
                   onClick={() => handlePreferenceChange(option.key as keyof UserPreferences)}
                   className={`p-4 rounded-xl border-2 transition-all duration-200 ${
                     preferences[option.key as keyof UserPreferences]
-                      ? 'border-indigo-500 bg-indigo-50 text-indigo-900'
-                      : 'border-gray-200 bg-white text-gray-600 hover:border-indigo-200'
+                      ? 'border-[#1B4F72] bg-[#071B34]/5 text-[#071B34]'
+                      : 'border-[#071B34]/10 hover:border-[#4CC9F0]/30'
                   }`}
                 >
                   <div className="text-2xl mb-2">{option.icon}</div>
@@ -136,14 +136,14 @@ export default function Signup() {
             <div className="flex space-x-4">
               <button
                 onClick={() => setStep(1)}
-                className="flex-1 border-2 border-gray-200 text-gray-600 py-3 rounded-xl hover:bg-gray-50 transition-all duration-200"
+                className="flex-1 border-2 border-gray-200 text-gray-600 py-3 rounded-xl hover:bg-[#F5F7FA] transition-all duration-200"
               >
                 Back
               </button>
               <button
                 onClick={handleSignup}
                 disabled={isLoading || !Object.values(preferences).some(Boolean)}
-                className="flex-1 bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 font-semibold flex items-center justify-center space-x-2 disabled:opacity-50 shadow-sm"
+                className="flex-1 bg-[#071B34] hover:bg-[#0A2342] transition-all duration-200 font-semibold flex items-center justify-center space-x-2 disabled:opacity-50 shadow-sm"
               >
                 {isLoading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -159,16 +159,16 @@ export default function Signup() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-800 mb-4">
+          <Link to="/" className="inline-flex items-center space-x-2 text-[#1B4F72] hover:text-[#071B34] mb-4">
             <ArrowLeft className="w-5 h-5" />
             <span>Back to Home</span>
           </Link>
 
-          <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
+          <div className="w-16 h-16 bg-[#071B34] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
             <Building2 className="w-8 h-8 text-white" />
           </div>
 
@@ -191,7 +191,7 @@ export default function Signup() {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 focus:border-transparent"
                   placeholder="John"
                   required
                 />
@@ -205,7 +205,7 @@ export default function Signup() {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 focus:border-transparent"
                   placeholder="Doe"
                   required
                 />
@@ -217,13 +217,13 @@ export default function Signup() {
                 Username
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400 w-5 h-5" />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
                 <input
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 focus:border-transparent"
                   placeholder="johndoe123"
                   required
                 />
@@ -235,13 +235,13 @@ export default function Signup() {
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400 w-5 h-5" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 focus:border-transparent"
                   placeholder="your@email.com"
                   required
                 />
@@ -253,20 +253,20 @@ export default function Signup() {
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400 w-5 h-5" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 focus:border-transparent"
                   placeholder="Create a strong password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400 hover:text-indigo-600 transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] hover:text-[#1B4F72] transition-colors"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -279,7 +279,7 @@ export default function Signup() {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 font-semibold shadow-sm"
+              className="w-full bg-[#071B34] hover:bg-[#0A2342] transition-all duration-200 font-semibold shadow-sm"
             >
               Continue
             </button>
@@ -288,7 +288,7 @@ export default function Signup() {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="text-indigo-600 hover:text-indigo-800 font-semibold">
+              <Link to="/login" className="text-[#1B4F72] hover:text-[#071B34] font-semibold">
                 Sign in here
               </Link>
             </p>

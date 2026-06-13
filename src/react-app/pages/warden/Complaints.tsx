@@ -10,10 +10,10 @@ const queue = [
 
 export default function WardenComplaints() {
   return (
-    <div className="min-h-screen bg-gray-50 page-enter">
-      <PortalNav portal="Warden Portal" portalColor="text-emerald-600" userName="Dr. Priya Mehta" avatar="PM" homeHref="/warden/dashboard" />
+    <div className="min-h-screen bg-[#F5F7FA] page-enter">
+      <PortalNav portal="Warden Portal" userName="Dr. Priya Mehta" avatar="PM" homeHref="/warden/dashboard" dark />
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
-        <Link to="/warden/dashboard" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
+        <Link to="/warden/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
         <h1 className="text-2xl font-extrabold text-gray-900">Complaints Queue</h1>
         <div className="grid grid-cols-3 gap-4">
           {[{ l: 'Open', v: '8', c: 'text-rose-600' }, { l: 'In Progress', v: '4', c: 'text-amber-600' }, { l: 'Resolved Today', v: '3', c: 'text-green-600' }].map((s) => (
@@ -27,7 +27,7 @@ export default function WardenComplaints() {
                 <div>
                   <p className="text-sm font-semibold text-gray-800">{c.title}</p>
                   <p className="text-xs text-gray-400 mt-1">{c.id} · {c.student} · Room {c.room}</p>
-                  <p className="text-xs text-indigo-600 mt-2 flex items-center gap-1"><BrainCircuit className="w-3 h-3" />{c.ai}</p>
+                  <p className="text-xs text-[#1B4F72] mt-2 flex items-center gap-1"><BrainCircuit className="w-3 h-3" />{c.ai}</p>
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.priority === 'High' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>{c.priority}</span>
@@ -35,7 +35,7 @@ export default function WardenComplaints() {
                 </div>
               </div>
               <div className="flex gap-2 mt-4">
-                <button className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg font-medium">Assign</button>
+                <button className="text-xs bg-[#071B34] text-white px-3 py-1.5 rounded-lg font-medium">Assign</button>
                 <button className="text-xs border border-gray-200 px-3 py-1.5 rounded-lg font-medium text-gray-600">Resolve</button>
               </div>
             </div>

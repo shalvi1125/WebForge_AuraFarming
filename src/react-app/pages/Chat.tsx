@@ -16,10 +16,10 @@ interface Message {
 
 // ── AI capability cards shown on empty state ───────────────
 const capabilities = [
-  { icon: AlertCircle, title: 'Complaint Analysis', desc: 'AI categorization, priority prediction, and escalation guidance', color: 'text-rose-600', bg: 'bg-rose-50' },
-  { icon: Calendar,    title: 'Leave Guidance',      desc: 'Policy answers, application help, and approval tracking',           color: 'text-amber-600', bg: 'bg-amber-50' },
-  { icon: ShieldCheck, title: 'Hostel Support',      desc: 'Rules, curfew, mess timings, and procedure answers',    color: 'text-indigo-600', bg: 'bg-indigo-50' },
-  { icon: BarChart3,   title: 'Smart Insights',      desc: 'Occupancy, fee status, and personalized recommendations',      color: 'text-cyan-600',   bg: 'bg-cyan-50' },
+  { icon: AlertCircle, title: 'Complaint Analysis', desc: 'AI categorization, priority prediction, and escalation guidance' },
+  { icon: Calendar,    title: 'Leave Guidance',      desc: 'Policy answers, application help, and approval tracking' },
+  { icon: ShieldCheck, title: 'Hostel Support',      desc: 'Rules, curfew, mess timings, and procedure answers' },
+  { icon: BarChart3,   title: 'Smart Insights',      desc: 'Occupancy, fee status, and personalized recommendations' },
 ];
 
 const aiActions = [
@@ -163,7 +163,7 @@ export default function Chat() {
               key={i}
               src={part.value}
               alt={part.alt || ''}
-              className="max-w-full rounded-xl shadow-md border border-indigo-100"
+              className="max-w-full rounded-xl shadow-md border border-[#071B34]/10"
               loading="lazy"
             />
           ) : (
@@ -193,97 +193,80 @@ export default function Chat() {
   const titleSize            = expanded ? 'text-base' : 'text-lg';
 
   return (
-    <div className="min-h-screen bg-gray-50">
-
-      {/* ── Navbar ── */}
+    <div className={`min-h-screen ${expanded ? 'bg-[#071B34]' : 'bg-[#F5F7FA]'}`}>
       {!expanded && (
-        <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-          <div className="max-w-5xl mx-auto px-6 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Link to="/student/dashboard" className="flex items-center space-x-1.5 text-gray-500 hover:text-indigo-600 transition-colors text-sm font-medium">
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Dashboard</span>
-                </Link>
-                <div className="w-px h-5 bg-gray-200" />
-                <Link to="/" className="flex items-center space-x-2">
-                  <div className="w-7 h-7 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-lg flex items-center justify-center">
-                    <Building2 className="w-3.5 h-3.5 text-white" />
-                  </div>
-                  <span className="font-bold text-gray-900 text-sm">HostelIQ</span>
-                </Link>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center space-x-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-full border border-green-200 text-xs font-medium">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                  <span>AI Online</span>
+        <div className="gradient-mesh-hero relative">
+          <div className="glow-orb w-[500px] h-[500px] bg-[#4CC9F0]/10 top-0 left-1/4" />
+          <nav className="gradient-mesh-content border-b border-white/5 sticky top-0 z-50">
+            <div className="max-w-5xl mx-auto px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Link to="/student/dashboard" className="flex items-center space-x-1.5 text-[#4A5568] hover:text-[#4CC9F0] transition-colors text-sm font-medium">
+                    <ArrowLeft className="w-4 h-4" /><span>Dashboard</span>
+                  </Link>
+                  <div className="w-px h-5 bg-white/10" />
+                  <Link to="/" className="flex items-center space-x-2">
+                    <div className="w-7 h-7 bg-[#1B4F72] rounded-lg flex items-center justify-center">
+                      <Building2 className="w-3.5 h-3.5 text-[#F8FAFC]" />
+                    </div>
+                    <span className="font-semibold text-[#F8FAFC] text-sm">HostelIQ</span>
+                  </Link>
+                </div>
+                <div className="flex items-center gap-1.5 text-[#4CC9F0] text-xs font-medium">
+                  <div className="w-1.5 h-1.5 bg-[#4CC9F0] rounded-full animate-pulse" /><span>AI Online</span>
                 </div>
               </div>
             </div>
-          </div>
-        </nav>
+          </nav>
+        </div>
       )}
 
       {/* ── Chat Container ── */}
       <div className={`${containerWidthClass} ${containerMarginX} ${containerPaddingY} ${containerHeightClass} flex flex-col`}>
 
-        {/* Header */}
-        <div className={`bg-white ${headerRadius} border border-gray-100 ${headerPad} border-b-0 shadow-sm`}>
+        <div className={`${expanded ? 'bg-[#0A2342] border-[#1B4F72]/30' : 'bg-white border-[#071B34]/5'} ${headerRadius} border ${headerPad} border-b-0 shadow-sm`}>
           <div className="flex items-center space-x-3">
-            <div className={`${avatarSize} bg-gradient-to-br from-indigo-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md`}>
-              <BrainCircuit className={`${brainIconSize} text-white`} />
+            <div className={`${avatarSize} bg-[#071B34] rounded-xl flex items-center justify-center`}>
+              <BrainCircuit className={`${brainIconSize} text-[#4CC9F0]`} />
             </div>
             <div className="flex-1">
-              <h2 className={`${titleSize} font-bold text-gray-900`}>HostelIQ AI Assistant</h2>
-              {!expanded && (
-                <p className="text-gray-400 text-xs mt-0.5">Powered by AI · Hostel support, leave, complaints, fees & more</p>
-              )}
+              <h2 className={`${titleSize} font-semibold ${expanded ? 'text-[#F8FAFC]' : 'text-[#071B34]'}`}>HostelIQ AI Assistant</h2>
+              {!expanded && <p className="text-[#4A5568] text-xs mt-0.5">Hostel support, leave, complaints, fees & more</p>}
             </div>
-            <div className="flex items-center gap-2">
-              {!expanded && (
-                <div className="hidden sm:flex items-center space-x-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-medium border border-green-200">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                  <span>Online</span>
-                </div>
-              )}
-              <button
-                onClick={() => setExpanded((v: boolean) => !v)}
-                className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-indigo-600 transition-colors"
-                aria-label={expanded ? 'Collapse' : 'Expand'}
-              >
-                {expanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-              </button>
-            </div>
+            <button onClick={() => setExpanded((v: boolean) => !v)}
+              className={`p-2 rounded-lg border transition-colors ${expanded ? 'border-white/10 text-[#4A5568] hover:text-[#F8FAFC]' : 'border-[#071B34]/10 text-[#4A5568] hover:text-[#071B34]'}`}
+              aria-label={expanded ? 'Collapse' : 'Expand'}>
+              {expanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 
-        {/* Messages Area */}
-        <div className={`flex-1 bg-white ${messagesBorders} border-gray-100 ${messagesPad} overflow-y-auto shadow-sm`}>
-
-          {/* Empty state: capability cards + prompts shown before messages stack up */}
+        <div className={`flex-1 ${expanded ? 'bg-[#071B34]' : 'bg-white'} ${messagesBorders} ${expanded ? 'border-[#1B4F72]/30' : 'border-[#071B34]/5'} ${messagesPad} overflow-y-auto shadow-sm`}>
           {messages.length <= 1 && !isLoading && (
-            <div className="mb-8 space-y-6">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">What I can help with</p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {capabilities.map(c => {
-                  const Icon = c.icon;
-                  return (
-                    <div key={c.title} className={`${c.bg} rounded-xl p-3 border border-transparent card-hover cursor-default`}>
-                      <Icon className={`w-5 h-5 ${c.color} mb-2`} />
-                      <p className="text-xs font-semibold text-gray-700">{c.title}</p>
-                      <p className="text-xs text-gray-400 mt-0.5 leading-snug">{c.desc}</p>
-                    </div>
-                  );
-                })}
+            <div className="mb-10 space-y-10">
+              <div>
+                <p className="text-xs text-[#1B4F72] uppercase tracking-widest mb-6">Capabilities</p>
+                <div className="grid sm:grid-cols-2 gap-px bg-[#071B34]/5 rounded-xl overflow-hidden">
+                  {capabilities.map((c) => {
+                    const Icon = c.icon;
+                    return (
+                      <div key={c.title} className={`p-6 ${expanded ? 'bg-[#0A2342]' : 'bg-[#F5F7FA]/50'}`}>
+                        <Icon className={`w-5 h-5 ${expanded ? 'text-[#4CC9F0]' : 'text-[#1B4F72]'} mb-3`} />
+                        <p className={`text-sm font-medium ${expanded ? 'text-[#F8FAFC]' : 'text-[#071B34]'}`}>{c.title}</p>
+                        <p className={`text-xs mt-1 leading-relaxed ${expanded ? 'text-[#4A5568]' : 'text-[#4A5568]'}`}>{c.desc}</p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
               <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">AI Suggested Actions</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <p className="text-xs text-[#1B4F72] uppercase tracking-widest mb-4">Suggested actions</p>
+                <div className="flex flex-wrap gap-2">
                   {aiActions.map((a) => (
                     <button key={a.label} onClick={() => setInputValue(a.label)}
-                      className="text-left bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-xl p-3 hover:border-indigo-300 transition-colors">
-                      <p className="text-xs font-semibold text-indigo-700">{a.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{a.desc}</p>
+                      className={`text-left px-4 py-3 rounded-lg border transition-colors ${expanded ? 'border-white/10 bg-white/5 hover:bg-white/10 text-[#F8FAFC]' : 'border-[#071B34]/10 bg-white hover:border-[#4CC9F0]/30'}`}>
+                      <p className="text-xs font-medium">{a.label}</p>
+                      <p className={`text-xs mt-0.5 ${expanded ? 'text-[#4A5568]' : 'text-[#4A5568]'}`}>{a.desc}</p>
                     </button>
                   ))}
                 </div>
@@ -296,28 +279,24 @@ export default function Chat() {
               <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`flex items-start space-x-3 ${contentWidthClass} ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   {/* Avatar */}
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
-                    message.role === 'user'
-                      ? 'bg-gradient-to-br from-indigo-100 to-blue-100 border border-indigo-200'
-                      : 'bg-gradient-to-br from-indigo-600 to-blue-600'
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                    message.role === 'user' ? 'bg-[#071B34]/10' : 'bg-[#071B34]'
                   }`}>
                     {message.role === 'user'
-                      ? <User className="w-4 h-4 text-indigo-600" />
-                      : <BrainCircuit className="w-4 h-4 text-white" />
+                      ? <User className="w-4 h-4 text-[#1B4F72]" />
+                      : <BrainCircuit className="w-4 h-4 text-[#4CC9F0]" />
                     }
                   </div>
-
-                  {/* Bubble */}
-                  <div className={`rounded-2xl px-4 py-3 shadow-sm border text-sm ${
+                  <div className={`rounded-2xl px-4 py-3 text-sm ${
                     message.role === 'user'
-                      ? 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white border-indigo-500 max-w-xs sm:max-w-sm'
-                      : 'bg-white text-gray-800 border-gray-100 flex-1'
+                      ? 'bg-[#071B34] text-[#F8FAFC] max-w-xs sm:max-w-sm'
+                      : `${expanded ? 'bg-[#0A2342] text-[#F8FAFC] border border-white/5' : 'bg-[#F5F7FA] text-[#071B34]'} flex-1`
                   }`}>
                     {message.role === 'assistant'
                       ? renderAssistantContent(message.content)
                       : <p className="whitespace-pre-line leading-relaxed">{message.content}</p>
                     }
-                    <p className={`text-xs mt-2 ${message.role === 'user' ? 'text-indigo-200' : 'text-gray-400'}`}>
+                    <p className={`text-xs mt-2 ${message.role === 'user' ? 'text-[#4A5568]' : 'text-[#4A5568]'}`}>
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -329,20 +308,18 @@ export default function Chat() {
             {isLoading && (
               <div className="flex justify-start">
                 <div className={`flex items-start space-x-3 ${contentWidthClass}`}>
-                  <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
-                    <BrainCircuit className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 bg-[#071B34] rounded-xl flex items-center justify-center">
+                    <BrainCircuit className="w-4 h-4 text-[#4CC9F0]" />
                   </div>
-                  <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-100">
+                  <div className={`rounded-2xl px-4 py-3 ${expanded ? 'bg-[#0A2342] border border-white/5' : 'bg-[#F5F7FA]'}`}>
                     <div className="flex items-center space-x-2">
-                      <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
-                      <span className="text-gray-500 text-sm">{statusText || 'AI is thinking...'}</span>
+                      <Loader2 className="w-4 h-4 animate-spin text-[#4CC9F0]" />
+                      <span className={`text-sm ${expanded ? 'text-[#4A5568]' : 'text-[#4A5568]'}`}>{statusText || 'AI is thinking...'}</span>
                     </div>
                     {statusTrail.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {statusTrail.map((s: string, i: number) => (
-                          <span key={i} className="px-2 py-0.5 rounded-full text-xs bg-indigo-50 text-indigo-600 border border-indigo-100">
-                            {s}
-                          </span>
+                          <span key={i} className="px-2 py-0.5 rounded-full text-xs bg-[#1B4F72]/20 text-[#4CC9F0]">{s}</span>
                         ))}
                       </div>
                     )}
@@ -357,15 +334,12 @@ export default function Chat() {
 
         {/* Quick Prompts — shown only on initial state */}
         {!expanded && messages.length <= 1 && !isLoading && (
-          <div className="bg-white border-l border-r border-gray-100 px-5 py-4 border-t border-gray-50">
-            <p className="text-xs text-gray-400 font-medium mb-2.5">✨ Suggested questions</p>
+          <div className="bg-white border-l border-r border-[#071B34]/5 px-5 py-4 border-t">
+            <p className="text-xs text-[#4A5568] uppercase tracking-widest mb-3">Suggested questions</p>
             <div className="flex flex-wrap gap-2">
               {quickPrompts.map((prompt, index) => (
-                <button
-                  key={index}
-                  onClick={() => setInputValue(prompt)}
-                  className="bg-gray-50 text-gray-600 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 border border-gray-200"
-                >
+                <button key={index} onClick={() => setInputValue(prompt)}
+                  className="text-[#071B34] hover:text-[#4CC9F0] px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border border-[#071B34]/10 hover:border-[#4CC9F0]/30">
                   {prompt}
                 </button>
               ))}
@@ -374,59 +348,35 @@ export default function Chat() {
         )}
 
         {/* Input Area */}
-        <div className={`bg-white ${inputRadius} border border-gray-100 ${inputPad} border-t-0 shadow-sm`}>
+        <div className={`${expanded ? 'bg-[#0A2342] border-[#1B4F72]/30' : 'bg-white border-[#071B34]/5'} ${inputRadius} border ${inputPad} border-t-0 shadow-sm`}>
           <div className="flex items-end space-x-3">
             <div className="flex-1">
-              <textarea
-                value={inputValue}
-                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
+              <textarea value={inputValue} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setInputValue(e.target.value)} onKeyPress={handleKeyPress}
                 placeholder="Ask about leave, complaints, fees, hostel rules, visitor passes..."
-                className="w-full resize-none border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all text-sm bg-gray-50 placeholder-gray-400"
-                rows={2}
-                disabled={isLoading}
-              />
+                className={`w-full resize-none border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 transition-all text-sm ${expanded ? 'bg-[#071B34] border-white/10 text-[#F8FAFC] placeholder-[#4A5568]' : 'bg-[#F5F7FA] border-[#071B34]/10 text-[#071B34] placeholder-[#4A5568]'}`}
+                rows={2} disabled={isLoading} />
             </div>
-            <button
-              onClick={handleSendMessage}
-              disabled={!inputValue.trim() || isLoading}
-              className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-3 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-md hover:shadow-indigo-200 hover:shadow-lg"
-            >
+            <button onClick={handleSendMessage} disabled={!inputValue.trim() || isLoading}
+              className="bg-[#071B34] text-[#F8FAFC] p-3 rounded-xl hover:bg-[#0A2342] transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
               <Send className="w-5 h-5" />
             </button>
           </div>
-
-          <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
+          <div className="flex items-center justify-between mt-3 text-xs text-[#4A5568]">
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                <span>AI-powered responses</span>
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <Clock className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Instant support</span>
-              </div>
+              <span className="flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-[#4CC9F0]" /> AI-powered</span>
+              <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-[#4CC9F0]" /> Instant support</span>
             </div>
             <p>Press Enter to send</p>
           </div>
         </div>
 
-        {/* Footer actions */}
         {!expanded && (
-          <div className="mt-5 flex justify-center space-x-4">
-            <Link
-              to="/student/dashboard"
-              className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-2.5 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all flex items-center space-x-2 text-sm font-semibold shadow-md hover:shadow-indigo-200 hover:shadow-lg"
-            >
-              <span>Back to Dashboard</span>
-              <ArrowRight className="w-4 h-4" />
+          <div className="mt-6 flex justify-center gap-4">
+            <Link to="/student/dashboard" className="bg-[#071B34] text-[#F8FAFC] px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-[#0A2342] transition-colors">
+              <span>Back to Dashboard</span><ArrowRight className="w-4 h-4" />
             </Link>
-            <Link
-              to="/"
-              className="border border-indigo-200 text-indigo-600 px-6 py-2.5 rounded-xl hover:bg-indigo-50 transition-all flex items-center space-x-2 text-sm font-semibold bg-white shadow-sm"
-            >
-              <Building2 className="w-4 h-4" />
-              <span>Home</span>
+            <Link to="/" className="border border-[#071B34]/10 text-[#071B34] px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium bg-white hover:bg-[#F5F7FA] transition-colors">
+              <Building2 className="w-4 h-4" /><span>Home</span>
             </Link>
           </div>
         )}

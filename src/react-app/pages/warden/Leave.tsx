@@ -10,14 +10,14 @@ const requests = [
 
 export default function WardenLeave() {
   return (
-    <div className="min-h-screen bg-gray-50 page-enter">
-      <PortalNav portal="Warden Portal" portalColor="text-emerald-600" userName="Dr. Priya Mehta" avatar="PM" homeHref="/warden/dashboard" />
+    <div className="min-h-screen bg-[#F5F7FA] page-enter">
+      <PortalNav portal="Warden Portal" userName="Dr. Priya Mehta" avatar="PM" homeHref="/warden/dashboard" dark />
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
-        <Link to="/warden/dashboard" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
+        <Link to="/warden/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
         <h1 className="text-2xl font-extrabold text-gray-900">Leave Approvals</h1>
-        <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-start gap-3">
-          <BrainCircuit className="w-5 h-5 text-indigo-600 shrink-0" />
-          <p className="text-sm text-indigo-700">AI recommends approving LV-012 and reviewing LV-014 — 3 overlapping requests may affect Block B occupancy.</p>
+        <div className="bg-[#F5F7FA] border border-[#071B34]/10 rounded-xl p-4 flex items-start gap-3">
+          <BrainCircuit className="w-5 h-5 text-[#1B4F72] shrink-0" />
+          <p className="text-sm text-[#071B34]">AI recommends approving LV-012 and reviewing LV-014 — 3 overlapping requests may affect Block B occupancy.</p>
         </div>
         <div className="space-y-3">
           {requests.map((r) => (

@@ -33,7 +33,7 @@ export default function VisitorRequest() {
   const [showPass, setShowPass] = useState<string | null>('HQ-2025-042');
 
   return (
-    <div className="min-h-screen bg-gray-50 page-enter">
+    <div className="min-h-screen bg-[#F5F7FA] page-enter">
       <PortalNav
         portal="Visitor Management"
         userName="Aryan Sharma"
@@ -45,21 +45,21 @@ export default function VisitorRequest() {
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <Link to="/student/dashboard" className="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 mb-2 font-medium">
+            <Link to="/student/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] hover:text-[#071B34] mb-2 font-medium">
               <ArrowLeft className="w-4 h-4" /> Back to Dashboard
             </Link>
             <h1 className="text-2xl font-extrabold text-gray-900">Visitor Management</h1>
             <p className="text-gray-500 text-sm mt-1">Register visitors, generate QR passes, and track visit history</p>
           </div>
           <button onClick={() => setShowForm(!showForm)}
-            className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-md">
+            className="bg-[#071B34] text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-md">
             <Plus className="w-4 h-4" /> New Visitor Request
           </button>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'This Month', value: '3', icon: Users, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+            { label: 'This Month', value: '3', icon: Users, color: 'text-[#1B4F72]', bg: 'bg-[#F5F7FA]' },
             { label: 'Approved', value: '2', icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50' },
             { label: 'Pending', value: '1', icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
             { label: 'Security Score', value: '100%', icon: Shield, color: 'text-cyan-600', bg: 'bg-cyan-50' },
@@ -82,18 +82,18 @@ export default function VisitorRequest() {
         </div>
 
         {showForm && (
-          <div className="bg-white rounded-2xl border border-indigo-100 shadow-lg p-6 animate-fade-up">
+          <div className="bg-white rounded-2xl border border-[#071B34]/10 shadow-lg p-6 animate-fade-up">
             <h2 className="font-semibold text-gray-800 mb-4">Register Visitor</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {['Visitor Name', 'Relation', 'Visit Date', 'Expected Time', 'Phone Number', 'Purpose'].map((label) => (
                 <div key={label}>
                   <label className="text-xs text-gray-500 font-medium">{label}</label>
                   <input type={label.includes('Date') ? 'date' : label.includes('Time') ? 'time' : 'text'}
-                    className="w-full mt-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" />
+                    className="w-full mt-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#4CC9F0]/30 outline-none" />
                 </div>
               ))}
             </div>
-            <button className="mt-4 bg-indigo-600 text-white px-5 py-2 rounded-xl text-sm font-semibold">Submit Request</button>
+            <button className="mt-4 bg-[#071B34] text-white px-5 py-2 rounded-xl text-sm font-semibold">Submit Request</button>
           </div>
         )}
 
@@ -106,8 +106,8 @@ export default function VisitorRequest() {
               {visitors.map((v) => (
                 <div key={v.id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
-                      <UserCheck className="w-5 h-5 text-indigo-600" />
+                    <div className="w-10 h-10 bg-[#F5F7FA] rounded-xl flex items-center justify-center">
+                      <UserCheck className="w-5 h-5 text-[#1B4F72]" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-800">{v.name}</p>
@@ -117,7 +117,7 @@ export default function VisitorRequest() {
                   <div className="flex items-center gap-2">
                     <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusStyles[v.status]}`}>{v.status}</span>
                     {v.passId && (
-                      <button onClick={() => setShowPass(v.passId!)} className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg">
+                      <button onClick={() => setShowPass(v.passId!)} className="p-1.5 text-[#1B4F72] hover:bg-[#F5F7FA] rounded-lg">
                         <Eye className="w-4 h-4" />
                       </button>
                     )}
@@ -129,9 +129,9 @@ export default function VisitorRequest() {
 
           <div className="space-y-4">
             {showPass && (
-              <div className="bg-white rounded-2xl border-2 border-indigo-200 shadow-xl overflow-hidden animate-fade-up">
-                <div className="bg-gradient-to-r from-indigo-600 to-blue-600 px-5 py-4 text-center">
-                  <p className="text-indigo-200 text-xs">HostelIQ Visitor Pass</p>
+              <div className="bg-white rounded-2xl border-2 border-[#071B34]/10 shadow-xl overflow-hidden animate-fade-up">
+                <div className="bg-[#071B34] px-5 py-4 text-center">
+                  <p className="text-[#4A5568] text-xs">HostelIQ Visitor Pass</p>
                   <p className="text-white font-bold text-lg">{showPass}</p>
                 </div>
                 <div className="p-6 flex flex-col items-center">
@@ -141,7 +141,7 @@ export default function VisitorRequest() {
                   <p className="text-sm font-semibold text-gray-800">Rahul Sharma</p>
                   <p className="text-xs text-gray-500">Visiting: Aryan Sharma · Room 204</p>
                   <p className="text-xs text-gray-400 mt-1 flex items-center gap-1"><Calendar className="w-3 h-3" /> 14 Jun 2025 · 2:00 PM</p>
-                  <button className="mt-4 flex items-center gap-2 text-indigo-600 text-sm font-medium hover:text-indigo-800">
+                  <button className="mt-4 flex items-center gap-2 text-[#1B4F72] text-sm font-medium hover:text-[#071B34]">
                     <Download className="w-4 h-4" /> Download Pass
                   </button>
                 </div>
@@ -150,7 +150,7 @@ export default function VisitorRequest() {
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <h2 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                <Shield className="w-5 h-5 text-indigo-600" /> Security Dashboard
+                <Shield className="w-5 h-5 text-[#1B4F72]" /> Security Dashboard
               </h2>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between"><span className="text-gray-500">Today's Visitors</span><span className="font-medium">2</span></div>
@@ -159,12 +159,12 @@ export default function VisitorRequest() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-indigo-900 to-blue-900 rounded-2xl p-5">
+            <div className="bg-[#071B34] rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-2">
                 <BrainCircuit className="w-5 h-5 text-cyan-400" />
                 <p className="text-white font-semibold text-sm">AI Visit Analytics</p>
               </div>
-              <p className="text-indigo-200 text-xs">Peak visitor hours: 2–5 PM on weekends. Pre-register 24h ahead for faster gate clearance.</p>
+              <p className="text-[#4A5568] text-xs">Peak visitor hours: 2–5 PM on weekends. Pre-register 24h ahead for faster gate clearance.</p>
             </div>
           </div>
         </div>

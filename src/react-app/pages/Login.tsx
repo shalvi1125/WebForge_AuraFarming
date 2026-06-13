@@ -69,20 +69,20 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-800 mb-4">
+          <Link to="/" className="inline-flex items-center space-x-2 text-[#1B4F72] hover:text-[#071B34] mb-4">
             <ArrowLeft className="w-5 h-5" />
             <span>Back to Home</span>
           </Link>
           
-          <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
+          <div className="w-16 h-16 bg-[#071B34] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
             <Building2 className="w-8 h-8 text-white" />
           </div>
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-[#071B34] mb-2">
             Welcome Back
           </h1>
           <p className="text-gray-500">Sign in to your HostelIQ account</p>
@@ -98,12 +98,12 @@ export default function Login() {
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400 w-5 h-5" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 focus:border-transparent"
                       placeholder="your@email.com"
                       required
                     />
@@ -115,12 +115,12 @@ export default function Login() {
                     Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400 w-5 h-5" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
                     <input
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 focus:border-transparent"
                       placeholder="Your password"
                       required
                     />
@@ -130,7 +130,7 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 font-semibold flex items-center justify-center space-x-2 disabled:opacity-50 shadow-sm"
+                  className="w-full bg-[#071B34] hover:bg-[#0A2342] transition-all duration-200 font-semibold flex items-center justify-center space-x-2 disabled:opacity-50 shadow-sm"
                 >
                   {isLoading ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -145,13 +145,13 @@ export default function Login() {
               <div className="mt-6 text-center space-y-2">
                 <button
                   onClick={() => setShowForgotPassword(true)}
-                  className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors"
+                  className="text-[#1B4F72] hover:text-[#071B34] font-medium text-sm transition-colors"
                 >
                   Forgot Password?
                 </button>
                 <p className="text-gray-600">
                   Don't have an account?{' '}
-                  <Link to="/signup" className="text-indigo-600 hover:text-indigo-800 font-semibold">
+                  <Link to="/signup" className="text-[#1B4F72] hover:text-[#071B34] font-semibold">
                     Sign up here
                   </Link>
                 </p>
@@ -161,10 +161,10 @@ export default function Login() {
             /* Forgot Password Form */
             <div className="space-y-6">
               <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
+                <div className="w-16 h-16 bg-[#071B34] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
                   <KeyRound className="w-8 h-8 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Reset Password</h2>
+                <h2 className="text-2xl font-bold text-[#071B34] mb-2">Reset Password</h2>
                 <p className="text-gray-500 text-sm">Enter your email address and we'll send you a link to reset your password.</p>
               </div>
 
@@ -174,12 +174,12 @@ export default function Login() {
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400 w-5 h-5" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#4A5568] w-5 h-5" />
                     <input
                       type="email"
                       value={resetEmail}
                       onChange={(e) => setResetEmail(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CC9F0]/30 focus:border-transparent"
                       placeholder="your@email.com"
                       required
                     />
@@ -199,7 +199,7 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={resetLoading}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 font-semibold flex items-center justify-center space-x-2 disabled:opacity-50 shadow-sm"
+                  className="w-full bg-[#071B34] hover:bg-[#0A2342] transition-all duration-200 font-semibold flex items-center justify-center space-x-2 disabled:opacity-50 shadow-sm"
                 >
                   {resetLoading ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -216,7 +216,7 @@ export default function Login() {
                     setResetEmail('');
                     setResetMessage('');
                   }}
-                  className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors"
+                  className="text-[#1B4F72] hover:text-[#071B34] font-medium text-sm transition-colors"
                 >
                   Back to Login
                 </button>

@@ -38,7 +38,7 @@ export default function StudentFees() {
   const maxTrend = Math.max(...monthlyTrend, 1);
 
   return (
-    <div className="min-h-screen bg-gray-50 page-enter">
+    <div className="min-h-screen bg-[#F5F7FA] page-enter">
       <PortalNav
         portal="Fee Management"
         userName="Aryan Sharma"
@@ -53,7 +53,7 @@ export default function StudentFees() {
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
         <div>
-          <Link to="/student/dashboard" className="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 mb-2 font-medium">
+          <Link to="/student/dashboard" className="inline-flex items-center gap-1 text-sm text-[#1B4F72] hover:text-[#071B34] mb-2 font-medium">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Link>
           <h1 className="text-2xl font-extrabold text-gray-900">Fee Management</h1>
@@ -61,10 +61,10 @@ export default function StudentFees() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
-            <p className="text-indigo-200 text-sm">Total Paid</p>
+          <div className="bg-[#071B34] rounded-2xl p-6 text-white shadow-lg">
+            <p className="text-[#4A5568] text-sm">Total Paid</p>
             <p className="text-3xl font-extrabold mt-1">₹{totalPaid.toLocaleString()}</p>
-            <p className="text-indigo-200 text-xs mt-2 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> 3 payments this semester</p>
+            <p className="text-[#4A5568] text-xs mt-2 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> 3 payments this semester</p>
           </div>
           <div className="bg-white rounded-2xl p-6 border border-rose-100 shadow-sm">
             <p className="text-gray-500 text-sm">Outstanding</p>
@@ -83,7 +83,7 @@ export default function StudentFees() {
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h2 className="font-semibold text-gray-800">Payment History</h2>
               <select value={selectedPeriod} onChange={(e) => setSelectedPeriod(e.target.value)}
-                className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-indigo-400">
+                className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-[#4CC9F0]/30">
                 <option value="all">All Time</option>
                 <option value="2025">2025</option>
                 <option value="2024">2024</option>
@@ -116,14 +116,14 @@ export default function StudentFees() {
               <div className="flex items-end gap-2 h-32">
                 {monthlyTrend.map((v, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                    <div className="w-full bg-gradient-to-t from-indigo-600 to-cyan-400 rounded-t-md transition-all" style={{ height: `${(v / maxTrend) * 100}%`, minHeight: v ? '4px' : '2px' }} />
+                    <div className="w-full bg-[#1B4F72] rounded-t-md transition-all" style={{ height: `${(v / maxTrend) * 100}%`, minHeight: v ? '4px' : '2px' }} />
                     <span className="text-[10px] text-gray-400">{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'][i]}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <button className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-md hover:shadow-indigo-200 transition-shadow">
+            <button className="w-full bg-[#071B34] text-white py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-md hover:shadow-[#4CC9F0]/20 transition-shadow">
               <CreditCard className="w-5 h-5" /> Pay ₹{outstanding.toLocaleString()} Now
             </button>
 
@@ -131,11 +131,11 @@ export default function StudentFees() {
               <Download className="w-4 h-4" /> Download Receipt
             </button>
 
-            <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex items-start gap-3">
-              <BrainCircuit className="w-5 h-5 text-indigo-600 shrink-0" />
+            <div className="bg-[#F5F7FA] border border-[#071B34]/10 rounded-2xl p-4 flex items-start gap-3">
+              <BrainCircuit className="w-5 h-5 text-[#1B4F72] shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-indigo-800">AI Payment Reminder</p>
-                <p className="text-xs text-indigo-600 mt-0.5">Pay before 25 Jun to avoid additional late fees. Set up auto-reminder?</p>
+                <p className="text-sm font-semibold text-[#071B34]">AI Payment Reminder</p>
+                <p className="text-xs text-[#1B4F72] mt-0.5">Pay before 25 Jun to avoid additional late fees. Set up auto-reminder?</p>
               </div>
             </div>
           </div>

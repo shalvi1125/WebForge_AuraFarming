@@ -1,11 +1,10 @@
-// src/react-app/pages/student/Dashboard.tsx
 import { Link } from 'react-router';
 import {
-  Building2, Home, AlertCircle, Calendar, IndianRupee,
-  Users, BrainCircuit, ChevronRight, Bell, LogOut,
-  CheckCircle2, Clock, XCircle, ArrowUpRight, Wifi,
-  Wrench, Utensils, BedDouble, User, Megaphone, UserCheck,
+  AlertCircle, Calendar, IndianRupee, BrainCircuit, ChevronRight,
+  ArrowUpRight, Wifi, Wrench, Utensils, User, Megaphone, UserCheck, Map, Activity,
 } from 'lucide-react';
+import PortalNav from '@/react-app/components/PortalNav';
+import HostelBlueprint from '@/react-app/components/HostelBlueprint';
 
 const getGreeting = () => {
   const h = new Date().getHours();
@@ -14,22 +13,7 @@ const getGreeting = () => {
   return 'Good evening';
 };
 
-// ── Mock Data ──────────────────────────────────────────────
-const student = {
-  name: 'Aryan Sharma',
-  rollNo: 'CS21B047',
-  room: '204',
-  block: 'Block B',
-  hostel: 'Tagore Hostel',
-  avatar: 'AS',
-};
-
-const stats = [
-  { label: 'Active Complaints', value: '2', icon: AlertCircle, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100' },
-  { label: 'Pending Leave', value: '1', icon: Calendar, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-  { label: 'Outstanding Fees', value: '₹4,500', icon: IndianRupee, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
-  { label: 'Visitors This Month', value: '3', icon: Users, color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-100' },
-];
+const student = { name: 'Aryan Sharma', rollNo: 'CS21B047', room: '204', block: 'Block B', hostel: 'Tagore Hostel', avatar: 'AS' };
 
 const complaints = [
   { id: 'CMP-041', title: 'Water leakage near washroom', status: 'In Progress', priority: 'High', date: '10 Jun', icon: Wrench },
@@ -38,37 +22,8 @@ const complaints = [
 ];
 
 const leaveRequests = [
-  { id: 'LV-014', reason: 'Family function – Diwali holidays', from: '14 Jun', to: '17 Jun', status: 'Pending' },
+  { id: 'LV-014', reason: 'Family function – summer break', from: '14 Jun', to: '17 Jun', status: 'Pending' },
   { id: 'LV-011', reason: 'Medical appointment', from: '02 Jun', to: '02 Jun', status: 'Approved' },
-  { id: 'LV-008', reason: 'College fest at home campus', from: '20 May', to: '22 May', status: 'Rejected' },
-];
-
-const statusStyles: Record<string, string> = {
-  Open: 'bg-rose-100 text-rose-700',
-  'In Progress': 'bg-amber-100 text-amber-700',
-  Resolved: 'bg-green-100 text-green-700',
-  Pending: 'bg-amber-100 text-amber-700',
-  Approved: 'bg-green-100 text-green-700',
-  Rejected: 'bg-red-100 text-red-700',
-};
-
-const priorityStyles: Record<string, string> = {
-  High: 'bg-rose-50 text-rose-600 border border-rose-200',
-  Medium: 'bg-amber-50 text-amber-600 border border-amber-200',
-  Low: 'bg-green-50 text-green-600 border border-green-200',
-};
-
-const statusIcon = (s: string) => {
-  if (s === 'Resolved' || s === 'Approved') return <CheckCircle2 className="w-3.5 h-3.5" />;
-  if (s === 'Rejected') return <XCircle className="w-3.5 h-3.5" />;
-  return <Clock className="w-3.5 h-3.5" />;
-};
-
-const quickActions = [
-  { label: 'File Complaint', icon: AlertCircle, href: '/student/complaints', gradient: 'from-rose-500 to-pink-500' },
-  { label: 'Apply Leave', icon: Calendar, href: '/student/leave', gradient: 'from-amber-500 to-orange-500' },
-  { label: 'View Fees', icon: IndianRupee, href: '/student/fees', gradient: 'from-indigo-500 to-blue-500' },
-  { label: 'AI Assistant', icon: BrainCircuit, href: '/chat', gradient: 'from-cyan-500 to-blue-500' },
 ];
 
 const recentActivity = [
@@ -83,318 +38,196 @@ const visitorRequests = [
   { name: 'Amit Patel', date: '16 Jun', status: 'Pending' },
 ];
 
+const aiInsights = [
+  { text: 'Most recurring issue in your wing: Wi-Fi connectivity', type: 'pattern' },
+  { text: 'Room 206 has a critical alert nearby — corridor west wing', type: 'alert' },
+  { text: 'Apply for leave before 12 Jun for faster warden approval', type: 'tip' },
+];
+
+const statusStyles: Record<string, string> = {
+  Open: 'text-[#1B4F72] font-semibold', 'In Progress': 'text-[#0A2342] font-semibold', Resolved: 'text-[#4A5568]',
+  Pending: 'text-[#1B4F72] font-semibold', Approved: 'text-[#1B4F72] font-semibold', Rejected: 'text-[#4A5568]',
+};
+
 export default function StudentDashboard() {
   return (
-    <div className="min-h-screen bg-gray-50 page-enter gradient-mesh">
+    <div className="min-h-screen bg-[#F5F7FA] page-enter relative">
+      <HostelBlueprint className="blueprint-decor w-96 h-72 -left-10 top-48 hidden xl:block" />
 
-      {/* ── Navbar ── */}
-      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-xl flex items-center justify-center">
-              <Building2 className="w-4 h-4 text-white" />
+      <PortalNav portal="Student Portal" userName={student.name} userMeta={student.rollNo} avatar={student.avatar} homeHref="/student/dashboard"
+        links={[{ label: 'Complaints', href: '/student/complaints' }, { label: 'Leave', href: '/student/leave' }, { label: 'Room Map', href: '/student/room' }]} />
+
+      <section className="gradient-mesh-hero relative">
+        <div className="glow-orb w-[400px] h-[400px] bg-[#4CC9F0]/15 -top-20 right-0" />
+        <div className="gradient-mesh-content max-w-7xl mx-auto px-6 lg:px-10 py-12 lg:py-16">
+          <div className="flex flex-wrap items-start justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-2 h-2 rounded-full bg-[#4CC9F0] live-indicator" />
+                <p className="text-[#4CC9F0] text-sm font-medium">{getGreeting()}</p>
+              </div>
+              <h1 className="text-4xl lg:text-5xl font-semibold text-[#F8FAFC] tracking-tight mb-2">{student.name}</h1>
+              <p className="text-[#C5D0D8] font-medium">{student.hostel} · Room {student.room} · {student.block}</p>
             </div>
-            <div className="leading-none">
-              <p className="font-bold text-gray-900 text-sm">HostelIQ</p>
-              <p className="text-xs text-indigo-500">Student Portal</p>
+            <div className="bg-white/8 border border-white/12 rounded-xl px-5 py-4 backdrop-blur-sm">
+              <p className="text-xs text-[#C5D0D8] uppercase tracking-widest font-semibold mb-1">Today's Status</p>
+              <p className="text-sm text-[#F8FAFC] font-medium">2 active issues · 1 leave pending</p>
+              <p className="text-xs text-[#4CC9F0] mt-1">Curfew 10 PM · Mess closes 9 PM</p>
             </div>
           </div>
-
-          <div className="flex items-center space-x-3">
-            <button className="relative p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
-            </button>
-            <Link to="/student/profile" className="flex items-center space-x-2 pl-2 border-l border-gray-100">
-              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                {student.avatar}
-              </div>
-              <div className="hidden sm:block leading-none">
-                <p className="text-sm font-semibold text-gray-800">{student.name}</p>
-                <p className="text-xs text-gray-400">{student.rollNo}</p>
-              </div>
-            </Link>
-            <Link to="/" className="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Logout">
-              <LogOut className="w-4 h-4" />
-            </Link>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10 mt-8 pt-8 border-t border-white/10">
+            {[['2', 'Active complaints', '#F8FAFC'], ['1', 'Pending leave', '#4CC9F0'], ['₹4,500', 'Outstanding fees', '#F8FAFC'], ['3', 'Visitors this month', '#F8FAFC']].map(([v, l, c]) => (
+              <div key={l}><p className="text-2xl font-bold" style={{ color: c }}>{v}</p><p className="text-xs text-[#C5D0D8] mt-1 uppercase tracking-wider font-medium">{l}</p></div>
+            ))}
           </div>
         </div>
-      </nav>
+      </section>
 
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 -mt-6 relative z-10 pb-16 space-y-10">
 
-        {/* ── Welcome Banner ── */}
-        <div className="relative bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 rounded-2xl p-6 overflow-hidden">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
-            <div className="absolute bottom-0 left-1/3 w-32 h-32 bg-white/5 rounded-full blur-xl" />
-          </div>
-          <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <p className="text-indigo-200 text-sm font-medium">{getGreeting()} 👋</p>
-              <h1 className="text-2xl font-extrabold text-white">{student.name}</h1>
-              <div className="flex flex-wrap items-center gap-3 text-indigo-100 text-sm">
-                <span className="flex items-center gap-1"><BedDouble className="w-4 h-4" /> Room {student.room}</span>
-                <span className="text-indigo-300">·</span>
-                <span>{student.block}</span>
-                <span className="text-indigo-300">·</span>
-                <span>{student.hostel}</span>
+        {/* Operations Map CTA — signature feature */}
+        <section className="surface-panel rounded-2xl p-6 lg:p-8 border border-[#4CC9F0]/20 elevate-hover relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#4CC9F0]/5 rounded-bl-full" />
+          <div className="grid lg:grid-cols-3 gap-6 items-center relative">
+            <div className="lg:col-span-2">
+              <div className="flex items-center gap-2 mb-2">
+                <Map className="w-5 h-5 text-[#1B4F72]" />
+                <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold">Smart Hostel Operations Map</p>
               </div>
+              <h2 className="text-xl font-bold text-[#071B34] mb-2">Explore your floor in real time</h2>
+              <p className="text-sm text-[#4A5568] leading-relaxed">Interactive floor plan with pastel status colors, heatmaps, and room intelligence. See nearby alerts for Room 206 and 205.</p>
             </div>
-            <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-xl text-sm font-medium border border-white/20">
-              <BrainCircuit className="w-4 h-4 text-cyan-300" />
-              <span>AI Insights Active</span>
-            </div>
+            <Link to="/student/room" className="inline-flex items-center justify-center gap-2 bg-[#071B34] text-[#F8FAFC] px-6 py-3.5 rounded-xl font-semibold hover:bg-[#0A2342] transition-colors">
+              Open Operations Map <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
-        </div>
+        </section>
 
-        {/* ── Quick Stats ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((s) => {
-            const Icon = s.icon;
-            return (
-              <div key={s.label} className={`bg-white rounded-2xl p-5 border ${s.border} shadow-sm hover:shadow-md transition-shadow`}>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs text-gray-500 font-medium">{s.label}</p>
-                    <p className={`text-2xl font-extrabold mt-1 ${s.color}`}>{s.value}</p>
-                  </div>
-                  <div className={`w-10 h-10 ${s.bg} rounded-xl flex items-center justify-center`}>
-                    <Icon className={`w-5 h-5 ${s.color}`} />
-                  </div>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Room Overview */}
+          <section className="lg:col-span-2 surface-panel rounded-2xl p-6 lg:p-8">
+            <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold mb-3">Your Space</p>
+            <h2 className="text-2xl font-bold text-[#071B34] mb-2">Room {student.room}</h2>
+            <p className="text-sm text-[#4A5568] font-medium mb-6">{student.block} · Tagore Hostel · 3 of 4 beds occupied</p>
+            <div className="mb-6">
+              <div className="flex justify-between text-sm mb-2"><span className="text-[#4A5568] font-medium">Occupancy</span><span className="text-[#071B34] font-bold">75%</span></div>
+              <div className="h-2 bg-[#071B34]/8 rounded-full"><div className="h-full w-3/4 bg-[#4CC9F0] rounded-full" /></div>
+            </div>
+            <div className="grid grid-cols-4 gap-3">
+              {[['Room 204', 'Assigned'], ['Block B', 'Location'], ['3 / 4', 'Beds'], ['Active', 'Status']].map(([v, l]) => (
+                <div key={l} className="bg-[#F5F7FA] rounded-lg p-4 border border-[#071B34]/6">
+                  <p className="text-[10px] text-[#4A5568] uppercase tracking-wider font-semibold mb-1">{l}</p>
+                  <p className="text-sm font-bold text-[#071B34]">{v}</p>
                 </div>
+              ))}
+            </div>
+          </section>
+
+          {/* AI Insights */}
+          <section className="surface-panel-dark rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <BrainCircuit className="w-5 h-5 text-[#4CC9F0]" />
+              <p className="text-xs text-[#4CC9F0] uppercase tracking-widest font-bold">AI Insights</p>
+            </div>
+            <div className="space-y-4">
+              {aiInsights.map((ins, i) => (
+                <div key={i} className="pb-3 border-b border-white/8 last:border-0">
+                  <p className="text-sm text-[#F8FAFC] leading-relaxed font-medium">{ins.text}</p>
+                </div>
+              ))}
+            </div>
+            <Link to="/chat" className="inline-flex items-center gap-1 text-sm text-[#4CC9F0] font-semibold mt-4 hover:text-[#67E8F9]">Ask AI <ArrowUpRight className="w-3.5 h-3.5" /></Link>
+          </section>
+        </div>
+
+        {/* Activity + Complaints row */}
+        <div className="grid lg:grid-cols-2 gap-8">
+          <section>
+            <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold mb-4 flex items-center gap-2"><Activity className="w-3.5 h-3.5" /> Recent Activity</p>
+            <div className="space-y-0 border-l-2 border-[#071B34]/10 ml-2">
+              {recentActivity.map((a, i) => {
+                const Icon = a.icon;
+                return (
+                  <div key={i} className="relative pl-6 pb-5 last:pb-0">
+                    <div className="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-[#4CC9F0]" />
+                    <div className="flex items-start gap-3">
+                      <Icon className="w-4 h-4 text-[#1B4F72] mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-[#071B34]">{a.text}</p>
+                        <p className="text-xs text-[#4A5568] mt-0.5 font-medium">{a.time}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section>
+            <div className="flex items-end justify-between mb-4">
+              <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold">Open Complaints</p>
+              <Link to="/student/complaints" className="text-sm text-[#1B4F72] font-semibold hover:text-[#4CC9F0]">View all</Link>
+            </div>
+            <div className="divide-y divide-[#071B34]/8 surface-panel rounded-xl overflow-hidden">
+              {complaints.map((c) => {
+                const Icon = c.icon;
+                return (
+                  <div key={c.id} className="px-5 py-4 flex items-center gap-4">
+                    <Icon className="w-4 h-4 text-[#1B4F72] shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[#071B34]">{c.title}</p>
+                      <p className="text-xs text-[#4A5568] font-medium mt-0.5">{c.id} · {c.priority}</p>
+                    </div>
+                    <span className={`text-xs ${statusStyles[c.status]}`}>{c.status}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+
+        {/* Leave + Visitors */}
+        <div className="grid lg:grid-cols-5 gap-6">
+          <section className="lg:col-span-3 surface-panel rounded-xl p-6">
+            <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold mb-4">Leave Requests</p>
+            {leaveRequests.map((l) => (
+              <div key={l.id} className="py-3 border-b border-[#071B34]/6 last:border-0 flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-semibold text-[#071B34]">{l.reason}</p>
+                  <p className="text-xs text-[#4A5568] font-medium">{l.from} → {l.to}</p>
+                </div>
+                <span className={`text-xs ${statusStyles[l.status]}`}>{l.status}</span>
               </div>
+            ))}
+            <Link to="/student/leave" className="text-sm text-[#1B4F72] font-semibold mt-3 inline-flex items-center gap-1 hover:text-[#4CC9F0]">Apply for leave <ChevronRight className="w-3.5 h-3.5" /></Link>
+          </section>
+          <section className="lg:col-span-2 surface-panel rounded-xl p-6">
+            <p className="text-xs text-[#1B4F72] uppercase tracking-widest font-bold mb-4">Visitors</p>
+            {visitorRequests.map((v) => (
+              <div key={v.name} className="py-3 border-b border-[#071B34]/6 last:border-0 flex justify-between">
+                <div><p className="text-sm font-semibold text-[#071B34]">{v.name}</p><p className="text-xs text-[#4A5568]">{v.date}</p></div>
+                <span className="text-xs text-[#1B4F72] font-bold">{v.status}</span>
+              </div>
+            ))}
+          </section>
+        </div>
+
+        <section className="flex flex-wrap gap-3">
+          {[
+            { label: 'Operations Map', href: '/student/room', icon: Map },
+            { label: 'Complaints', href: '/student/complaints', icon: AlertCircle },
+            { label: 'Leave', href: '/student/leave', icon: Calendar },
+            { label: 'Fees', href: '/student/fees', icon: IndianRupee },
+            { label: 'Announcements', href: '/student/announcements', icon: Megaphone },
+          ].map((a) => {
+            const Icon = a.icon;
+            return (
+              <Link key={a.label} to={a.href} className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#071B34] text-[#F8FAFC] rounded-lg text-sm font-semibold hover:bg-[#0A2342] transition-colors">
+                <Icon className="w-4 h-4" />{a.label}
+              </Link>
             );
           })}
-        </div>
-
-        {/* ── Main Grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-          {/* Left col (2/3) */}
-          <div className="lg:col-span-2 space-y-6">
-
-            {/* Room Info Card */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-50 to-blue-50 px-6 py-4 flex items-center justify-between border-b border-gray-100">
-                <div className="flex items-center space-x-2">
-                  <Home className="w-5 h-5 text-indigo-600" />
-                  <h2 className="font-semibold text-gray-800">Room Information</h2>
-                </div>
-                <Link to="/student/room" className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1 font-medium">
-                  Details <ChevronRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-              <div className="p-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {[
-                  { label: 'Room Number', value: '204' },
-                  { label: 'Block', value: 'Block B' },
-                  { label: 'Occupancy', value: '3 / 4' },
-                  { label: 'Status', value: 'Occupied', highlight: true },
-                ].map((r) => (
-                  <div key={r.label} className="bg-gray-50 rounded-xl p-3 text-center">
-                    <p className="text-xs text-gray-400 mb-1">{r.label}</p>
-                    <p className={`text-sm font-bold ${r.highlight ? 'text-green-600' : 'text-gray-800'}`}>{r.value}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="px-6 pb-5">
-                <div className="flex justify-between text-xs text-gray-500 mb-1.5">
-                  <span className="font-medium text-gray-600">Room Occupancy</span>
-                  <span className="text-indigo-600 font-semibold">75%</span>
-                </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full w-3/4 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full" />
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Complaints */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 flex items-center justify-between border-b border-gray-100">
-                <div className="flex items-center space-x-2">
-                  <AlertCircle className="w-5 h-5 text-rose-500" />
-                  <h2 className="font-semibold text-gray-800">Recent Complaints</h2>
-                </div>
-                <Link to="/student/complaints" className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1 font-medium">
-                  View all <ChevronRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {complaints.map((c) => {
-                  const Icon = c.icon;
-                  return (
-                    <div key={c.id} className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors">
-                      <div className="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
-                        <Icon className="w-4 h-4 text-gray-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-800 truncate">{c.title}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{c.id} · {c.date}</p>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${priorityStyles[c.priority]}`}>{c.priority}</span>
-                        <span className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium ${statusStyles[c.status]}`}>
-                          {statusIcon(c.status)} {c.status}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Leave Requests */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 flex items-center justify-between border-b border-gray-100">
-                <div className="flex items-center space-x-2">
-                  <Calendar className="w-5 h-5 text-amber-500" />
-                  <h2 className="font-semibold text-gray-800">Leave Requests</h2>
-                </div>
-                <Link to="/student/leave" className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1 font-medium">
-                  View all <ChevronRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {leaveRequests.map((l) => (
-                  <div key={l.id} className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{l.reason}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{l.id} · {l.from} → {l.to}</p>
-                    </div>
-                    <span className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium shrink-0 ${statusStyles[l.status]}`}>
-                      {statusIcon(l.status)} {l.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right col (1/3) */}
-          <div className="space-y-6">
-
-            {/* Quick Actions */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-100">
-                <h2 className="font-semibold text-gray-800">Quick Actions</h2>
-              </div>
-              <div className="p-5 grid grid-cols-2 gap-3">
-                {quickActions.map((a) => {
-                  const Icon = a.icon;
-                  return (
-                    <Link
-                      key={a.label}
-                      to={a.href}
-                      className={`bg-gradient-to-br ${a.gradient} text-white rounded-xl p-4 flex flex-col items-center space-y-2 hover:opacity-90 hover:scale-[1.03] transition-all duration-150 shadow-sm`}
-                    >
-                      <Icon className="w-6 h-6" />
-                      <span className="text-xs font-semibold text-center leading-tight">{a.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Student Profile Card */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-500 to-blue-500 px-5 py-5 flex flex-col items-center space-y-2">
-                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-white text-2xl font-extrabold border-2 border-white/40">
-                  {student.avatar}
-                </div>
-                <p className="text-white font-bold text-base">{student.name}</p>
-                <p className="text-indigo-100 text-xs">{student.rollNo}</p>
-              </div>
-              <div className="p-5 space-y-3">
-                {[
-                  { label: 'Hostel', value: student.hostel },
-                  { label: 'Room', value: `${student.room}, ${student.block}` },
-                  { label: 'Year', value: '3rd Year · CSE' },
-                  { label: 'Status', value: 'Active', green: true },
-                ].map((row) => (
-                  <div key={row.label} className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">{row.label}</span>
-                    <span className={`font-medium ${row.green ? 'text-green-600' : 'text-gray-700'}`}>{row.value}</span>
-                  </div>
-                ))}
-                <Link
-                  to="/student/profile"
-                  className="mt-2 w-full flex items-center justify-center gap-2 border border-indigo-200 text-indigo-600 py-2 rounded-xl text-sm font-medium hover:bg-indigo-50 transition-colors"
-                >
-                  <User className="w-4 h-4" /> View Full Profile
-                </Link>
-              </div>
-            </div>
-
-            {/* AI Tip Card */}
-            <div className="bg-gradient-to-br from-indigo-900 to-blue-900 rounded-2xl p-5 space-y-3">
-              <div className="flex items-center space-x-2">
-                <BrainCircuit className="w-5 h-5 text-cyan-400" />
-                <p className="text-white font-semibold text-sm">AI Recommendations</p>
-              </div>
-              <p className="text-indigo-200 text-xs leading-relaxed">
-                Your Wi-Fi complaint has been open for 6 days. I've flagged it as high priority and notified the warden. Consider applying for leave before exam week for faster approval.
-              </p>
-              <Link
-                to="/chat"
-                className="flex items-center justify-between bg-white/10 hover:bg-white/20 transition-colors text-white text-xs px-3 py-2 rounded-xl font-medium"
-              >
-                <span>Ask AI Assistant</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            {/* Visitor Requests */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 className="font-semibold text-gray-800 text-sm">Visitor Requests</h2>
-                <Link to="/visitor/request" className="text-xs text-indigo-600 font-medium">View all</Link>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {visitorRequests.map((v) => (
-                  <div key={v.name} className="px-5 py-3 flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-800">{v.name}</p>
-                      <p className="text-xs text-gray-400">{v.date}</p>
-                    </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${v.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>{v.status}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Announcements */}
-            <Link to="/student/announcements" className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-5 card-hover">
-              <div className="flex items-center gap-2 mb-2">
-                <Megaphone className="w-5 h-5 text-indigo-600" />
-                <p className="font-semibold text-gray-800 text-sm">Hostel Announcements</p>
-              </div>
-              <p className="text-xs text-gray-500">Curfew extended for fest week · Mess menu update · Fire drill 16 Jun</p>
-              <span className="inline-flex items-center gap-1 text-xs text-indigo-600 font-medium mt-2">Read notices <ChevronRight className="w-3 h-3" /></span>
-            </Link>
-
-            {/* Recent Activity */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-100">
-                <h2 className="font-semibold text-gray-800 text-sm">Recent Activity</h2>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {recentActivity.map((a, i) => {
-                  const Icon = a.icon;
-                  return (
-                    <div key={i} className="px-5 py-3 flex items-start gap-3">
-                      <Icon className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-gray-700">{a.text}</p>
-                        <p className="text-[10px] text-gray-400 mt-0.5">{a.time}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
+        </section>
       </div>
     </div>
   );

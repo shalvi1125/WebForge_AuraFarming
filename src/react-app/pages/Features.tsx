@@ -6,12 +6,12 @@ import {
 } from 'lucide-react';
 
 const capabilities = [
-  { icon: Building2, title: 'Smart Room Allocation', desc: 'AI-powered room assignment with preference matching, conflict detection, and occupancy optimization.', color: 'from-indigo-500 to-blue-500' },
-  { icon: ClipboardList, title: 'Complaint Management', desc: 'End-to-end complaint lifecycle with AI categorization, priority prediction, and resolution tracking.', color: 'from-blue-500 to-cyan-500' },
-  { icon: DoorOpen, title: 'Leave Management', desc: 'Digital leave applications, warden approval workflows, and automated security notifications.', color: 'from-cyan-500 to-indigo-500' },
-  { icon: UserCheck, title: 'Visitor Management', desc: 'Pre-registration, QR pass generation, entry/exit logging, and security dashboard integration.', color: 'from-indigo-500 to-purple-500' },
-  { icon: CreditCard, title: 'Fee Management', desc: 'Real-time fee tracking, payment history, automated reminders, and financial analytics.', color: 'from-emerald-500 to-teal-500' },
-  { icon: BarChart3, title: 'Admin Analytics', desc: 'Executive dashboards with occupancy trends, revenue metrics, and AI capacity forecasting.', color: 'from-violet-500 to-indigo-500' },
+  { icon: Building2, title: 'Smart Room Allocation', desc: 'AI-powered room assignment with preference matching, conflict detection, and occupancy optimization.', color: 'bg-[#1B4F72]' },
+  { icon: ClipboardList, title: 'Complaint Management', desc: 'End-to-end complaint lifecycle with AI categorization, priority prediction, and resolution tracking.', color: 'bg-[#0A2342]' },
+  { icon: DoorOpen, title: 'Leave Management', desc: 'Digital leave applications, warden approval workflows, and automated security notifications.', color: 'bg-[#1B4F72]' },
+  { icon: UserCheck, title: 'Visitor Management', desc: 'Pre-registration, QR pass generation, entry/exit logging, and security dashboard integration.', color: 'bg-[#0A2342]' },
+  { icon: CreditCard, title: 'Fee Management', desc: 'Real-time fee tracking, payment history, automated reminders, and financial analytics.', color: 'bg-[#1B4F72]' },
+  { icon: BarChart3, title: 'Admin Analytics', desc: 'Executive dashboards with occupancy trends, revenue metrics, and AI capacity forecasting.', color: 'bg-[#0A2342]' },
 ];
 
 const aiFeatures = [
@@ -24,43 +24,41 @@ const aiFeatures = [
 ];
 
 const journeys = [
-  { role: 'Student', steps: ['Login → Dashboard', 'File complaint / Apply leave', 'Track status in real-time', 'Get AI guidance via chat'], badge: 'bg-indigo-50 text-indigo-700' },
-  { role: 'Warden', steps: ['Review complaint queue', 'Approve leave requests', 'Monitor occupancy', 'Act on AI alerts'], badge: 'bg-blue-50 text-blue-700' },
-  { role: 'Admin', steps: ['Campus-wide analytics', 'Room allocation oversight', 'Fee collection reports', 'Capacity planning'], badge: 'bg-cyan-50 text-cyan-700' },
+  { role: 'Student', steps: ['Login → Dashboard', 'File complaint / Apply leave', 'Track status in real-time', 'Get AI guidance via chat'], badge: 'bg-[#F5F7FA] text-[#071B34]' },
+  { role: 'Warden', steps: ['Review complaint queue', 'Approve leave requests', 'Monitor occupancy', 'Act on AI alerts'], badge: 'bg-[#071B34]/5 text-[#071B34]' },
+  { role: 'Admin', steps: ['Campus-wide analytics', 'Room allocation oversight', 'Fee collection reports', 'Capacity planning'], badge: 'bg-[#071B34]/5 text-[#071B34]' },
 ];
 
 export default function Features() {
   return (
-    <div className="min-h-screen bg-white page-enter">
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <div className="min-h-screen bg-[#F5F7FA] page-enter">
+      <nav className="sticky top-0 z-50 bg-[#F5F7FA]/90 backdrop-blur-md border-b border-[#071B34]/5">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#071B34] rounded-xl flex items-center justify-center">
               <Building2 className="w-5 h-5 text-white" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">HostelIQ</h1>
-              <p className="text-xs text-indigo-500">Platform Features</p>
+              <p className="text-xs text-[#1B4F72]">Platform Features</p>
             </div>
           </Link>
           <div className="flex items-center gap-4">
-            <Link to="/chat" className="text-sm text-gray-600 hover:text-indigo-600 font-medium">AI Assistant</Link>
-            <Link to="/register" className="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">Get Started</Link>
+            <Link to="/chat" className="text-sm text-gray-600 hover:text-[#1B4F72] font-medium">AI Assistant</Link>
+            <Link to="/register" className="bg-[#071B34] text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-[#0A2342] transition-colors">Get Started</Link>
           </div>
         </div>
       </nav>
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-indigo-50 to-blue-50 py-24">
-        <div className="absolute inset-0 gradient-mesh pointer-events-none" />
-        <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+      <section className="gradient-mesh-hero py-24">
+        <div className="gradient-mesh-content max-w-7xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-2 bg-white/5 text-[#4CC9F0] px-4 py-1.5 rounded-full text-sm font-medium mb-6">
             <Layers className="w-4 h-4" /> Platform Capabilities
           </div>
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4">
-            Everything HostelIQ{' '}
-            <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">Delivers</span>
+          <h1 className="text-4xl lg:text-5xl font-semibold text-[#F8FAFC] mb-4 tracking-tight">
+            Everything HostelIQ <span className="text-[#4CC9F0]">Delivers</span>
           </h1>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          <p className="text-lg text-[#4A5568] max-w-2xl mx-auto">
             One intelligent platform for students, wardens, admins, and visitors — powered by AI at every step.
           </p>
         </div>
@@ -73,7 +71,7 @@ export default function Features() {
             const Icon = c.icon;
             return (
               <div key={c.title} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover group">
-                <div className={`w-12 h-12 bg-gradient-to-br ${c.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                <div className={`w-12 h-12 ${c.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-2">{c.title}</h3>
@@ -87,7 +85,7 @@ export default function Features() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 bg-[#071B34]/5 text-[#071B34] px-4 py-1.5 rounded-full text-sm font-medium mb-4">
               <BrainCircuit className="w-4 h-4" /> AI-Powered
             </div>
             <h2 className="text-2xl font-extrabold text-gray-900">Intelligence Built In</h2>
@@ -96,8 +94,8 @@ export default function Features() {
             {aiFeatures.map((f) => {
               const Icon = f.icon;
               return (
-                <div key={f.title} className="glass-card rounded-2xl p-5 border border-indigo-100/50 card-hover">
-                  <Icon className="w-5 h-5 text-indigo-600 mb-3" />
+                <div key={f.title} className="surface-panel rounded-2xl p-5 elevate-hover">
+                  <Icon className="w-5 h-5 text-[#1B4F72] mb-3" />
                   <h3 className="font-semibold text-gray-800 text-sm mb-1">{f.title}</h3>
                   <p className="text-xs text-gray-500 leading-relaxed">{f.desc}</p>
                 </div>
@@ -118,7 +116,7 @@ export default function Features() {
               <ol className="space-y-3">
                 {j.steps.map((step, i) => (
                   <li key={step} className="flex items-start gap-3 text-sm">
-                    <span className="w-6 h-6 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+                    <span className="w-6 h-6 bg-[#071B34]/5 text-[#071B34] rounded-full flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
                     <span className="text-gray-600">{step}</span>
                   </li>
                 ))}
@@ -128,12 +126,12 @@ export default function Features() {
         </div>
       </section>
 
-      <section className="py-16 bg-gradient-to-r from-indigo-900 to-blue-900">
+      <section className="py-16 bg-[#071B34]">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-extrabold text-white mb-4">See HostelIQ in Action</h2>
-          <p className="text-indigo-200 mb-8">Explore the platform with our interactive prototype.</p>
+          <p className="text-[#4A5568] mb-8">Explore the platform with our interactive prototype.</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/student/dashboard" className="bg-white text-indigo-700 px-6 py-3 rounded-xl font-semibold hover:bg-indigo-50 transition-colors flex items-center gap-2">
+            <Link to="/student/dashboard" className="bg-white text-[#071B34] px-6 py-3 rounded-xl font-semibold hover:bg-[#F5F7FA] transition-colors flex items-center gap-2">
               Student Portal <ArrowRight className="w-4 h-4" />
             </Link>
             <Link to="/admin/dashboard" className="border border-white/30 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition-colors flex items-center gap-2">
@@ -147,7 +145,7 @@ export default function Features() {
       </section>
 
       <footer className="bg-gray-900 py-8 text-center">
-        <Link to="/" className="text-white font-semibold hover:text-indigo-300">← Back to HostelIQ Home</Link>
+        <Link to="/" className="text-white font-semibold hover:text-[#4CC9F0]">← Back to HostelIQ Home</Link>
       </footer>
     </div>
   );

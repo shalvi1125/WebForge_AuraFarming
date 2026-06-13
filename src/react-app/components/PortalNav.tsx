@@ -9,34 +9,34 @@ interface NavLink {
 
 interface PortalNavProps {
   portal: string;
-  portalColor?: string;
   userName?: string;
   userMeta?: string;
   avatar?: string;
   links?: NavLink[];
   homeHref?: string;
+  dark?: boolean;
 }
 
 export default function PortalNav({
   portal,
-  portalColor = 'text-indigo-500',
   userName = 'User',
   userMeta,
   avatar = 'U',
   links = [],
   homeHref = '/',
+  dark = false,
 }: PortalNavProps) {
   return (
-    <nav className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <Link to={homeHref} className="flex items-center space-x-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
-              <Building2 className="w-4 h-4 text-white" />
+    <nav className={`sticky top-0 z-50 border-b backdrop-blur-md ${dark ? 'bg-[#071B34]/90 border-white/5' : 'bg-[#F5F7FA]/90 border-[#071B34]/5'}`}>
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-8">
+          <Link to={homeHref} className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-[#0A2342] rounded-lg flex items-center justify-center">
+              <Building2 className="w-4 h-4 text-[#4CC9F0]" />
             </div>
-            <div className="leading-none">
-              <p className="font-bold text-gray-900 text-sm">HostelIQ</p>
-              <p className={`text-xs font-medium ${portalColor}`}>{portal}</p>
+            <div className="leading-tight">
+              <p className={`font-semibold text-sm tracking-tight ${dark ? 'text-[#F8FAFC]' : 'text-[#071B34]'}`}>HostelIQ</p>
+              <p className="text-[11px] text-[#4A5568] uppercase tracking-widest font-medium">{portal}</p>
             </div>
           </Link>
           {links.length > 0 && (
@@ -45,7 +45,7 @@ export default function PortalNav({
                 <Link
                   key={l.href}
                   to={l.href}
-                  className="text-sm text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors font-medium"
+                  className={`text-sm px-3 py-1.5 rounded-md transition-colors font-semibold ${dark ? 'text-[#C5D0D8] hover:text-[#F8FAFC]' : 'text-[#4A5568] hover:text-[#071B34]'}`}
                 >
                   {l.label}
                 </Link>
@@ -53,22 +53,22 @@ export default function PortalNav({
             </div>
           )}
         </div>
-        <div className="flex items-center gap-3">
-          <button className="relative p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
+        <div className="flex items-center gap-4">
+          <button className={`relative p-2 rounded-md transition-colors ${dark ? 'text-[#4A5568] hover:text-[#F8FAFC]' : 'text-[#4A5568] hover:text-[#071B34]'}`}>
+            <Bell className="w-[18px] h-[18px]" />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#4CC9F0] rounded-full" />
           </button>
-          <div className="flex items-center gap-2 pl-2 border-l border-gray-100">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+          <div className={`flex items-center gap-3 pl-4 border-l ${dark ? 'border-white/10' : 'border-[#071B34]/8'}`}>
+            <div className="w-8 h-8 bg-[#1B4F72] rounded-full flex items-center justify-center text-[#F8FAFC] text-xs font-medium">
               {avatar}
             </div>
-            <div className="hidden sm:block leading-none">
-              <p className="text-sm font-semibold text-gray-800">{userName}</p>
-              {userMeta && <p className="text-xs text-gray-400">{userMeta}</p>}
+            <div className="hidden sm:block leading-tight">
+              <p className={`text-sm font-medium ${dark ? 'text-[#F8FAFC]' : 'text-[#071B34]'}`}>{userName}</p>
+              {userMeta && <p className="text-[11px] text-[#4A5568]">{userMeta}</p>}
             </div>
           </div>
-          <Link to="/" className="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Exit">
-            <LogOut className="w-4 h-4" />
+          <Link to="/" className={`p-2 rounded-md transition-colors ${dark ? 'text-[#4A5568] hover:text-[#F8FAFC]' : 'text-[#4A5568] hover:text-[#071B34]'}`} title="Exit">
+            <LogOut className="w-[18px] h-[18px]" />
           </Link>
         </div>
       </div>

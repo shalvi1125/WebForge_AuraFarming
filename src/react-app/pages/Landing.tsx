@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import {
   ArrowRight, Users, Shield, ChevronRight, LogOut, User, Building2,
   BrainCircuit, ClipboardList, DoorOpen, CreditCard, UserCheck, BarChart3,
-  Cpu, Menu, X, Sparkles, Quote, Workflow,
+  Menu, X, Sparkles, Quote,
 } from 'lucide-react';
 import { useScrollReveal } from '@/react-app/hooks/useScrollReveal';
 
@@ -13,82 +13,8 @@ interface UserData {
   lastName: string;
   username: string;
   email: string;
-  preferences: any;
+  preferences: unknown;
 }
-
-const features = [
-  {
-    icon: Building2,
-    title: 'Room Allocation',
-    desc: 'Automated room assignment based on preferences, availability, and occupancy — zero manual effort.',
-    color: 'from-indigo-500 to-blue-500',
-    bg: 'bg-indigo-50',
-    iconColor: 'text-indigo-600',
-  },
-  {
-    icon: ClipboardList,
-    title: 'Complaint Management',
-    desc: 'Students raise complaints digitally. Wardens track, prioritize, and resolve them in real time.',
-    color: 'from-blue-500 to-cyan-500',
-    bg: 'bg-blue-50',
-    iconColor: 'text-blue-600',
-  },
-  {
-    icon: DoorOpen,
-    title: 'Leave Requests',
-    desc: 'Streamlined leave application, approval, and record-keeping for students and wardens.',
-    color: 'from-cyan-500 to-indigo-500',
-    bg: 'bg-cyan-50',
-    iconColor: 'text-cyan-600',
-  },
-  {
-    icon: UserCheck,
-    title: 'Visitor Management',
-    desc: 'Pre-register visitors, track entry/exit, and maintain a complete visitor log automatically.',
-    color: 'from-indigo-500 to-cyan-500',
-    bg: 'bg-indigo-50',
-    iconColor: 'text-indigo-600',
-  },
-  {
-    icon: CreditCard,
-    title: 'Fee Tracking',
-    desc: 'View fee dues, payment history, and receive automated reminders — all in one place.',
-    color: 'from-blue-500 to-indigo-500',
-    bg: 'bg-blue-50',
-    iconColor: 'text-blue-600',
-  },
-  {
-    icon: BarChart3,
-    title: 'AI Analytics',
-    desc: 'Smart dashboards with occupancy trends, complaint patterns, and predictive insights.',
-    color: 'from-cyan-500 to-blue-500',
-    bg: 'bg-cyan-50',
-    iconColor: 'text-cyan-600',
-  },
-  {
-    icon: BrainCircuit,
-    title: 'AI Complaint Categorization',
-    desc: 'AI automatically tags, routes, and prioritizes complaints — reducing resolution time dramatically.',
-    color: 'from-indigo-600 to-blue-600',
-    bg: 'bg-indigo-50',
-    iconColor: 'text-indigo-600',
-  },
-  {
-    icon: Cpu,
-    title: 'Smart Occupancy Insights',
-    desc: 'Real-time occupancy heatmaps and forecasting to help admins plan hostel capacity intelligently.',
-    color: 'from-blue-600 to-cyan-600',
-    bg: 'bg-blue-50',
-    iconColor: 'text-blue-600',
-  },
-];
-
-const stats = [
-  { value: '10,000+', label: 'Students Managed' },
-  { value: '500+', label: 'Hostels Onboarded' },
-  { value: '98%', label: 'Complaint Resolution Rate' },
-  { value: '3x', label: 'Faster than Manual Systems' },
-];
 
 const testimonials = [
   { name: 'Dr. Priya Mehta', role: 'Warden, Tagore Hostel', quote: 'HostelIQ cut our complaint resolution time in half. AI categorization means the right team gets notified instantly.', avatar: 'PM' },
@@ -96,18 +22,11 @@ const testimonials = [
   { name: 'Dr. Rajesh Kumar', role: 'Campus Administrator', quote: 'Real-time occupancy analytics across 12 hostels. Capacity planning used to take weeks — now it takes minutes.', avatar: 'RK' },
 ];
 
-const workflow = [
-  { step: '01', title: 'Student raises request', desc: 'Complaint, leave, visitor, or fee — all from one portal' },
-  { step: '02', title: 'AI categorizes & routes', desc: 'Smart tagging, priority prediction, and department assignment' },
-  { step: '03', title: 'Warden reviews & acts', desc: 'Dashboard queue with alerts, approvals, and resolution tracking' },
-  { step: '04', title: 'Admin monitors campus', desc: 'Executive analytics, occupancy forecasting, and health scores' },
-];
-
-const aiShowcase = [
-  { title: 'Complaint Categorization', metric: '94% accuracy', desc: 'Auto-tags plumbing, electrical, hygiene, and security issues' },
-  { title: 'Occupancy Prediction', metric: '91% forecast', desc: 'Predicts room availability 30 days ahead across all blocks' },
-  { title: 'Leave Optimization', metric: '2.4x faster', desc: 'Suggests optimal dates based on policies and occupancy' },
-  { title: 'Fee Recovery', metric: '₹4.2L tracked', desc: 'AI identifies high-risk accounts and sends smart reminders' },
+const aiCapabilities = [
+  { title: 'Complaint Categorization', metric: '94%', desc: 'Auto-tags and routes issues to the right department instantly.' },
+  { title: 'Occupancy Prediction', metric: '91%', desc: 'Forecasts room availability 30 days ahead across all blocks.' },
+  { title: 'Leave Optimization', metric: '2.4×', desc: 'Suggests optimal dates based on policies and occupancy.' },
+  { title: 'Fee Recovery', metric: '₹4.2L', desc: 'AI identifies high-risk accounts and sends smart reminders.' },
 ];
 
 export default function Landing() {
@@ -115,592 +34,264 @@ export default function Landing() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [animatedStats, setAnimatedStats] = useState(false);
 
   useScrollReveal();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    if (token && userData) {
-      setUser(JSON.parse(userData));
-    }
+    try {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      if (token && userData) setUser(JSON.parse(userData));
+    } catch { /* ignore corrupt localStorage */ }
 
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-      if (window.scrollY > 400) setAnimatedStats(true);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (!(event.target as Element).closest('.profile-menu')) {
-        setShowProfileMenu(false);
-      }
+      if (!(event.target as Element).closest('.profile-menu')) setShowProfileMenu(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
-    <div className="min-h-screen bg-white overflow-hidden">
+    <div className="min-h-screen bg-[#F5F7FA]">
 
-      {/* ── Navbar ── */}
-      <nav
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100'
-            : 'bg-white/80 backdrop-blur-sm'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
-                <Building2 className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900 leading-none">HostelIQ</h1>
-                <p className="text-xs text-indigo-500 font-medium">AI Powered Hostel Management</p>
-              </div>
+      {/* Nav */}
+      <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#071B34]/95 backdrop-blur-md border-b border-white/5' : 'bg-transparent'}`}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-[#0A2342] border border-white/10 rounded-lg flex items-center justify-center">
+              <Building2 className="w-4 h-4 text-[#4CC9F0]" />
             </div>
-
-            {/* Desktop nav links */}
-            <div className="hidden md:flex items-center space-x-6">
-              <a href="#features" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm">
-                Features
-              </a>
-              <Link to="/features" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm">
-                Platform
-              </Link>
-              <a href="#about" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm">
-                About
-              </a>
-              <Link to="/chat" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm">
-                AI Assistant
-              </Link>
-
-              {user ? (
-                <div className="relative profile-menu">
-                  <button
-                    onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="flex items-center space-x-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 text-sm font-medium"
-                  >
-                    <User className="w-4 h-4" />
-                    <span>{user.firstName || user.username}</span>
-                  </button>
-                  {showProfileMenu && (
-                    <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-gray-100 z-50">
-                      <div className="py-2">
-                        <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="text-sm font-semibold text-gray-900">
-                            {user.firstName} {user.lastName}
-                          </p>
-                          <p className="text-xs text-gray-500">{user.email}</p>
-                        </div>
-                        <Link
-                          to="/student/profile"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
-                          onClick={() => setShowProfileMenu(false)}
-                        >
-                          <User className="w-4 h-4 mr-2" />
-                          My Profile
-                        </Link>
-                        <button
-                          onClick={() => {
-                            localStorage.removeItem('token');
-                            localStorage.removeItem('user');
-                            setUser(null);
-                            setShowProfileMenu(false);
-                            window.location.reload();
-                          }}
-                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
-                        >
-                          <LogOut className="w-4 h-4 mr-2" />
-                          Logout
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  <Link
-                    to="/login"
-                    className="text-indigo-600 font-medium hover:text-indigo-800 transition-colors text-sm"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-5 py-2 rounded-lg hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 text-sm font-medium shadow-sm"
-                  >
-                    Get Started
-                  </Link>
-                </div>
-              )}
+            <div>
+              <p className="font-semibold text-[#F8FAFC] text-sm tracking-tight">HostelIQ</p>
+              <p className="text-[10px] text-[#4A5568] uppercase tracking-widest">Hostel Management</p>
             </div>
-
-            {/* Mobile menu toggle */}
-            <button
-              className="md:hidden p-2 text-gray-600 hover:text-indigo-600 transition-colors"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
           </div>
 
-          {/* Mobile menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 border-t border-gray-100 pt-4 space-y-3">
-              <a href="#features" className="block text-gray-600 hover:text-indigo-600 font-medium text-sm py-1">Features</a>
-              <a href="#about" className="block text-gray-600 hover:text-indigo-600 font-medium text-sm py-1">About</a>
-              <Link to="/chat" className="block text-gray-600 hover:text-indigo-600 font-medium text-sm py-1">AI Assistant</Link>
-              <div className="flex space-x-3 pt-2">
-                <Link to="/login" className="flex-1 text-center border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg text-sm font-medium">Login</Link>
-                <Link to="/register" className="flex-1 text-center bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Get Started</Link>
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#problem" className="text-sm text-[#4A5568] hover:text-[#F8FAFC] transition-colors">Problem</a>
+            <a href="#ai" className="text-sm text-[#4A5568] hover:text-[#F8FAFC] transition-colors">AI</a>
+            <Link to="/features" className="text-sm text-[#4A5568] hover:text-[#F8FAFC] transition-colors">Platform</Link>
+            <Link to="/chat" className="text-sm text-[#4A5568] hover:text-[#F8FAFC] transition-colors">Assistant</Link>
+            {user ? (
+              <div className="relative profile-menu">
+                <button onClick={() => setShowProfileMenu(!showProfileMenu)} className="flex items-center gap-2 text-sm text-[#F8FAFC] border border-white/10 px-4 py-2 rounded-lg hover:bg-white/5 transition-colors">
+                  <User className="w-4 h-4" />{user.firstName || user.username}
+                </button>
+                {showProfileMenu && (
+                  <div className="absolute right-0 mt-2 w-52 bg-[#102A43] rounded-xl border border-white/10 shadow-2xl py-2">
+                    <div className="px-4 py-3 border-b border-white/5">
+                      <p className="text-sm font-medium text-[#F8FAFC]">{user.firstName} {user.lastName}</p>
+                      <p className="text-xs text-[#4A5568]">{user.email}</p>
+                    </div>
+                    <Link to="/student/profile" className="flex items-center px-4 py-2.5 text-sm text-[#4A5568] hover:text-[#F8FAFC] hover:bg-white/5" onClick={() => setShowProfileMenu(false)}>
+                      <User className="w-4 h-4 mr-2" /> Profile
+                    </Link>
+                    <button onClick={() => { localStorage.clear(); setUser(null); setShowProfileMenu(false); window.location.reload(); }}
+                      className="flex items-center w-full px-4 py-2.5 text-sm text-[#4A5568] hover:text-[#F8FAFC] hover:bg-white/5">
+                      <LogOut className="w-4 h-4 mr-2" /> Logout
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link to="/login" className="text-sm text-[#4A5568] hover:text-[#F8FAFC] transition-colors">Sign in</Link>
+                <Link to="/register" className="text-sm bg-[#4CC9F0] text-[#071B34] px-5 py-2 rounded-lg font-medium hover:bg-[#67E8F9] transition-colors">Get Started</Link>
+              </div>
+            )}
+          </div>
+          <button className="md:hidden text-[#F8FAFC]" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
       </nav>
 
-      {/* ── Hero Section ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-indigo-50 to-blue-50">
-        {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-200 rounded-full opacity-20 blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-200 rounded-full opacity-20 blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-100 rounded-full opacity-10 blur-3xl" />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-6 py-28">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Left: Text */}
+      {/* Hero */}
+      <section className="gradient-mesh-hero min-h-screen flex items-center">
+        <div className="glow-orb w-[500px] h-[500px] bg-[#4CC9F0]/20 -top-32 -right-32" />
+        <div className="glow-orb w-[400px] h-[400px] bg-[#1B4F72]/40 bottom-0 left-0" style={{ animationDelay: '3s' }} />
+        <div className="gradient-mesh-content max-w-7xl mx-auto px-6 lg:px-10 pt-32 pb-24 w-full">
+          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             <div className="space-y-8 animate-fade-up">
-              <div className="space-y-2">
-                <div className="inline-flex items-center space-x-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium">
-                  <BrainCircuit className="w-4 h-4" />
-                  <span>AI-Powered Platform</span>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h1 className="text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
-                  HostelIQ
-                  <span className="block bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                    Smarter Hostels.
-                  </span>
-                  <span className="block text-4xl lg:text-5xl text-gray-700 font-bold">
-                    Happier Students.
-                  </span>
-                </h1>
-
-                <p className="text-lg text-gray-500 leading-relaxed max-w-lg">
-                  The AI-powered hostel management system built for universities. Automate room allocation,
-                  complaints, leave, and fee tracking — all in one intelligent platform.
-                </p>
-              </div>
-
-              {/* Portal buttons */}
-              <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-                <Link
-                  to="/student/dashboard"
-                  className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-7 py-3.5 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2 font-semibold shadow-md hover:shadow-indigo-200 hover:shadow-lg"
-                >
-                  <Users className="w-5 h-5" />
-                  <span>Student Portal</span>
-                </Link>
-                <Link
-                  to="/warden/dashboard"
-                  className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-7 py-3.5 rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 flex items-center justify-center space-x-2 font-semibold shadow-md hover:shadow-blue-200 hover:shadow-lg"
-                >
-                  <Shield className="w-5 h-5" />
-                  <span>Warden Portal</span>
-                </Link>
-                <Link
-                  to="/admin/dashboard"
-                  className="border-2 border-indigo-600 text-indigo-700 px-7 py-3.5 rounded-xl hover:bg-indigo-50 transition-all duration-200 flex items-center justify-center space-x-2 font-semibold"
-                >
-                  <Building2 className="w-5 h-5" />
-                  <span>Admin Portal</span>
-                </Link>
-              </div>
-
-              {/* Trust signals */}
-              <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-green-400" />
-                  <span>Real-time sync</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-indigo-400" />
-                  <span>Role-based access</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-400" />
-                  <span>AI insights built-in</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Dashboard preview card */}
-            <div className="relative animate-float">
-              <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
-                {/* Card header bar */}
-                <div className="bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-4 flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-white/30" />
-                  <div className="w-3 h-3 rounded-full bg-white/30" />
-                  <div className="w-3 h-3 rounded-full bg-white/30" />
-                  <span className="ml-3 text-white/80 text-sm font-medium">HostelIQ Dashboard</span>
-                </div>
-                {/* Mock dashboard content */}
-                <div className="p-6 space-y-4 bg-gray-50">
-                  {/* Stats row */}
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { label: 'Rooms', value: '248', color: 'text-indigo-600' },
-                      { label: 'Students', value: '1,024', color: 'text-blue-600' },
-                      { label: 'Open Issues', value: '12', color: 'text-cyan-600' },
-                    ].map((s) => (
-                      <div key={s.label} className="bg-white rounded-xl p-3 text-center shadow-sm border border-gray-100">
-                        <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
-                      </div>
-                    ))}
-                  </div>
-                  {/* Occupancy bar */}
-                  <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                    <div className="flex justify-between text-xs text-gray-500 mb-2">
-                      <span className="font-medium text-gray-700">Occupancy Rate</span>
-                      <span className="text-indigo-600 font-semibold">87%</span>
-                    </div>
-                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full w-[87%] bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full" />
-                    </div>
-                  </div>
-                  {/* Recent complaints */}
-                  <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-2">
-                    <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Recent Complaints</p>
-                    {[
-                      { text: 'Water leakage in Block B', tag: 'Maintenance', tagColor: 'bg-blue-100 text-blue-700' },
-                      { text: 'Wi-Fi outage in Room 204', tag: 'Network', tagColor: 'bg-indigo-100 text-indigo-700' },
-                      { text: 'Mess food quality issue', tag: 'Catering', tagColor: 'bg-cyan-100 text-cyan-700' },
-                    ].map((c) => (
-                      <div key={c.text} className="flex items-center justify-between text-xs">
-                        <span className="text-gray-600 truncate mr-2">{c.text}</span>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${c.tagColor}`}>{c.tag}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              {/* Floating AI badge */}
-              <div className="absolute -bottom-4 -right-4 bg-gradient-to-r from-indigo-600 to-cyan-500 text-white px-4 py-2 rounded-xl shadow-lg flex items-center space-x-2 text-sm font-medium">
-                <BrainCircuit className="w-4 h-4" />
-                <span>AI Insights Active</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Stats Bar ── */}
-      <section className="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 py-12">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center text-white">
-            {stats.map((s, i) => (
-              <div key={s.label} className={animatedStats ? 'animate-count-up' : ''} style={{ animationDelay: `${i * 0.1}s` }}>
-                <p className="text-3xl font-extrabold">{s.value}</p>
-                <p className="text-indigo-100 text-sm mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Features Section ── */}
-      <section id="features" className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16 space-y-4">
-            <div className="inline-flex items-center space-x-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium">
-              <Cpu className="w-4 h-4" />
-              <span>Everything you need</span>
-            </div>
-            <h2 className="text-4xl font-extrabold text-gray-900">
-              Powerful Features,{' '}
-              <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">
-                Zero Complexity
-              </span>
-            </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-              HostelIQ brings every aspect of hostel management into one intelligent platform — so wardens
-              manage less and students experience more.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((f) => {
-              const Icon = f.icon;
-              return (
-                <div
-                  key={f.title}
-                  className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-200 group"
-                >
-                  <div className={`w-12 h-12 ${f.bg} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200`}>
-                    <Icon className={`w-6 h-6 ${f.iconColor}`} />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{f.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── AI Showcase ── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16 reveal-on-scroll">
-            <div className="inline-flex items-center space-x-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
-              <Sparkles className="w-4 h-4" />
-              <span>AI at the Core</span>
-            </div>
-            <h2 className="text-4xl font-extrabold text-gray-900">
-              Intelligence That{' '}
-              <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">Works for You</span>
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {aiShowcase.map((item) => (
-              <div key={item.title} className="glass-card rounded-2xl p-6 shadow-sm card-hover reveal-on-scroll border border-indigo-100/50">
-                <p className="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">{item.metric}</p>
-                <h3 className="font-semibold text-gray-900 mt-2 mb-2">{item.title}</h3>
-                <p className="text-sm text-gray-500">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Workflow ── */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16 reveal-on-scroll">
-            <div className="inline-flex items-center space-x-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
-              <Workflow className="w-4 h-4" />
-              <span>How It Works</span>
-            </div>
-            <h2 className="text-4xl font-extrabold text-gray-900">From Request to Resolution</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {workflow.map((w, i) => (
-              <div key={w.step} className="relative reveal-on-scroll">
-                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover h-full">
-                  <span className="text-3xl font-extrabold text-indigo-100">{w.step}</span>
-                  <h3 className="font-semibold text-gray-900 mt-2 mb-2">{w.title}</h3>
-                  <p className="text-sm text-gray-500">{w.desc}</p>
-                </div>
-                {i < workflow.length - 1 && (
-                  <ChevronRight className="hidden md:block absolute top-1/2 -right-3 w-6 h-6 text-indigo-300 -translate-y-1/2 z-10" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Testimonials ── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12 reveal-on-scroll">Trusted by Campus Leaders</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t) => (
-              <div key={t.name} className="bg-gray-50 rounded-2xl p-6 border border-gray-100 card-hover reveal-on-scroll">
-                <Quote className="w-8 h-8 text-indigo-200 mb-4" />
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">"{t.quote}"</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">{t.avatar}</div>
-                  <div>
-                    <p className="font-semibold text-gray-900 text-sm">{t.name}</p>
-                    <p className="text-xs text-gray-400">{t.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Product Screenshots ── */}
-      <section className="py-24 bg-gradient-to-br from-indigo-50 to-blue-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12 reveal-on-scroll">
-            <h2 className="text-3xl font-extrabold text-gray-900">Built for Every Role</h2>
-            <p className="text-gray-500 mt-2">Student, warden, admin, and visitor portals — unified under one platform</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { title: 'Student Portal', desc: 'Dashboard, complaints, leave, fees, room allocation', href: '/student/dashboard', gradient: 'from-indigo-600 to-blue-600' },
-              { title: 'Warden Portal', desc: 'Complaint queue, leave approvals, occupancy monitoring', href: '/warden/dashboard', gradient: 'from-blue-600 to-cyan-600' },
-              { title: 'Admin Portal', desc: 'Campus analytics, revenue, capacity planning', href: '/admin/dashboard', gradient: 'from-indigo-700 to-purple-700' },
-            ].map((portal) => (
-              <Link key={portal.title} to={portal.href} className="group reveal-on-scroll">
-                <div className={`bg-gradient-to-br ${portal.gradient} rounded-2xl p-6 text-white shadow-lg group-hover:scale-[1.02] transition-transform`}>
-                  <div className="bg-white/10 rounded-xl p-4 mb-4 h-32 backdrop-blur-sm border border-white/20">
-                    <div className="grid grid-cols-3 gap-2">
-                      {[1, 2, 3].map((n) => (
-                        <div key={n} className="bg-white/20 rounded-lg h-8" />
-                      ))}
-                    </div>
-                    <div className="mt-3 h-2 bg-white/20 rounded-full w-3/4" />
-                    <div className="mt-2 h-2 bg-white/10 rounded-full w-1/2" />
-                  </div>
-                  <h3 className="font-bold text-lg">{portal.title}</h3>
-                  <p className="text-white/80 text-sm mt-1">{portal.desc}</p>
-                  <span className="inline-flex items-center gap-1 text-sm font-medium mt-3 text-white/90 group-hover:text-white">
-                    Open portal <ArrowRight className="w-4 h-4" />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── About Section ── */}
-      <section id="about" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Left: illustration / visual */}
-            <div className="relative">
-              <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-8 border border-indigo-100">
-                <div className="space-y-4">
-                  {/* Problem cards */}
-                  {[
-                    { icon: '📋', title: 'Paper-based records', sub: 'Lost files, manual errors, no audit trail' },
-                    { icon: '📞', title: 'Phone-based complaints', sub: 'No tracking, slow resolution, frustrated students' },
-                    { icon: '📊', title: 'No data insights', sub: 'Admins flying blind without occupancy analytics' },
-                  ].map((p) => (
-                    <div key={p.title} className="flex items-start space-x-3 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                      <span className="text-2xl">{p.icon}</span>
-                      <div>
-                        <p className="font-semibold text-gray-800 text-sm">{p.title}</p>
-                        <p className="text-xs text-gray-500">{p.sub}</p>
-                      </div>
-                    </div>
-                  ))}
-                  {/* Arrow */}
-                  <div className="text-center py-2">
-                    <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-indigo-600 to-cyan-500 text-white px-5 py-2 rounded-full text-sm font-medium shadow-md">
-                      <BrainCircuit className="w-4 h-4" />
-                      <span>HostelIQ solves all of this</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: About text */}
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <div className="inline-flex items-center space-x-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium">
-                  <Building2 className="w-4 h-4" />
-                  <span>The problem we're solving</span>
-                </div>
-                <h2 className="text-4xl font-extrabold text-gray-900 leading-tight">
-                  Hostel Management
-                  <span className="block bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">
-                    Reimagined for the AI Era
-                  </span>
-                </h2>
-              </div>
-
-              <p className="text-gray-500 leading-relaxed">
-                University hostels today run on spreadsheets, phone calls, and paper forms. Students wait
-                days for complaint resolutions. Wardens drown in administrative work. Admins have zero
-                visibility into real-time occupancy.
+              <p className="text-[#4CC9F0] text-sm font-medium tracking-wide uppercase">AI Powered Hostel Management</p>
+              <h1 className="text-5xl lg:text-7xl font-semibold text-[#F8FAFC] leading-[1.05] tracking-tight">
+                Smarter hostels.<br />
+                <span className="text-gradient-highlight">Happier students.</span>
+              </h1>
+              <p className="text-lg text-[#4A5568] leading-relaxed max-w-lg">
+                The intelligent platform built for universities. Automate room allocation, complaints, leave, and fee tracking — all in one place.
               </p>
-
-              <p className="text-gray-500 leading-relaxed">
-                HostelIQ replaces all of that with a unified, AI-powered platform. Students get a
-                transparent self-service portal. Wardens get smart dashboards with AI-categorized complaints.
-                Admins get predictive occupancy analytics — all in real time.
-              </p>
-
-              <div className="space-y-3">
-                {[
-                  'Automated room allocation with conflict-free assignment',
-                  'AI complaint categorization — right person, right time',
-                  'Digital leave and visitor management with audit trails',
-                  'Live fee dashboards and automated reminders',
-                ].map((point) => (
-                  <div key={point} className="flex items-start space-x-3">
-                    <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
-                      <ChevronRight className="w-3 h-3 text-indigo-600" />
-                    </div>
-                    <p className="text-gray-600 text-sm">{point}</p>
+              <div className="flex flex-wrap gap-4 pt-2">
+                <Link to="/student/dashboard" className="inline-flex items-center gap-2 bg-[#4CC9F0] text-[#071B34] px-7 py-3.5 rounded-lg font-medium hover:bg-[#67E8F9] transition-colors">
+                  Student Portal <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link to="/warden/dashboard" className="inline-flex items-center gap-2 border border-white/15 text-[#F8FAFC] px-7 py-3.5 rounded-lg font-medium hover:bg-white/5 transition-colors">
+                  Warden Portal
+                </Link>
+              </div>
+              <div className="flex gap-12 pt-8 border-t border-white/10">
+                {[['10,000+', 'Students'], ['500+', 'Hostels'], ['98%', 'Resolution']].map(([v, l]) => (
+                  <div key={l}>
+                    <p className="text-2xl font-semibold text-[#F8FAFC]">{v}</p>
+                    <p className="text-xs text-[#4A5568] mt-1 uppercase tracking-wider">{l}</p>
                   </div>
                 ))}
               </div>
-
-              <Link
-                to="/register"
-                className="inline-flex items-center space-x-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-7 py-3.5 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 font-semibold shadow-md hover:shadow-indigo-200 hover:shadow-lg"
-              >
-                <span>Get Started Free</span>
-                <ArrowRight className="w-5 h-5" />
-              </Link>
+            </div>
+            <div className="hidden lg:block animate-subtle-float">
+              <div className="surface-panel-dark rounded-2xl p-8 border border-white/5">
+                <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/5">
+                  <p className="text-sm text-[#4A5568]">Live Overview</p>
+                  <span className="flex items-center gap-2 text-xs text-[#4CC9F0]"><span className="w-1.5 h-1.5 bg-[#4CC9F0] rounded-full animate-pulse" /> Active</span>
+                </div>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between text-sm mb-2"><span className="text-[#4A5568]">Occupancy</span><span className="text-[#F8FAFC] font-medium">87%</span></div>
+                    <div className="h-1 bg-white/10 rounded-full"><div className="h-full w-[87%] bg-[#4CC9F0] rounded-full" /></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[['248', 'Rooms'], ['1,024', 'Students'], ['14', 'Complaints'], ['6', 'Leave Pending']].map(([v, l]) => (
+                      <div key={l} className="bg-white/5 rounded-xl p-4">
+                        <p className="text-xl font-semibold text-[#F8FAFC]">{v}</p>
+                        <p className="text-xs text-[#4A5568] mt-1">{l}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Footer CTA ── */}
-      <section className="bg-gradient-to-br from-indigo-900 via-blue-900 to-indigo-800 py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center space-y-6">
-          <h2 className="text-4xl font-extrabold text-white">
-            Ready to modernize your hostel?
-          </h2>
-          <p className="text-indigo-200 text-lg">
-            Join universities already using HostelIQ to manage smarter, not harder.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/register"
-              className="bg-white text-indigo-700 px-8 py-3.5 rounded-xl font-semibold hover:bg-indigo-50 transition-colors flex items-center space-x-2 shadow-md"
-            >
-              <span>Start for Free</span>
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
-              to="/login"
-              className="border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-white/10 transition-colors"
-            >
-              Sign In
-            </Link>
+      {/* Problem */}
+      <section id="problem" className="py-32 px-6 lg:px-10 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-20 items-center reveal-on-scroll">
+          <div>
+            <p className="text-sm text-[#1B4F72] font-medium uppercase tracking-widest mb-4">The Problem</p>
+            <h2 className="text-4xl lg:text-5xl font-semibold text-[#071B34] leading-tight tracking-tight">
+              Hostel management<br />wasn't designed for today.
+            </h2>
+          </div>
+          <div className="space-y-6">
+            {[
+              { title: 'Paper-based records', desc: 'Lost files, manual errors, no audit trail.' },
+              { title: 'Phone-based complaints', desc: 'No tracking, slow resolution, frustrated students.' },
+              { title: 'Zero data visibility', desc: 'Admins flying blind without occupancy analytics.' },
+            ].map((p) => (
+              <div key={p.title} className="border-l-2 border-[#4CC9F0] pl-6 py-2">
+                <p className="font-medium text-[#071B34]">{p.title}</p>
+                <p className="text-[#4A5568] text-sm mt-1">{p.desc}</p>
+              </div>
+            ))}
+            <p className="text-[#071B34] pt-4">HostelIQ replaces all of that with a unified, AI-powered platform.</p>
           </div>
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <footer className="bg-gray-900 py-10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-lg flex items-center justify-center">
-              <Building2 className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-white font-semibold">HostelIQ</span>
+      {/* AI Showcase */}
+      <section id="ai" className="py-32 bg-[#071B34]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="max-w-2xl mb-20 reveal-on-scroll">
+            <p className="text-[#4CC9F0] text-sm font-medium uppercase tracking-widest mb-4">Intelligence</p>
+            <h2 className="text-4xl lg:text-5xl font-semibold text-[#F8FAFC] tracking-tight">AI that understands hostel operations.</h2>
           </div>
-          <p className="text-gray-500 text-sm">© 2025 HostelIQ. AI Powered Hostel Management System.</p>
-          <div className="flex items-center space-x-4 text-gray-500 text-sm">
-            <Link to="/login" className="hover:text-gray-300 transition-colors">Login</Link>
-            <Link to="/register" className="hover:text-gray-300 transition-colors">Register</Link>
-            <Link to="/chat" className="hover:text-gray-300 transition-colors">AI Assistant</Link>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 rounded-2xl overflow-hidden reveal-on-scroll">
+            {aiCapabilities.map((item) => (
+              <div key={item.title} className="bg-[#0A2342] p-8 lg:p-10 elevate-hover">
+                <p className="text-4xl font-semibold text-gradient-highlight mb-4">{item.metric}</p>
+                <p className="font-medium text-[#F8FAFC] mb-2">{item.title}</p>
+                <p className="text-sm text-[#4A5568] leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Role Experiences */}
+      {[
+        { role: 'Student', title: 'Your hostel workspace', desc: 'File complaints, apply for leave, manage fees, and track visitors — all from one calm, focused portal.', href: '/student/dashboard', icon: Users, features: ['Complaint tracking', 'Leave applications', 'Fee management', 'Room allocation'] },
+        { role: 'Warden', title: 'Hostel control center', desc: 'Monitor occupancy, resolve complaints, approve leave, and act on AI-generated insights in real time.', href: '/warden/dashboard', icon: Shield, features: ['Complaint queue', 'Leave approvals', 'Occupancy monitoring', 'AI alerts'], dark: true },
+        { role: 'Admin', title: 'Executive campus overview', desc: 'Campus-wide analytics, revenue tracking, capacity planning, and predictive forecasting for every hostel.', href: '/admin/dashboard', icon: BarChart3, features: ['Campus analytics', 'Revenue metrics', 'Capacity planning', 'AI forecasting'] },
+      ].map((portal, i) => {
+        const Icon = portal.icon;
+        return (
+          <section key={portal.role} className={`py-32 ${portal.dark ? 'bg-[#102A43]' : 'bg-[#F5F7FA]'}`}>
+            <div className="max-w-7xl mx-auto px-6 lg:px-10">
+              <div className={`grid lg:grid-cols-2 gap-16 items-center reveal-on-scroll ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+                <div className={i % 2 === 1 ? 'lg:order-2' : ''}>
+                  <p className={`text-sm font-medium uppercase tracking-widest mb-4 ${portal.dark ? 'text-[#4CC9F0]' : 'text-[#1B4F72]'}`}>{portal.role} Experience</p>
+                  <h2 className={`text-4xl font-semibold tracking-tight mb-6 ${portal.dark ? 'text-[#F8FAFC]' : 'text-[#071B34]'}`}>{portal.title}</h2>
+                  <p className={`text-lg leading-relaxed mb-8 ${portal.dark ? 'text-[#4A5568]' : 'text-[#4A5568]'}`}>{portal.desc}</p>
+                  <ul className="space-y-3 mb-10">
+                    {portal.features.map((f) => (
+                      <li key={f} className={`flex items-center gap-3 text-sm ${portal.dark ? 'text-[#4A5568]' : 'text-[#071B34]'}`}>
+                        <ChevronRight className={`w-4 h-4 ${portal.dark ? 'text-[#4CC9F0]' : 'text-[#1B4F72]'}`} />{f}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link to={portal.href} className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${portal.dark ? 'bg-[#4CC9F0] text-[#071B34] hover:bg-[#67E8F9]' : 'bg-[#071B34] text-[#F8FAFC] hover:bg-[#0A2342]'}`}>
+                    Open {portal.role} Portal <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+                <div className={`rounded-2xl p-10 min-h-[320px] flex items-center justify-center ${portal.dark ? 'bg-[#071B34] border border-white/5' : 'surface-panel'} ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
+                  <div className="text-center">
+                    <Icon className={`w-16 h-16 mx-auto mb-4 ${portal.dark ? 'text-[#4CC9F0]' : 'text-[#1B4F72]'}`} />
+                    <p className={`text-sm uppercase tracking-widest ${portal.dark ? 'text-[#4A5568]' : 'text-[#4A5568]'}`}>{portal.role} Portal Preview</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      })}
+
+      {/* Testimonials */}
+      <section className="py-32 max-w-7xl mx-auto px-6 lg:px-10">
+        <p className="text-sm text-[#1B4F72] font-medium uppercase tracking-widest mb-4 reveal-on-scroll">Testimonials</p>
+        <h2 className="text-4xl font-semibold text-[#071B34] tracking-tight mb-16 reveal-on-scroll">Trusted by campus leaders.</h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          {testimonials.map((t) => (
+            <div key={t.name} className="surface-panel rounded-2xl p-8 elevate-hover reveal-on-scroll">
+              <Quote className="w-8 h-8 text-[#4CC9F0]/40 mb-6" />
+              <p className="text-[#071B34] leading-relaxed mb-8">"{t.quote}"</p>
+              <div className="flex items-center gap-3 pt-6 border-t border-[#071B34]/5">
+                <div className="w-10 h-10 bg-[#1B4F72] rounded-full flex items-center justify-center text-[#F8FAFC] text-sm font-medium">{t.avatar}</div>
+                <div>
+                  <p className="font-medium text-[#071B34] text-sm">{t.name}</p>
+                  <p className="text-xs text-[#4A5568]">{t.role}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="gradient-mesh-hero py-32">
+        <div className="gradient-mesh-content max-w-3xl mx-auto px-6 text-center">
+          <h2 className="text-4xl lg:text-5xl font-semibold text-[#F8FAFC] tracking-tight mb-6">Ready to modernize your hostel?</h2>
+          <p className="text-[#4A5568] text-lg mb-10">Join universities already using HostelIQ to manage smarter, not harder.</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link to="/register" className="bg-[#4CC9F0] text-[#071B34] px-8 py-3.5 rounded-lg font-medium hover:bg-[#67E8F9] transition-colors">Start for Free</Link>
+            <Link to="/login" className="border border-white/15 text-[#F8FAFC] px-8 py-3.5 rounded-lg font-medium hover:bg-white/5 transition-colors">Sign In</Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="bg-[#071B34] py-12 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[#4A5568] text-sm">© 2025 HostelIQ. AI Powered Hostel Management.</p>
+          <div className="flex gap-6 text-sm text-[#4A5568]">
+            <Link to="/login" className="hover:text-[#F8FAFC] transition-colors">Login</Link>
+            <Link to="/register" className="hover:text-[#F8FAFC] transition-colors">Register</Link>
+            <Link to="/chat" className="hover:text-[#F8FAFC] transition-colors">AI Assistant</Link>
           </div>
         </div>
       </footer>

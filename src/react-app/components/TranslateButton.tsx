@@ -16,7 +16,7 @@ const TranslateButton = () => {
   return (
     <button
       onClick={toggleTranslate}
-      className="fixed top-6 right-6 bg-white border border-gray-300 hover:border-amber-400 text-amber-700 p-2 rounded-lg shadow-sm transition-all duration-200 z-50"
+      className="fixed top-6 right-6 bg-white border border-gray-200 hover:border-indigo-400 text-indigo-600 p-2 rounded-lg shadow-sm transition-all duration-200 z-50"
       title="Translate Website"
     >
       <Languages size={18} />

@@ -1,23 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import {
-  ArrowRight,
-  Users,
-  Shield,
-  ChevronRight,
-  LogOut,
-  User,
-  Building2,
-  BrainCircuit,
-  ClipboardList,
-  DoorOpen,
-  CreditCard,
-  UserCheck,
-  BarChart3,
-  Cpu,
-  Menu,
-  X,
+  ArrowRight, Users, Shield, ChevronRight, LogOut, User, Building2,
+  BrainCircuit, ClipboardList, DoorOpen, CreditCard, UserCheck, BarChart3,
+  Cpu, Menu, X, Sparkles, Quote, Workflow,
 } from 'lucide-react';
+import { useScrollReveal } from '@/react-app/hooks/useScrollReveal';
 
 interface UserData {
   id: number;
@@ -102,11 +90,34 @@ const stats = [
   { value: '3x', label: 'Faster than Manual Systems' },
 ];
 
+const testimonials = [
+  { name: 'Dr. Priya Mehta', role: 'Warden, Tagore Hostel', quote: 'HostelIQ cut our complaint resolution time in half. AI categorization means the right team gets notified instantly.', avatar: 'PM' },
+  { name: 'Aryan Sharma', role: 'CS Student, 3rd Year', quote: 'I can file complaints, apply for leave, and pay fees without standing in a single queue. The AI assistant answers everything.', avatar: 'AS' },
+  { name: 'Dr. Rajesh Kumar', role: 'Campus Administrator', quote: 'Real-time occupancy analytics across 12 hostels. Capacity planning used to take weeks — now it takes minutes.', avatar: 'RK' },
+];
+
+const workflow = [
+  { step: '01', title: 'Student raises request', desc: 'Complaint, leave, visitor, or fee — all from one portal' },
+  { step: '02', title: 'AI categorizes & routes', desc: 'Smart tagging, priority prediction, and department assignment' },
+  { step: '03', title: 'Warden reviews & acts', desc: 'Dashboard queue with alerts, approvals, and resolution tracking' },
+  { step: '04', title: 'Admin monitors campus', desc: 'Executive analytics, occupancy forecasting, and health scores' },
+];
+
+const aiShowcase = [
+  { title: 'Complaint Categorization', metric: '94% accuracy', desc: 'Auto-tags plumbing, electrical, hygiene, and security issues' },
+  { title: 'Occupancy Prediction', metric: '91% forecast', desc: 'Predicts room availability 30 days ahead across all blocks' },
+  { title: 'Leave Optimization', metric: '2.4x faster', desc: 'Suggests optimal dates based on policies and occupancy' },
+  { title: 'Fee Recovery', metric: '₹4.2L tracked', desc: 'AI identifies high-risk accounts and sends smart reminders' },
+];
+
 export default function Landing() {
   const [user, setUser] = useState<UserData | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [animatedStats, setAnimatedStats] = useState(false);
+
+  useScrollReveal();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -115,7 +126,10 @@ export default function Landing() {
       setUser(JSON.parse(userData));
     }
 
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+      if (window.scrollY > 400) setAnimatedStats(true);
+    };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -159,6 +173,9 @@ export default function Landing() {
               <a href="#features" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm">
                 Features
               </a>
+              <Link to="/features" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm">
+                Platform
+              </Link>
               <a href="#about" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors text-sm">
                 About
               </a>
@@ -185,7 +202,7 @@ export default function Landing() {
                           <p className="text-xs text-gray-500">{user.email}</p>
                         </div>
                         <Link
-                          to="/profile"
+                          to="/student/profile"
                           className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
                           onClick={() => setShowProfileMenu(false)}
                         >
@@ -263,7 +280,7 @@ export default function Landing() {
         <div className="relative max-w-7xl mx-auto px-6 py-28">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Left: Text */}
-            <div className="space-y-8">
+            <div className="space-y-8 animate-fade-up">
               <div className="space-y-2">
                 <div className="inline-flex items-center space-x-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium">
                   <BrainCircuit className="w-4 h-4" />
@@ -331,7 +348,7 @@ export default function Landing() {
             </div>
 
             {/* Right: Dashboard preview card */}
-            <div className="relative">
+            <div className="relative animate-float">
               <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
                 {/* Card header bar */}
                 <div className="bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-4 flex items-center space-x-2">
@@ -395,8 +412,8 @@ export default function Landing() {
       <section className="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 py-12">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center text-white">
-            {stats.map((s) => (
-              <div key={s.label}>
+            {stats.map((s, i) => (
+              <div key={s.label} className={animatedStats ? 'animate-count-up' : ''} style={{ animationDelay: `${i * 0.1}s` }}>
                 <p className="text-3xl font-extrabold">{s.value}</p>
                 <p className="text-indigo-100 text-sm mt-1">{s.label}</p>
               </div>
@@ -441,6 +458,116 @@ export default function Landing() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── AI Showcase ── */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16 reveal-on-scroll">
+            <div className="inline-flex items-center space-x-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+              <Sparkles className="w-4 h-4" />
+              <span>AI at the Core</span>
+            </div>
+            <h2 className="text-4xl font-extrabold text-gray-900">
+              Intelligence That{' '}
+              <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">Works for You</span>
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {aiShowcase.map((item) => (
+              <div key={item.title} className="glass-card rounded-2xl p-6 shadow-sm card-hover reveal-on-scroll border border-indigo-100/50">
+                <p className="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">{item.metric}</p>
+                <h3 className="font-semibold text-gray-900 mt-2 mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-500">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Workflow ── */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16 reveal-on-scroll">
+            <div className="inline-flex items-center space-x-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+              <Workflow className="w-4 h-4" />
+              <span>How It Works</span>
+            </div>
+            <h2 className="text-4xl font-extrabold text-gray-900">From Request to Resolution</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {workflow.map((w, i) => (
+              <div key={w.step} className="relative reveal-on-scroll">
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover h-full">
+                  <span className="text-3xl font-extrabold text-indigo-100">{w.step}</span>
+                  <h3 className="font-semibold text-gray-900 mt-2 mb-2">{w.title}</h3>
+                  <p className="text-sm text-gray-500">{w.desc}</p>
+                </div>
+                {i < workflow.length - 1 && (
+                  <ChevronRight className="hidden md:block absolute top-1/2 -right-3 w-6 h-6 text-indigo-300 -translate-y-1/2 z-10" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Testimonials ── */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12 reveal-on-scroll">Trusted by Campus Leaders</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t) => (
+              <div key={t.name} className="bg-gray-50 rounded-2xl p-6 border border-gray-100 card-hover reveal-on-scroll">
+                <Quote className="w-8 h-8 text-indigo-200 mb-4" />
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">"{t.quote}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">{t.avatar}</div>
+                  <div>
+                    <p className="font-semibold text-gray-900 text-sm">{t.name}</p>
+                    <p className="text-xs text-gray-400">{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Product Screenshots ── */}
+      <section className="py-24 bg-gradient-to-br from-indigo-50 to-blue-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12 reveal-on-scroll">
+            <h2 className="text-3xl font-extrabold text-gray-900">Built for Every Role</h2>
+            <p className="text-gray-500 mt-2">Student, warden, admin, and visitor portals — unified under one platform</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { title: 'Student Portal', desc: 'Dashboard, complaints, leave, fees, room allocation', href: '/student/dashboard', gradient: 'from-indigo-600 to-blue-600' },
+              { title: 'Warden Portal', desc: 'Complaint queue, leave approvals, occupancy monitoring', href: '/warden/dashboard', gradient: 'from-blue-600 to-cyan-600' },
+              { title: 'Admin Portal', desc: 'Campus analytics, revenue, capacity planning', href: '/admin/dashboard', gradient: 'from-indigo-700 to-purple-700' },
+            ].map((portal) => (
+              <Link key={portal.title} to={portal.href} className="group reveal-on-scroll">
+                <div className={`bg-gradient-to-br ${portal.gradient} rounded-2xl p-6 text-white shadow-lg group-hover:scale-[1.02] transition-transform`}>
+                  <div className="bg-white/10 rounded-xl p-4 mb-4 h-32 backdrop-blur-sm border border-white/20">
+                    <div className="grid grid-cols-3 gap-2">
+                      {[1, 2, 3].map((n) => (
+                        <div key={n} className="bg-white/20 rounded-lg h-8" />
+                      ))}
+                    </div>
+                    <div className="mt-3 h-2 bg-white/20 rounded-full w-3/4" />
+                    <div className="mt-2 h-2 bg-white/10 rounded-full w-1/2" />
+                  </div>
+                  <h3 className="font-bold text-lg">{portal.title}</h3>
+                  <p className="text-white/80 text-sm mt-1">{portal.desc}</p>
+                  <span className="inline-flex items-center gap-1 text-sm font-medium mt-3 text-white/90 group-hover:text-white">
+                    Open portal <ArrowRight className="w-4 h-4" />
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

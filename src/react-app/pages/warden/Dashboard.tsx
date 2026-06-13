@@ -116,7 +116,7 @@ const aiTextStyles: Record<string, string> = {
 
 export default function WardenDashboard() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 page-enter gradient-mesh">
 
       {/* ── Navbar ── */}
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
@@ -171,7 +171,15 @@ export default function WardenDashboard() {
                 <span className="flex items-center gap-1"><Users className="w-4 h-4" />{warden.totalStudents} Students</span>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-5 py-3">
+                <Activity className="w-6 h-6 text-cyan-300" />
+                <div>
+                  <p className="text-white font-semibold text-sm">Hostel Health Score</p>
+                  <p className="text-2xl font-extrabold text-white">88<span className="text-lg text-indigo-200">/100</span></p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
               <Link to="/warden/complaints"
                 className="flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/20 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">
                 <AlertCircle className="w-4 h-4" /> Manage Complaints
@@ -180,6 +188,7 @@ export default function WardenDashboard() {
                 className="flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/20 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">
                 <Users className="w-4 h-4" /> View Students
               </Link>
+              </div>
             </div>
           </div>
         </div>

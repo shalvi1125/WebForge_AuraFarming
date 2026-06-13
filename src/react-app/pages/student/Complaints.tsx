@@ -218,7 +218,7 @@ export default function StudentComplaints() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 page-enter">
 
       {/* Navbar */}
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
@@ -262,6 +262,45 @@ export default function StudentComplaints() {
               <p className={`text-3xl font-extrabold mt-1 ${s.color}`}>{s.value}</p>
             </div>
           ))}
+        </div>
+
+        {/* Analytics */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h2 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <BrainCircuit className="w-5 h-5 text-indigo-600" /> Complaint Trends
+            </h2>
+            <div className="flex items-end gap-2 h-28">
+              {[3, 5, 2, 4, 6, 3, 2].map((v, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                  <div className="w-full bg-gradient-to-t from-indigo-600 to-cyan-400 rounded-t-md" style={{ height: `${(v / 6) * 100}%`, minHeight: '8px' }} />
+                  <span className="text-[10px] text-gray-400">{['W1','W2','W3','W4','W5','W6','W7'][i]}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h2 className="font-semibold text-gray-800 mb-4">Department Breakdown</h2>
+            <div className="space-y-3">
+              {[
+                { dept: 'Plumbing', pct: 28, color: 'bg-blue-500' },
+                { dept: 'Internet', pct: 22, color: 'bg-purple-500' },
+                { dept: 'Hygiene', pct: 18, color: 'bg-green-500' },
+                { dept: 'Electrical', pct: 15, color: 'bg-yellow-500' },
+                { dept: 'Other', pct: 17, color: 'bg-gray-400' },
+              ].map((d) => (
+                <div key={d.dept}>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-gray-600">{d.dept}</span>
+                    <span className="font-medium">{d.pct}%</span>
+                  </div>
+                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div className={`h-full ${d.color} rounded-full`} style={{ width: `${d.pct}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Category pills */}

@@ -4,8 +4,15 @@ import {
   Building2, Home, AlertCircle, Calendar, IndianRupee,
   Users, BrainCircuit, ChevronRight, Bell, LogOut,
   CheckCircle2, Clock, XCircle, ArrowUpRight, Wifi,
-  Wrench, Utensils, BedDouble, User,
+  Wrench, Utensils, BedDouble, User, Megaphone, UserCheck,
 } from 'lucide-react';
+
+const getGreeting = () => {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+};
 
 // ── Mock Data ──────────────────────────────────────────────
 const student = {
@@ -64,9 +71,21 @@ const quickActions = [
   { label: 'AI Assistant', icon: BrainCircuit, href: '/chat', gradient: 'from-cyan-500 to-blue-500' },
 ];
 
+const recentActivity = [
+  { text: 'Complaint CMP-041 moved to In Progress', time: '2h ago', icon: AlertCircle },
+  { text: 'Leave LV-014 submitted for approval', time: '3d ago', icon: Calendar },
+  { text: 'Visitor pass issued for Rahul Sharma', time: '5d ago', icon: UserCheck },
+  { text: 'Mess fee reminder — ₹3,500 due 30 Jun', time: '1w ago', icon: IndianRupee },
+];
+
+const visitorRequests = [
+  { name: 'Rahul Sharma', date: '14 Jun', status: 'Approved' },
+  { name: 'Amit Patel', date: '16 Jun', status: 'Pending' },
+];
+
 export default function StudentDashboard() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 page-enter gradient-mesh">
 
       {/* ── Navbar ── */}
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
@@ -112,7 +131,7 @@ export default function StudentDashboard() {
           </div>
           <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
-              <p className="text-indigo-200 text-sm font-medium">Welcome back 👋</p>
+              <p className="text-indigo-200 text-sm font-medium">{getGreeting()} 👋</p>
               <h1 className="text-2xl font-extrabold text-white">{student.name}</h1>
               <div className="flex flex-wrap items-center gap-3 text-indigo-100 text-sm">
                 <span className="flex items-center gap-1"><BedDouble className="w-4 h-4" /> Room {student.room}</span>
@@ -311,10 +330,10 @@ export default function StudentDashboard() {
             <div className="bg-gradient-to-br from-indigo-900 to-blue-900 rounded-2xl p-5 space-y-3">
               <div className="flex items-center space-x-2">
                 <BrainCircuit className="w-5 h-5 text-cyan-400" />
-                <p className="text-white font-semibold text-sm">AI Assistant</p>
+                <p className="text-white font-semibold text-sm">AI Recommendations</p>
               </div>
               <p className="text-indigo-200 text-xs leading-relaxed">
-                Your Wi-Fi complaint has been open for 6 days. I've flagged it as high priority and notified the warden.
+                Your Wi-Fi complaint has been open for 6 days. I've flagged it as high priority and notified the warden. Consider applying for leave before exam week for faster approval.
               </p>
               <Link
                 to="/chat"
@@ -323,6 +342,56 @@ export default function StudentDashboard() {
                 <span>Ask AI Assistant</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </Link>
+            </div>
+
+            {/* Visitor Requests */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 className="font-semibold text-gray-800 text-sm">Visitor Requests</h2>
+                <Link to="/visitor/request" className="text-xs text-indigo-600 font-medium">View all</Link>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {visitorRequests.map((v) => (
+                  <div key={v.name} className="px-5 py-3 flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{v.name}</p>
+                      <p className="text-xs text-gray-400">{v.date}</p>
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${v.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>{v.status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Announcements */}
+            <Link to="/student/announcements" className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-5 card-hover">
+              <div className="flex items-center gap-2 mb-2">
+                <Megaphone className="w-5 h-5 text-indigo-600" />
+                <p className="font-semibold text-gray-800 text-sm">Hostel Announcements</p>
+              </div>
+              <p className="text-xs text-gray-500">Curfew extended for fest week · Mess menu update · Fire drill 16 Jun</p>
+              <span className="inline-flex items-center gap-1 text-xs text-indigo-600 font-medium mt-2">Read notices <ChevronRight className="w-3 h-3" /></span>
+            </Link>
+
+            {/* Recent Activity */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <h2 className="font-semibold text-gray-800 text-sm">Recent Activity</h2>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {recentActivity.map((a, i) => {
+                  const Icon = a.icon;
+                  return (
+                    <div key={i} className="px-5 py-3 flex items-start gap-3">
+                      <Icon className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs text-gray-700">{a.text}</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">{a.time}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

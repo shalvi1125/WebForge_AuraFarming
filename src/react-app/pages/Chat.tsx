@@ -16,10 +16,16 @@ interface Message {
 
 // ── AI capability cards shown on empty state ───────────────
 const capabilities = [
-  { icon: AlertCircle, title: 'Complaint Analysis', desc: 'Get guidance on filing and tracking hostel complaints', color: 'text-rose-600', bg: 'bg-rose-50' },
-  { icon: Calendar,    title: 'Leave Guidance',      desc: 'Understand leave policies and how to apply',           color: 'text-amber-600', bg: 'bg-amber-50' },
-  { icon: ShieldCheck, title: 'Hostel Support',      desc: 'Answers on hostel rules, policies, and procedures',    color: 'text-indigo-600', bg: 'bg-indigo-50' },
-  { icon: BarChart3,   title: 'Occupancy Insights',  desc: 'Information on room allocation and availability',      color: 'text-cyan-600',   bg: 'bg-cyan-50' },
+  { icon: AlertCircle, title: 'Complaint Analysis', desc: 'AI categorization, priority prediction, and escalation guidance', color: 'text-rose-600', bg: 'bg-rose-50' },
+  { icon: Calendar,    title: 'Leave Guidance',      desc: 'Policy answers, application help, and approval tracking',           color: 'text-amber-600', bg: 'bg-amber-50' },
+  { icon: ShieldCheck, title: 'Hostel Support',      desc: 'Rules, curfew, mess timings, and procedure answers',    color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  { icon: BarChart3,   title: 'Smart Insights',      desc: 'Occupancy, fee status, and personalized recommendations',      color: 'text-cyan-600',   bg: 'bg-cyan-50' },
+];
+
+const aiActions = [
+  { label: 'Escalate CMP-041', desc: 'Flag water leakage to warden' },
+  { label: 'Check leave status', desc: 'LV-014 pending review' },
+  { label: 'Pay outstanding fees', desc: '₹4,500 due 30 Jun' },
 ];
 
 // ── Suggested prompts ──────────────────────────────────────
@@ -44,8 +50,24 @@ export default function Chat() {
   const [expanded, setExpanded] = useState(false);
   const [statusText, setStatusText] = useState<string | null>(null);
   const [statusTrail, setStatusTrail] = useState<string[]>([]);
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const userPreferences = user.preferences || {};
+  const mockResponses: Record<string, string> = {
+    leave: "To apply for leave in HostelIQ:\n\n1. Go to **Leave Management** from your dashboard\n2. Click **Apply for Leave** and fill in dates + reason\n3. Your warden (Dr. Priya Mehta) will review within 24 hours\n4. Once approved, security is notified automatically\n\n📋 You have **18 leave days** remaining this semester. Your pending request LV-014 is awaiting warden approval.",
+    complaint: "For your water leakage complaint (CMP-041):\n\n✅ **Status:** In Progress — assigned to Rajan Kumar (Plumbing)\n🔴 **Priority:** High (AI-detected based on duration)\n⏱️ **Expected resolution:** 16 Jun 2025\n\nI've flagged this as high priority since it's been open 6 days. Would you like me to escalate to the warden?",
+    fee: "Your fee summary:\n\n💳 **Outstanding:** ₹4,500 (Mess Fee + Late Fee)\n📅 **Due date:** 30 Jun 2025\n✅ **Last payment:** ₹8,000 on 01 May\n\nPay before 25 Jun to avoid additional late fees. You can pay via the **Fee Management** page on your dashboard.",
+    visitor: "Visitor pass requirements:\n\n📄 Valid government ID of visitor\n📱 Pre-registration at least 24 hours ahead\n👤 Maximum 2 visitors per room at a time\n⏰ Visiting hours: 10 AM – 6 PM\n\nGo to **Visitor Management** to register a new visitor and generate a QR pass.",
+    rule: "Key hostel rules for Tagore Hostel:\n\n⏰ Curfew: 10:00 PM (extended to 11 PM during fest week)\n🚫 No cooking in rooms\n🔇 Quiet hours: 11 PM – 6 AM\n📦 Report maintenance issues via the complaint portal\n👥 Visitors must check in at the gate with QR pass",
+    default: "I'm the HostelIQ AI Assistant. I can help with:\n\n• Leave applications and policies\n• Complaint tracking and escalation\n• Fee payments and dues\n• Visitor pass registration\n• Room allocation queries\n• Hostel rules and procedures\n\nWhat would you like help with?",
+  };
+
+  const getMockResponse = (input: string): string => {
+    const lower = input.toLowerCase();
+    if (lower.includes('leave') || lower.includes('apply')) return mockResponses.leave;
+    if (lower.includes('complaint') || lower.includes('leak') || lower.includes('wi-fi') || lower.includes('water')) return mockResponses.complaint;
+    if (lower.includes('fee') || lower.includes('pay') || lower.includes('₹')) return mockResponses.fee;
+    if (lower.includes('visitor') || lower.includes('pass') || lower.includes('guest')) return mockResponses.visitor;
+    if (lower.includes('rule') || lower.includes('curfew') || lower.includes('policy')) return mockResponses.rule;
+    return mockResponses.default;
+  };
 
   useEffect(() => {
     const welcomeMessage: Message = {
@@ -85,60 +107,15 @@ export default function Chat() {
     setMessages((prev: Message[]) => [...prev, assistantMessage]);
 
     try {
-      setStatusText('Thinking...');
-      setStatusTrail([]);
+      setStatusText('Analyzing your query...');
+      setStatusTrail(['Checking hostel policies', 'Reviewing your profile']);
 
-      const historyForServer = [...messages, userMessage].map(m => ({
-        role: m.role,
-        content: m.content,
-      }));
+      await new Promise((r) => setTimeout(r, 1200));
 
-      const res = await fetch('/api/agent/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: historyForServer,
-          userPreferences,
-        }),
-      });
-
-      if (!res.ok || !res.body) throw new Error('Agent request failed');
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-      let buffer = '';
-
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        if (value) {
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-          for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed) continue;
-            try {
-              const obj = JSON.parse(trimmed);
-              if (obj?.type === 'status' && typeof obj.text === 'string') {
-                setStatusText((obj as { text: string }).text);
-                setStatusTrail((prev: string[]) =>
-                  prev.length && prev[prev.length - 1] === (obj as { text: string }).text
-                    ? prev
-                    : [...prev.slice(-2), (obj as { text: string }).text]
-                );
-              } else if (obj?.type === 'final' && typeof (obj as { text?: string }).text === 'string') {
-                setMessages((prev: Message[]) =>
-                  prev.map((msg: Message) => msg.id === assistantId ? { ...msg, content: (obj as { text: string }).text } : msg)
-                );
-              }
-            } catch {
-              // ignore parse errors
-            }
-          }
-        }
-      }
+      const responseText = getMockResponse(userMessage.content);
+      setMessages((prev: Message[]) =>
+        prev.map((msg: Message) => msg.id === assistantId ? { ...msg, content: responseText } : msg)
+      );
     } catch {
       setMessages((prev: Message[]) =>
         prev.map((msg: Message) =>
@@ -285,19 +262,31 @@ export default function Chat() {
 
           {/* Empty state: capability cards + prompts shown before messages stack up */}
           {messages.length <= 1 && !isLoading && (
-            <div className="mb-8">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">What I can help with</p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            <div className="mb-8 space-y-6">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">What I can help with</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {capabilities.map(c => {
                   const Icon = c.icon;
                   return (
-                    <div key={c.title} className={`${c.bg} rounded-xl p-3 border border-transparent`}>
+                    <div key={c.title} className={`${c.bg} rounded-xl p-3 border border-transparent card-hover cursor-default`}>
                       <Icon className={`w-5 h-5 ${c.color} mb-2`} />
                       <p className="text-xs font-semibold text-gray-700">{c.title}</p>
                       <p className="text-xs text-gray-400 mt-0.5 leading-snug">{c.desc}</p>
                     </div>
                   );
                 })}
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">AI Suggested Actions</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {aiActions.map((a) => (
+                    <button key={a.label} onClick={() => setInputValue(a.label)}
+                      className="text-left bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-xl p-3 hover:border-indigo-300 transition-colors">
+                      <p className="text-xs font-semibold text-indigo-700">{a.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{a.desc}</p>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}

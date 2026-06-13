@@ -1,12 +1,36 @@
-// Placeholder – admin reports (Phase 2)
 import { Link } from 'react-router';
+import { ArrowLeft, BarChart3, Download } from 'lucide-react';
+import PortalNav from '@/react-app/components/PortalNav';
+
+const reports = [
+  { title: 'Monthly Occupancy Report', desc: 'Room utilization across all hostels', date: 'Jun 2025' },
+  { title: 'Complaint Resolution Summary', desc: 'Resolution times and department breakdown', date: 'Jun 2025' },
+  { title: 'Fee Collection Report', desc: 'Revenue, outstanding dues, and recovery rate', date: 'Jun 2025' },
+  { title: 'Leave Analytics', desc: 'Leave patterns and approval metrics', date: 'May 2025' },
+];
+
 export default function AdminReports() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-purple-900 mb-4">Reports</h1>
-        <p className="text-purple-600 mb-6">Analytics and AI-generated reports — coming in Phase 2</p>
-        <Link to="/admin/dashboard" className="text-purple-500 underline">← Back to Dashboard</Link>
+    <div className="min-h-screen bg-gray-50 page-enter">
+      <PortalNav portal="Admin Portal" portalColor="text-purple-600" userName="Dr. Rajesh Kumar" avatar="RK" homeHref="/admin/dashboard" />
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+        <Link to="/admin/dashboard" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium"><ArrowLeft className="w-4 h-4" /> Dashboard</Link>
+        <h1 className="text-2xl font-extrabold text-gray-900">Reports & Analytics</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {reports.map((r) => (
+            <div key={r.title} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 card-hover flex items-start justify-between">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center"><BarChart3 className="w-5 h-5 text-indigo-600" /></div>
+                <div>
+                  <h3 className="font-semibold text-gray-800 text-sm">{r.title}</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">{r.desc}</p>
+                  <p className="text-xs text-gray-400 mt-1">{r.date}</p>
+                </div>
+              </div>
+              <button className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg"><Download className="w-4 h-4" /></button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { ArrowLeft, Mail, Lock, KeyRound } from 'lucide-react';
 import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
+import { roleDashboard, UserRole } from '@/react-app/hooks/useAuth';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -26,10 +27,9 @@ export default function Login() {
 
       if (response.ok) {
         const data = await response.json();
-        // Fix: Use data.sessionToken (what the worker actually returns)
         localStorage.setItem('token', data.sessionToken);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/');
+        navigate(roleDashboard(data.user.role as UserRole));
       } else {
         const errorData = await response.json().catch(() => ({}));
         alert(errorData.error || 'Invalid credentials');

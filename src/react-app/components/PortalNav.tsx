@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { Bell, LogOut, LucideIcon } from 'lucide-react';
 import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
 
@@ -38,6 +38,21 @@ export default function PortalNav({
   dark = false,
 }: PortalNavProps) {
   const { pathname, search } = useLocation();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionToken: token }),
+      }).catch(() => {});
+    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/');
+  }
 
   const iconBtnClass = dark
     ? 'text-[#D1DEE6] hover:text-[#F8FAFC] hover:bg-white/8'
@@ -117,7 +132,7 @@ export default function PortalNav({
               )}
             </div>
           </div>
-          <Link to="/" className={`p-2 rounded-lg transition-colors ${iconBtnClass}`} title="Exit portal" aria-label="Exit portal">
+          <Link to="/" onClick={handleLogout} className={`p-2 rounded-lg transition-colors ${iconBtnClass}`} title="Logout" aria-label="Logout">
             <LogOut className="w-[18px] h-[18px]" />
           </Link>
         </div>

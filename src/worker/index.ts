@@ -1009,9 +1009,13 @@ app.post('/api/hotels/search', async (c) => {
 app.post('/api/auth/signup', async (c) => {
   try {
     const body = await c.req.json();
-    const { firstName, lastName, username, email, password, preferences } = body;
+    const { firstName, lastName, username, email, password, preferences, role } = body;
 
-    console.log('Signup attempt:', { firstName, lastName, username, email });
+    // Validate role — default to 'student' if not provided or invalid
+    const validRoles = ['student', 'warden', 'admin'];
+    const userRole = validRoles.includes(role) ? role : 'student';
+
+    console.log('Signup attempt:', { firstName, lastName, username, email, role: userRole });
 
     const sql = getNeonSql(c.env as any) as any;
     if (!sql) {
@@ -1028,8 +1032,8 @@ app.post('/api/auth/signup', async (c) => {
     console.log('Password hashed successfully');
 
     const rows = await sql<[{ id: number }]>`
-      INSERT INTO users (first_name, last_name, username, email, password_hash, preferences, created_at)
-      VALUES (${firstName}, ${lastName}, ${username}, ${email}, ${hashedPassword}, ${JSON.stringify(preferences)}, NOW())
+      INSERT INTO users (first_name, last_name, username, email, password_hash, preferences, role, created_at)
+      VALUES (${firstName}, ${lastName}, ${username}, ${email}, ${hashedPassword}, ${JSON.stringify(preferences)}, ${userRole}, NOW())
       RETURNING id
     `;
 
@@ -1040,7 +1044,7 @@ app.post('/api/auth/signup', async (c) => {
 
     return c.json({
       sessionToken,
-      user: { id: userId, firstName, lastName, username, email, preferences }
+      user: { id: userId, firstName, lastName, username, email, role: userRole, preferences }
     });
   } catch (error: unknown) {
     console.error('Signup error:', error);

@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router';
 import { Bell, LogOut, LucideIcon } from 'lucide-react';
 import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
+import { logoutSession } from '@/react-app/hooks/useAuth';
 
 interface NavLink {
   label: string;
@@ -41,9 +42,8 @@ export default function PortalNav({
   const navigate = useNavigate();
 
   function handleLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/');
+    void logoutSession();
+    navigate('/login');
   }
 
   const iconBtnClass = dark
@@ -124,7 +124,7 @@ export default function PortalNav({
               )}
             </div>
           </div>
-          <Link to="/" onClick={handleLogout} className={`p-2 rounded-lg transition-colors ${iconBtnClass}`} title="Logout" aria-label="Logout">
+          <Link to="/login" onClick={handleLogout} className={`p-2 rounded-lg transition-colors ${iconBtnClass}`} title="Logout" aria-label="Logout">
             <LogOut className="w-[18px] h-[18px]" />
           </Link>
         </div>

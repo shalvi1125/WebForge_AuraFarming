@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { ArrowLeft, User, Mail, Lock, Eye, EyeOff, GraduationCap, Shield, BarChart3 } from 'lucide-react';
 import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
-import { createMockSession, roleDashboard, saveMockUser, UserRole } from '@/react-app/hooks/useAuth';
+import { roleDashboard, signupWithPassword, UserRole } from '@/react-app/hooks/useAuth';
 
 interface UserPreferences {
   complaints: boolean;
@@ -60,21 +60,18 @@ export default function Signup() {
   const handleSignup = async () => {
     setIsLoading(true);
     try {
-      const user = {
-        id: Date.now(),
+      const { user } = await signupWithPassword({
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
         username: formData.username.trim(),
         email: formData.email.trim().toLowerCase(),
+        password: formData.password,
         role,
         preferences,
-      };
-
-      saveMockUser(user, formData.password);
-      createMockSession(user);
-      navigate(roleDashboard(user.role as UserRole));
-    } catch {
-      alert('Signup failed. Please try again.');
+      });
+      navigate(roleDashboard(user.role));
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Signup failed. Please try again.');
     }
     setIsLoading(false);
   };

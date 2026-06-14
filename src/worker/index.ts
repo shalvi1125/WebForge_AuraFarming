@@ -6,56 +6,181 @@ import { HeritageSiteSchema, SiteStorySchema, SiteArtifactSchema } from "@/share
 import z from "zod";
 import { neon } from "@neondatabase/serverless";
 import { Agent, run, tool } from "@openai/agents";
+import type { Collection, MongoClient, ObjectId } from "mongodb";
 
 /* ---------- Helper types & functions ---------- */
 
+type UserRole = 'student' | 'warden' | 'admin';
+
+interface MongoUserDocument {
+  _id?: ObjectId;
+  name: string;
+  email: string;
+  passwordHash: string;
+  role: UserRole;
+  createdAt: Date;
+}
+
+interface PublicAuthUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  role: UserRole;
+  preferences: Record<string, unknown>;
+}
+
+const VALID_AUTH_ROLES: UserRole[] = ['student', 'warden', 'admin'];
+const PASSWORD_HASH_ITERATIONS = 210000;
+const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
+let mongoClientPromise: Promise<MongoClient> | null = null;
+let mongoDriverPromise: Promise<typeof import("mongodb")> | null = null;
+
+function isUserRole(role: unknown): role is UserRole {
+  return typeof role === 'string' && VALID_AUTH_ROLES.includes(role as UserRole);
+}
+
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary);
+}
+
+function base64ToBytes(value: string): Uint8Array {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+function base64UrlEncode(value: string): string {
+  return btoa(value).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+function base64UrlDecode(value: string): string {
+  const padded = value.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - value.length % 4) % 4);
+  return atob(padded);
+}
+
 async function hashPassword(password: string): Promise<string> {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
   const encoder = new TextEncoder();
-  const data = encoder.encode(password + 'raahi_salt_2024'); // Add a salt
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const keyMaterial = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits']);
+  const derivedBits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: 'SHA-256', salt, iterations: PASSWORD_HASH_ITERATIONS },
+    keyMaterial,
+    256
+  );
+  return `pbkdf2:${PASSWORD_HASH_ITERATIONS}:${bytesToBase64(salt)}:${bytesToBase64(new Uint8Array(derivedBits))}`;
 }
 
-async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  const hashedInput = await hashPassword(password);
-  return hashedInput === hash;
+async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+  const [, iterationsRaw, saltRaw, hashRaw] = storedHash.split(':');
+  if (!storedHash.startsWith('pbkdf2:') || !iterationsRaw || !saltRaw || !hashRaw) return false;
+  const iterations = Number(iterationsRaw);
+  if (!Number.isFinite(iterations) || iterations < 100000) return false;
+  const encoder = new TextEncoder();
+  const salt = base64ToBytes(saltRaw);
+  const expected = base64ToBytes(hashRaw);
+  const keyMaterial = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits']);
+  const derivedBits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: 'SHA-256', salt, iterations },
+    keyMaterial,
+    expected.byteLength * 8
+  );
+  const actual = new Uint8Array(derivedBits);
+  if (actual.byteLength !== expected.byteLength) return false;
+  let diff = 0;
+  actual.forEach((byte, index) => { diff |= byte ^ expected[index]; });
+  return diff === 0;
 }
 
-/* Session helpers (MODIFIED: No expiration) */
-async function createSession(userId: number, env: any): Promise<string> {
-  const sessionToken = crypto.randomUUID();
-  // Set expires_at to a far future date (year 9999) to effectively never expire
-  const farFutureDate = new Date('9999-12-31T23:59:59.999Z');
-  const sql = getNeonSql(env) as any;
-  if (sql) {
-    await sql`
-      INSERT INTO user_sessions (user_id, token, expires_at, created_at)
-      VALUES (${userId}, ${sessionToken}, ${farFutureDate}, NOW())
-    `;
+function getMongoUri(env: any): string {
+  return String(env?.MONGODB_URI || env?.MONGO_URI || env?.mongodb_uri || '');
+}
+
+function getMongoDbName(uri: string, env: any): string {
+  const configured = String(env?.MONGODB_DB || env?.MONGO_DB || env?.mongodb_db || '').trim();
+  if (configured) return configured;
+  try {
+    const parsed = new URL(uri);
+    const pathDb = parsed.pathname.replace(/^\//, '').trim();
+    return pathDb || 'hosteliq';
+  } catch {
+    return 'hosteliq';
   }
-  return sessionToken;
+}
+
+async function getUsersCollection(env: any): Promise<Collection<MongoUserDocument>> {
+  const uri = getMongoUri(env);
+  if (!uri) throw new Error('MONGODB_URI is not configured');
+  const { MongoClient } = await getMongoDriver();
+  if (!mongoClientPromise) mongoClientPromise = new MongoClient(uri).connect();
+  const client = await mongoClientPromise;
+  const users = client.db(getMongoDbName(uri, env)).collection<MongoUserDocument>('users');
+  await users.createIndex({ email: 1 }, { unique: true });
+  return users;
+}
+
+function getMongoDriver(): Promise<typeof import("mongodb")> {
+  if (!mongoDriverPromise) mongoDriverPromise = import("mongodb");
+  return mongoDriverPromise;
+}
+
+function toPublicAuthUser(user: MongoUserDocument): PublicAuthUser {
+  const [firstName = user.name, ...rest] = user.name.trim().split(/\s+/);
+  const lastName = rest.join(' ') || 'User';
+  return {
+    id: user._id?.toString() || '',
+    firstName,
+    lastName,
+    username: user.email.split('@')[0] || firstName.toLowerCase(),
+    email: user.email,
+    role: user.role,
+    preferences: {},
+  };
+}
+
+async function signSessionValue(value: string, env: any): Promise<string> {
+  const encoder = new TextEncoder();
+  const secret = String(env?.AUTH_SESSION_SECRET || env?.JWT_SECRET || getMongoUri(env));
+  const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(value));
+  return bytesToBase64(new Uint8Array(signature)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+async function createSession(user: MongoUserDocument, env: any): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    sub: user._id?.toString(),
+    email: user.email,
+    role: user.role,
+    iat: now,
+    exp: now + SESSION_TTL_SECONDS,
+    nonce: crypto.randomUUID(),
+  };
+  const body = base64UrlEncode(JSON.stringify(payload));
+  const signature = await signSessionValue(body, env);
+  return `${body}.${signature}`;
 }
 
 async function validateSession(sessionToken: string, env: any): Promise<any | null> {
-  const sql = getNeonSql(env) as any;
-  if (!sql) return null;
-
-  const sessions = await sql`
-    SELECT s.*, u.first_name, u.last_name, u.username, u.email, u.preferences, u.role
-    FROM user_sessions s
-    JOIN users u ON s.user_id = u.id
-    WHERE s.token = ${sessionToken}
-    LIMIT 1
-  `;
-  return sessions.length > 0 ? sessions[0] : null;
+  const [body, signature] = sessionToken.split('.');
+  if (!body || !signature) return null;
+  const expectedSignature = await signSessionValue(body, env);
+  if (signature !== expectedSignature) return null;
+  const payload = JSON.parse(base64UrlDecode(body)) as { sub?: string; exp?: number };
+  if (!payload.sub || !payload.exp || payload.exp < Math.floor(Date.now() / 1000)) return null;
+  const users = await getUsersCollection(env);
+  const { ObjectId } = await getMongoDriver();
+  const user = await users.findOne({ _id: new ObjectId(payload.sub) });
+  return user && isUserRole(user.role) ? user : null;
 }
 
 async function destroySession(sessionToken: string, env: any): Promise<void> {
-  const sql = getNeonSql(env) as any;
-  if (sql) {
-    await sql`DELETE FROM user_sessions WHERE token = ${sessionToken}`;
-  }
+  void sessionToken;
+  void env;
 }
 
 /* ---------- Env interface ---------- */
@@ -63,6 +188,12 @@ interface Env {
   NEON_DATABASE_URL?: string;
   neon_database_url?: string;
   NEON_DB_URL?: string;
+  MONGODB_URI?: string;
+  MONGO_URI?: string;
+  MONGODB_DB?: string;
+  MONGO_DB?: string;
+  AUTH_SESSION_SECRET?: string;
+  JWT_SECRET?: string;
   DB: any;
   OPENAI_API_KEY?: string;
   SERPAPI_KEY?: string;
@@ -1005,175 +1136,95 @@ app.post('/api/hotels/search', async (c) => {
   }
 });
 
-/* User authentication endpoints (signup, login) */
+/* MongoDB-backed HostelIQ authentication endpoints */
 app.post('/api/auth/signup', async (c) => {
   try {
-    const body = await c.req.json();
-    const { firstName, lastName, username, email, password, preferences, role } = body;
+    const body = await c.req.json().catch(() => ({} as any));
+    const firstName = typeof body?.firstName === 'string' ? body.firstName.trim() : '';
+    const lastName = typeof body?.lastName === 'string' ? body.lastName.trim() : '';
+    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
+    const password = typeof body?.password === 'string' ? body.password : '';
+    const role = body?.role;
 
-    // Validate role — default to 'student' if not provided or invalid
-    const validRoles = ['student', 'warden', 'admin'];
-    const userRole = validRoles.includes(role) ? role : 'student';
-
-    console.log('Signup attempt:', { firstName, lastName, username, email, role: userRole });
-
-    const sql = getNeonSql(c.env as any) as any;
-    if (!sql) {
-      console.error('Database connection failed');
-      return c.json({ error: 'Database connection failed' }, 500);
+    if (!email || !password || !isUserRole(role)) {
+      return c.json({ error: 'Name, email, password, and valid role are required' }, 400);
     }
 
-    const existingUser = await sql`SELECT id FROM users WHERE email = ${email} OR username = ${username}`;
-    if (existingUser.length > 0) {
-      return c.json({ error: 'User already exists' }, 400);
-    }
+    const name = [firstName, lastName].filter(Boolean).join(' ').trim() || email.split('@')[0] || 'HostelIQ User';
+    const users = await getUsersCollection(c.env as any);
+    const existingUser = await users.findOne({ email });
+    if (existingUser) return c.json({ error: 'Email already registered' }, 409);
 
-    const hashedPassword = await hashPassword(password);
-    console.log('Password hashed successfully');
-
-    const rows = await sql<[{ id: number }]>`
-      INSERT INTO users (first_name, last_name, username, email, password_hash, preferences, role, created_at)
-      VALUES (${firstName}, ${lastName}, ${username}, ${email}, ${hashedPassword}, ${JSON.stringify(preferences)}, ${userRole}, NOW())
-      RETURNING id
-    `;
-
-    const userId = rows[0]?.id;
-    console.log('User created with ID:', userId);
-
-    const sessionToken = await createSession(userId, c.env as any);
+    const now = new Date();
+    const insertResult = await users.insertOne({
+      name,
+      email,
+      passwordHash: await hashPassword(password),
+      role,
+      createdAt: now,
+    });
+    const createdUser: MongoUserDocument = { _id: insertResult.insertedId, name, email, passwordHash: '', role, createdAt: now };
 
     return c.json({
-      sessionToken,
-      user: { id: userId, firstName, lastName, username, email, role: userRole, preferences }
+      success: true,
+      sessionToken: await createSession(createdUser, c.env as any),
+      user: toPublicAuthUser(createdUser),
     });
   } catch (error: unknown) {
-    console.error('Signup error:', error);
+    if (safeErrorMessage(error).includes('E11000')) return c.json({ error: 'Email already registered' }, 409);
+    console.error('Mongo signup error:', error);
     return c.json({ error: 'Failed to create account', details: safeErrorMessage(error) }, 500);
   }
 });
 
 app.post('/api/auth/login', async (c) => {
   try {
-    const body = await c.req.json();
-    const { email, password } = body;
+    const body = await c.req.json().catch(() => ({} as any));
+    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
+    const password = typeof body?.password === 'string' ? body.password : '';
+    if (!email || !password) return c.json({ error: 'Email and password are required' }, 400);
 
-    console.log('Login attempt for:', email);
-
-    const sql = getNeonSql(c.env as any) as any;
-    if (!sql) {
-      console.error('Database connection failed');
-      return c.json({ error: 'Database connection failed' }, 500);
-    }
-
-    const users = await sql`SELECT * FROM users WHERE email = ${email}`;
-    console.log('Users found:', users.length);
-
-    if (users.length === 0) {
+    const users = await getUsersCollection(c.env as any);
+    const user = await users.findOne({ email });
+    if (!user || !isUserRole(user.role) || !(await verifyPassword(password, user.passwordHash))) {
       return c.json({ error: 'Invalid credentials' }, 401);
-    }
-
-    const user = users[0];
-    console.log('User found:', { id: user.id, email: user.email });
-
-    const isValidPassword = await verifyPassword(password, user.password_hash);
-    console.log('Password verification result:', isValidPassword);
-
-    if (!isValidPassword) {
-      return c.json({ error: 'Invalid credentials' }, 401);
-    }
-
-    const sessionToken = await createSession(user.id, c.env as any);
-    console.log('Session created successfully');
-
-    let userPreferences = {};
-    try {
-      if (user.preferences) {
-        if (typeof user.preferences === 'string') {
-          userPreferences = JSON.parse(user.preferences);
-        } else if (typeof user.preferences === 'object') {
-          userPreferences = user.preferences;
-        }
-      }
-    } catch (parseError) {
-      console.warn('Failed to parse user preferences, using empty object:', parseError);
-      userPreferences = {};
     }
 
     return c.json({
-      sessionToken,
-      user: {
-        id: user.id,
-        firstName: user.first_name,
-        lastName: user.last_name,
-        username: user.username,
-        email: user.email,
-        role: user.role ?? 'student',
-        preferences: userPreferences
-      }
+      success: true,
+      sessionToken: await createSession(user, c.env as any),
+      user: toPublicAuthUser(user),
     });
   } catch (error: unknown) {
-    console.error('Login error:', error);
+    console.error('Mongo login error:', error);
     return c.json({ error: 'Login failed', details: safeErrorMessage(error) }, 500);
   }
 });
-
-/* Logout and session validation */
 
 app.post('/api/auth/logout', async (c) => {
   try {
     const body = await c.req.json().catch(() => ({}));
     const { sessionToken } = body as { sessionToken?: string };
-    if (sessionToken) {
-      await destroySession(sessionToken, c.env as any);
-    }
+    if (sessionToken) await destroySession(sessionToken, c.env as any);
     return c.json({ success: true });
   } catch (error: unknown) {
-    console.error('Logout error:', error);
+    console.error('Mongo logout error:', error);
     return c.json({ error: 'Logout failed', details: safeErrorMessage(error) }, 500);
   }
 });
 
 app.post('/api/auth/validate-session', async (c) => {
   try {
-    const body = await c.req.json();
-    const { sessionToken } = body;
+    const body = await c.req.json().catch(() => ({} as any));
+    const sessionToken = typeof body?.sessionToken === 'string' ? body.sessionToken : '';
+    if (!sessionToken) return c.json({ error: 'No session token provided' }, 401);
 
-    if (!sessionToken) {
-      return c.json({ error: 'No session token provided' }, 401);
-    }
+    const user = await validateSession(sessionToken, c.env as any);
+    if (!user || !isUserRole(user.role)) return c.json({ error: 'Invalid or expired session' }, 401);
 
-    const sessionData = await validateSession(sessionToken, c.env as any);
-    if (!sessionData) {
-      return c.json({ error: 'Invalid or expired session' }, 401);
-    }
-
-    // Handle preferences - could be string or already parsed object
-    let userPreferences = {};
-    try {
-      if (sessionData.preferences) {
-        if (typeof sessionData.preferences === 'string') {
-          userPreferences = JSON.parse(sessionData.preferences);
-        } else if (typeof sessionData.preferences === 'object') {
-          userPreferences = sessionData.preferences;
-        }
-      }
-    } catch (parseError) {
-      console.warn('Failed to parse user preferences, using empty object:', parseError);
-      userPreferences = {};
-    }
-    return c.json({
-      user: {
-        id: sessionData.user_id,
-        firstName: sessionData.first_name,
-        lastName: sessionData.last_name,
-        username: sessionData.username,
-        email: sessionData.email,
-        role: sessionData.role ?? 'student',
-        preferences: userPreferences
-      }
-    });
+    return c.json({ success: true, user: toPublicAuthUser(user as MongoUserDocument) });
   } catch (error: unknown) {
-    console.error('Session validation error:', error);
+    console.error('Mongo session validation error:', error);
     return c.json({ error: 'Session validation failed', details: safeErrorMessage(error) }, 500);
   }
 });

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import {
   ArrowRight, Users, Shield, ChevronRight, LogOut, User,
   BrainCircuit, ClipboardList, DoorOpen, CreditCard, UserCheck, BarChart3,
@@ -8,6 +8,7 @@ import {
 import { useScrollReveal } from '@/react-app/hooks/useScrollReveal';
 import HostelBlueprint from '@/react-app/components/HostelBlueprint';
 import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
+import { logoutSession } from '@/react-app/hooks/useAuth';
 
 interface UserData {
   id: number;
@@ -36,6 +37,7 @@ export default function Landing() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
 
   useScrollReveal();
 
@@ -58,6 +60,13 @@ export default function Landing() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  function handleLogout() {
+    void logoutSession();
+    setUser(null);
+    setShowProfileMenu(false);
+    navigate('/login');
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
@@ -92,7 +101,7 @@ export default function Landing() {
                     <Link to="/student/profile" className="flex items-center px-4 py-2.5 text-sm text-[#D1DEE6] hover:text-[#F8FAFC] hover:bg-white/5" onClick={() => setShowProfileMenu(false)}>
                       <User className="w-4 h-4 mr-2" /> Profile
                     </Link>
-                    <button onClick={() => { localStorage.clear(); setUser(null); setShowProfileMenu(false); window.location.reload(); }}
+                    <button onClick={handleLogout}
                       className="flex items-center w-full px-4 py-2.5 text-sm text-[#D1DEE6] hover:text-[#F8FAFC] hover:bg-white/5">
                       <LogOut className="w-4 h-4 mr-2" /> Logout
                     </button>

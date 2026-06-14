@@ -1,124 +1,209 @@
-# 🌟 Raahi – AI-Powered Indian Heritage Travel Companion
+# HostelIQ
 
-<div align="center">
-  <img src="public/images/logo.png" alt="Raahi Logo" width="120" height="120">
-  
-  <h3>Transforming Cultural Tourism Through Technology</h3>
-
-  <p>
-    <img src="https://img.shields.io/badge/React-19.0.0-blue.svg">
-    <img src="https://img.shields.io/badge/TypeScript-5.7.3-blue.svg">
-    <img src="https://img.shields.io/badge/Cloudflare-Workers-orange.svg">
-    <img src="https://img.shields.io/badge/TailwindCSS-4.1.16-blue.svg">
-    <img src="https://img.shields.io/badge/OpenAI-GPT--4o--mini-green.svg">
-  </p>
-
-  
-## 📘 Overview
-
-**Raahi** is an AI-powered travel companion redefining Indian heritage tourism.  
-It helps travelers **discover, plan, and experience** India’s cultural legacy through **personalized itineraries**, **interactive exploration**, and **community-driven authenticity**.
-
-### 🎯 Mission
-> *The Only AI Travel Companion That Understands India’s Soul.*
-
-Raahi combines **AI intelligence**, **local context**, and **cultural insight** to create an immersive, meaningful travel experience.
+An AI-Powered Smart Hostel Management System designed to streamline hostel operations through intelligent automation, role-based workflows, real-time monitoring, and data-driven decision-making.
 
 ---
 
-## 🚀 Key Features
+# Problem Statement
 
-### 🧭 **AI Travel Planning**
-- GPT-4o-mini powered itinerary generation  
-- Context-aware cultural recommendations  
-- Weather and season-based dynamic planning  
-- Multi-language narrative storytelling  
+Traditional hostel management systems rely heavily on manual processes for complaints, leave approvals, fee tracking, room management, and communication. This often results in:
 
-### 🌍 **Smart Search**
-- Intelligent city and landmark suggestions  
-- Typo-tolerant (e.g., “Gao” → *Goa*)  
-- Offline cache for quick results  
+* Delayed complaint resolution
+* Inefficient leave approval workflows
+* Poor communication between students and administration
+* Lack of operational visibility
+* Difficulty in monitoring hostel resources and occupancy
+* Fragmented management systems
 
-### 🗺️ **Interactive Heritage Maps**
-- 3D visualization of sites  
-- Explore routes, monuments, and artifacts  
-- Real-time route estimation and navigation  
-
-### 💬 **AI Chat Companion**
-- Conversational travel assistant  
-- Multilingual (12 Indian languages)  
-- Context retention and on-trip guidance  
-
-### 📸 **Memory & Media Intelligence**
-- Smart photo geotagging and organization  
-- AI-generated captions and descriptions  
-- Personal digital travel albums  
-
-### 👥 **Community Layer**
-- Authentic reviews and traveler interactions  
-- Follow, share, and reward system  
-- Local experience-based recommendations  
+HostelIQ addresses these challenges through a centralized digital platform powered by AI and real-time analytics.
 
 ---
 
-## 🧠 Technology Stack
+# Key Features
 
-### 🎨 **Frontend**
-| Technology | Purpose |
-|-------------|----------|
-| React 19.0.0 | UI Framework |
-| TypeScript 5.7.3 | Strong typing |
-| TailwindCSS 4.1.16 | Styling |
-| Vite 7.1.12 | Build tool |
-| React Router 7.5.3 | Routing |
+## Student Portal
 
-### ⚙️ **Backend & Infrastructure**
-| Technology | Purpose |
-|-------------|----------|
-| Cloudflare Workers | Edge-hosted backend |
-| Hono 4.7.7 | Lightweight API framework |
-| Neon PostgreSQL | Serverless database |
-| Cloudflare R2 | Object storage (planned) |
-| Wrangler 4.33.0 | Deployment CLI |
+* Raise and track complaints
+* Submit leave applications
+* View fee details and payment history
+* Access announcements and notices
+* Manage profile information
+* Interact with AI Hostel Assistant
+* Explore Smart Hostel Operations Map
 
-### 🤖 **AI & APIs**
-| API | Usage |
-|------|--------|
-| OpenAI GPT-4o-mini | AI chat & itinerary generation |
-| Google Maps API | Routes, distances, geocoding |
-| SerpAPI | Maps, reviews, events, hotels |
-| Open-Meteo API | Real-time weather |
-| Google Translate API | Multilingual responses |
+## Warden Portal
 
-### 🧩 **Developer Tools**
-| Tool | Purpose |
-|------|----------|
-| ESLint + Prettier | Code quality |
-| TypeScript ESLint | Type checking |
-| Vitest | Testing |
-| Wrangler | Edge deployment |
+* Manage complaint queues
+* Assign and resolve complaints
+* Approve or reject leave requests
+* Monitor hostel occupancy
+* View student activity and records
+* Access operational insights
+
+## Admin Portal
+
+* Campus-wide analytics dashboard
+* Student management system
+* Room utilization monitoring
+* Occupancy analytics
+* Dynamic reports generation
+* Hostel performance insights
 
 ---
 
-## ⚙️ Setup Guide
+# AI-Powered Hostel Assistant
 
-### 🧩 **Prerequisites**
-- **Node.js** ≥ 18  
-- **npm** ≥ 8  
-- **Cloudflare account** (for deployment)  
-- **Neon Database** (for persistence)
+The AI Assistant provides contextual responses related to:
+
+* Complaint status
+* Leave requests
+* Fee information
+* Hostel rules and policies
+* Room allocation
+* Visitor management
+* Emergency contacts
+* Hostel facilities and services
+
+The assistant is designed specifically for hostel-related queries and provides structured, domain-focused responses.
 
 ---
 
-### 💻 **Local Development Setup**
+# Smart Hostel Operations Map
 
-```bash
-# 1️⃣ Clone repository
-git clone https://github.com/yourusername/raahi.git
-cd raahi
+A visual hostel monitoring system that provides:
 
-# 2️⃣ Install dependencies
-npm install
+* Room occupancy visualization
+* Complaint heatmaps
+* Maintenance alerts
+* Room status monitoring
+* Operational insights
+* Real-time complaint indicators
 
-# 3️⃣ Copy environment file
-cp .env.example .env
+---
+
+# Analytics & Reporting
+
+HostelIQ provides real-time analytics including:
+
+* Complaint trends
+* Leave approval statistics
+* Occupancy rates
+* Room utilization metrics
+* Fee collection statistics
+* Administrative reports
+
+---
+
+# Multilingual Accessibility
+
+The platform supports multiple Indian languages to ensure accessibility for students from diverse linguistic backgrounds.
+
+---
+
+# System Architecture
+
+## Frontend
+
+* React 19
+* TypeScript
+* React Router
+* Tailwind CSS
+* Vite
+
+## Backend
+
+* Cloudflare Workers
+* Hono Framework
+* MongoDB Atlas
+* Node.js
+
+## AI Layer
+
+* OpenAI Integration
+* Intelligent Hostel Assistant
+* Context-Aware Query Handling
+
+## Infrastructure
+
+* Cloudflare
+* MongoDB Atlas
+* Vite Build System
+
+---
+
+# Authentication & Authorization
+
+Role-based authentication system with three user roles:
+
+## Student
+
+* Access Student Portal
+* Manage complaints, leave requests, fees, and profile
+
+## Warden
+
+* Manage complaints and leave approvals
+* Monitor hostel operations
+
+## Admin
+
+* Access analytics and reports
+* Manage rooms and students
+* Monitor overall hostel performance
+
+---
+
+# Workflow
+
+* User Registration/Login
+* Role Verification
+* Dashboard Access
+* Service Request Submission
+* AI-Assisted Processing
+* Warden/Admin Review
+* Real-Time Updates
+* Analytics & Reporting
+
+---
+
+# Innovation Highlights
+
+* Smart Hostel Operations Map
+* AI-Powered Hostel Assistant
+* Role-Based Digital Ecosystem
+* Real-Time Complaint Tracking
+* Data-Driven Decision Making
+
+---
+
+# Unique Selling Points
+
+* Unified Hostel Management Platform
+* End-to-End Workflow Automation
+* Real-Time Cross-Portal Synchronization
+* Live Analytics & Reporting
+* Multilingual Accessibility
+
+---
+
+# Future Scope
+
+* Mobile Application Integration
+* QR-Based Visitor Management
+* Predictive Maintenance Analytics
+* Smart IoT-Based Room Monitoring
+* Automated Fee Payment Gateway
+* Hostel Resource Optimization
+* Multi-Campus Management Support
+
+---
+
+# Project Impact
+
+HostelIQ transforms traditional hostel administration into a smart, connected, and efficient digital ecosystem by combining automation, analytics, and AI-powered assistance into a single unified platform.
+
+---
+
+# Team
+
+Developed as part of a Smart Hostel Management Solution aimed at improving student experience and operational efficiency within educational institutions.

@@ -1,23 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export type UserRole = 'student' | 'warden' | 'admin';
 
 export interface AuthUser {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   username: string;
   email: string;
   role: UserRole;
-  preferences: unknown;
+  preferences: Record<string, unknown>;
 }
 
-export interface MockStoredUser {
+interface AuthResponse {
+  success?: boolean;
+  sessionToken: string;
   user: AuthUser;
-  password: string;
 }
 
-const MOCK_USERS_KEY = 'mockUsers';
+export interface SignupInput {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  preferences?: unknown;
+}
+
 const USER_KEY = 'user';
 const TOKEN_KEY = 'token';
 const VALID_ROLES: UserRole[] = ['student', 'warden', 'admin'];
@@ -26,88 +36,107 @@ export function isUserRole(role: unknown): role is UserRole {
   return typeof role === 'string' && VALID_ROLES.includes(role as UserRole);
 }
 
-export function inferRoleFromEmail(email: string): UserRole {
-  const normalized = email.toLowerCase();
-  if (normalized.includes('admin')) return 'admin';
-  if (normalized.includes('warden')) return 'warden';
-  return 'student';
-}
-
-export function normalizeRole(role: unknown, email = ''): UserRole {
-  const normalizedRole = typeof role === 'string' ? role.trim().toLowerCase() : '';
-  if (isUserRole(normalizedRole)) return normalizedRole;
-  return inferRoleFromEmail(email);
+export function roleDashboard(role: unknown): string {
+  if (role === 'warden') return '/warden/dashboard';
+  if (role === 'admin') return '/admin/dashboard';
+  if (role === 'student') return '/student/dashboard';
+  return '/login';
 }
 
 function normalizeText(value: unknown, fallback: string): string {
   return typeof value === 'string' && value.trim() ? value.trim() : fallback;
 }
 
-function normalizeId(value: unknown): number {
-  if (typeof value === 'number' && Number.isFinite(value)) return value;
-  if (typeof value === 'string') {
-    const parsed = Number(value);
-    if (Number.isFinite(parsed)) return parsed;
-  }
-  return Date.now();
-}
-
 export function normalizeAuthUser(value: unknown): AuthUser | null {
   if (!value || typeof value !== 'object') return null;
-
   const record = value as Record<string, unknown>;
+  const role = record.role;
+  if (!isUserRole(role)) return null;
   const email = normalizeText(record.email, '').toLowerCase();
-  const role = normalizeRole(record.role, email);
+  if (!email) return null;
   const username = normalizeText(record.username, email.split('@')[0] || role);
 
   return {
-    id: normalizeId(record.id),
+    id: normalizeText(record.id, ''),
     firstName: normalizeText(record.firstName, role.charAt(0).toUpperCase() + role.slice(1)),
     lastName: normalizeText(record.lastName, 'User'),
     username,
     email,
     role,
-    preferences: record.preferences ?? {},
+    preferences: record.preferences && typeof record.preferences === 'object' ? record.preferences as Record<string, unknown> : {},
   };
 }
 
-export function getMockUsers(): MockStoredUser[] {
-  try {
-    const stored = localStorage.getItem(MOCK_USERS_KEY);
-    if (!stored) return [];
+function saveAuthSession(sessionToken: string, user: AuthUser) {
+  localStorage.setItem(TOKEN_KEY, sessionToken);
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+}
 
-    const parsed = JSON.parse(stored) as unknown;
-    if (!Array.isArray(parsed)) {
-      localStorage.removeItem(MOCK_USERS_KEY);
-      return [];
-    }
+export function clearAuthSession() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+}
 
-    const users = parsed.flatMap((entry) => {
-      if (!entry || typeof entry !== 'object') return [];
-      const record = entry as Record<string, unknown>;
-      const user = normalizeAuthUser(record.user);
-      const password = typeof record.password === 'string' ? record.password : '';
-      return user ? [{ user, password }] : [];
-    });
-
-    localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(users));
-    return users;
-  } catch {
-    localStorage.removeItem(MOCK_USERS_KEY);
-    return [];
+async function authRequest(path: string, body: object): Promise<AuthResponse> {
+  const response = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(typeof payload?.error === 'string' ? payload.error : 'Authentication failed');
   }
+  const user = normalizeAuthUser(payload?.user);
+  const sessionToken = typeof payload?.sessionToken === 'string' ? payload.sessionToken : '';
+  if (!user || !sessionToken) throw new Error('Invalid authentication response');
+  saveAuthSession(sessionToken, user);
+  return { success: true, sessionToken, user };
 }
 
-export function saveMockUser(user: AuthUser, password: string): void {
-  const normalizedUser = normalizeAuthUser(user) ?? user;
-  const users = getMockUsers().filter((entry) => entry.user.email !== normalizedUser.email);
-  localStorage.setItem(MOCK_USERS_KEY, JSON.stringify([{ user: normalizedUser, password }, ...users]));
+export function loginWithPassword(email: string, password: string) {
+  return authRequest('/api/auth/login', { email, password });
 }
 
-export function createMockSession(user: AuthUser): void {
-  const normalizedUser = normalizeAuthUser(user) ?? user;
-  localStorage.setItem(TOKEN_KEY, `mock-session-${normalizedUser.role}-${normalizedUser.id}`);
-  localStorage.setItem(USER_KEY, JSON.stringify(normalizedUser));
+export function signupWithPassword(input: SignupInput) {
+  return authRequest('/api/auth/signup', input);
+}
+
+export async function restoreAuthSession(): Promise<AuthUser | null> {
+  const sessionToken = localStorage.getItem(TOKEN_KEY);
+  if (!sessionToken) {
+    clearAuthSession();
+    return null;
+  }
+
+  const response = await fetch('/api/auth/validate-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionToken }),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    clearAuthSession();
+    return null;
+  }
+  const user = normalizeAuthUser(payload?.user);
+  if (!user) {
+    clearAuthSession();
+    return null;
+  }
+  saveAuthSession(sessionToken, user);
+  return user;
+}
+
+export async function logoutSession() {
+  const sessionToken = localStorage.getItem(TOKEN_KEY);
+  clearAuthSession();
+  if (!sessionToken) return;
+  await fetch('/api/auth/logout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionToken }),
+  }).catch(() => undefined);
 }
 
 export function useAuth() {
@@ -115,43 +144,23 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem(USER_KEY);
-
-    if (!stored) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const normalizedUser = normalizeAuthUser(JSON.parse(stored));
-      if (!normalizedUser) {
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
-      } else {
-        localStorage.setItem(TOKEN_KEY, `mock-session-${normalizedUser.role}-${normalizedUser.id}`);
-        localStorage.setItem(USER_KEY, JSON.stringify(normalizedUser));
-        setUser(normalizedUser);
-      }
-    } catch {
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_KEY);
-    }
-
-    setLoading(false);
+    let active = true;
+    restoreAuthSession()
+      .then((restoredUser) => {
+        if (active) setUser(restoredUser);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
-  function logout() {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+  async function logout() {
+    await logoutSession();
     setUser(null);
   }
 
   return { user, loading, logout };
-}
-
-export function roleDashboard(role: unknown): string {
-  const normalizedRole = normalizeRole(role);
-  if (normalizedRole === 'warden') return '/warden/dashboard';
-  if (normalizedRole === 'admin') return '/admin/dashboard';
-  return '/student/dashboard';
 }

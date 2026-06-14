@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { ArrowLeft, Mail, Lock, KeyRound } from 'lucide-react';
 import { HostelIQLogoMark } from '@/react-app/components/HostelIQLogo';
-import { createMockSession, getMockUsers, inferRoleFromEmail, roleDashboard, UserRole } from '@/react-app/hooks/useAuth';
+import { loginWithPassword, roleDashboard } from '@/react-app/hooks/useAuth';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -19,31 +19,11 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const normalizedEmail = email.trim().toLowerCase();
-      const storedUser = getMockUsers().find((entry) => entry.user.email.toLowerCase() === normalizedEmail);
-      if (storedUser && storedUser.password !== password) {
-        alert('Invalid credentials');
-        setIsLoading(false);
-        return;
-      }
-
-      const role = storedUser?.user.role ?? inferRoleFromEmail(normalizedEmail);
-      const fallbackUsername = normalizedEmail.split('@')[0] || role;
-      const user = storedUser?.user ?? {
-        id: Date.now(),
-        firstName: role.charAt(0).toUpperCase() + role.slice(1),
-        lastName: 'User',
-        username: fallbackUsername,
-        email: normalizedEmail,
-        role,
-        preferences: {},
-      };
-
-      createMockSession(user);
-      navigate(roleDashboard(user.role as UserRole));
+      const { user } = await loginWithPassword(email.trim().toLowerCase(), password);
+      navigate(roleDashboard(user.role));
     } catch (error) {
       console.error('Login error:', error);
-      alert('Login failed. Please try again.');
+      alert(error instanceof Error ? error.message : 'Login failed. Please try again.');
     }
     setIsLoading(false);
   };
